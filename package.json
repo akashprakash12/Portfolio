@@ -2,7 +2,7 @@
   "name": "portfolio",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://github.com/akashprakash12/Portfolio-.git",
+  "homepage": "https://github.com/akashprakash12/Portfolio/",
   "type": "module",
   "scripts": {
     "dev": "vite",
