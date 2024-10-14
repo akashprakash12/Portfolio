@@ -17,6 +17,9 @@ import {
   useGLTF,
 } from "@react-three/drei";
 import Shadows from "./componet/Shadows";
+import Text from "./componet/Text";
+import Textt from "./componet/Text";
+import Camera from "./componet/Camera";
 
 function Suzi(props) {
   const { nodes } = useGLTF(
@@ -31,16 +34,19 @@ function Suzi(props) {
 
 function App() {
   const [count, setCount] = useState(0);
+  
 
   return (
-    <Canvas shadows camera={{ position: [10, 12, 12], fov: 25 }}>
+    <Canvas shadows camera={{ position: [10,15,12], fov: 25 }}>
+      <Camera></Camera>
       <group position={[0, -0.5, 0]}>
         <Center top>
-          <Suzi rotation={[-0.63, 0, 0]} scale={2} />
+          {/* <Suzi rotation={[-0.63, 0, 0]} scale={2} /> */}
+          <Box></Box>
         </Center>
-        <Shadows></Shadows>
+        
       </group>
-
+      <Textt></Textt>
       <OrbitControls makeDefault />
       <Environment preset="city" />
       <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
