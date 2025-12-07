@@ -7,10 +7,6 @@ import gsap from "gsap";
 export default function CinematicCamera() {
   const { camera, controls } = useThree();
 
-
-console.log(camera.position);   // x, y, z
-
-
   const hasAnimated = useRef(false); // prevent running twice
 
   // Leva controls (sliders)

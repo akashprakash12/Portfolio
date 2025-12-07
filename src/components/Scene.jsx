@@ -24,12 +24,12 @@ const Scene = () => {
   };
 
   return (
-    <Canvas shadows camera={{ position: [-15, 10, 25], fov: 12 }}>
+    <Canvas  className="w-full h-full" shadows camera={{ position: [-15, 10, 25], fov: 12 }}>
       <CinematicCamera />
       {/* <Plane /> */}
 
       {/* --- Soft Dynamic Shadows --- */}
-      <Shadows shadowKey={shadowKey} />
+      {/* <Shadows shadowKey={shadowKey} /> */}
 
       {/* --- Draggable Sphere --- */}
       <Center top position={[-2, 0, 2]}>
@@ -77,7 +77,7 @@ const Shadows = memo(({ shadowKey }) => (
     key={shadowKey} // reset shadows when dragged
     temporal
     frames={60}
-    color="#9d4b4b"
+    color="#3b3a3e"
     colorBlend={0.5}
     alphaTest={0.9}
     scale={20}
