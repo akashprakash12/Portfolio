@@ -245,7 +245,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
       {/* FULL SCREEN BACKGROUND SCENE */}
-      <div className="fixed inset-0 z-0">
+      <div className="fixed inset-0 z-30">
         <Scene key={sceneKey} {...getSceneConfig()} />
       </div>
 

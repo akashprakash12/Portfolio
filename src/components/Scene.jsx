@@ -14,6 +14,7 @@ import { OrbitControls } from "@react-three/drei";
 import Plane from "./Plane";
 import Model from "./Model";
 import CinematicCamera from "./CinematicCamera";
+import Lights from "./Lights";
 
 const Scene = () => {
   const [shadowKey, setShadowKey] = useState(0);
@@ -25,6 +26,11 @@ const Scene = () => {
 
   return (
     <Canvas shadows camera={{ position: [-15, 10, 12], fov: 12 }}>
+<color attach="background" args={[0x000000]} />
+<fog attach="fog" args={[0x000000, 10, 40]} />
+
+
+    <Lights></Lights>
       <CinematicCamera />
       <Plane />
 
@@ -35,7 +41,7 @@ const Scene = () => {
       <Center top position={[-2, 0, 2]}>
         <DragControls onDrag={handleDrag}>
           <Suspense fallback={null}>
-            <Model></Model>
+            <Model ></Model>
           </Suspense>
         </DragControls>
       </Center>
@@ -57,7 +63,14 @@ const Scene = () => {
       />
 
       <OrbitControls makeDefault />
-      <Environment preset="city" />
+      <Environment preset="sunset" />
+
+    {/* {/* <Environment preset="sunset" background={false} environment={false} /> */}
+
+
+ <color attach="background" args={["#000000"]} />
+<fog attach="fog" args={["#000000", 10, 40]} />
+
 
       {/* --- Axis Helper --- */}
       <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
