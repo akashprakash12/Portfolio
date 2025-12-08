@@ -1,7 +1,7 @@
 import { useGLTF } from "@react-three/drei";
 import { useEffect } from "react";
 
-export default function Model() {
+export default function Model(props) {
   const { scene } = useGLTF("./models/angel.glb");
 
     useEffect(() => {
@@ -17,7 +17,11 @@ export default function Model() {
   }, [scene]);
 
   return (
-    <primitive object={scene}  />
+    <primitive object={scene} {...props} onClick={(e)=>{
+        e.stopPropagation();
+        console.log("Angel model clicked");
+
+    }} />
   );
 }
 

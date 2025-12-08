@@ -11,7 +11,7 @@ export default function CinematicCamera() {
 
   // Leva controls (sliders)
   const { camPos, target, fov } = useControls("Camera Controls", {
-    camPos: { value: [-8, 2, 9], step: 0.1 },
+    camPos: { value: [-9, 2, 6], step: 0.1 },
     target: { value: [0, 1, 0], step: 0.1 },
     fov: { value: 10, min: 10, max: 80, step: 1 }
   });
