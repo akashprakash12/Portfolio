@@ -1,6 +1,6 @@
-import React, { memo, Suspense, useState } from "react";
+import React, { memo, Suspense, useEffect, useRef, useState } from "react";
 import { useControls } from "leva";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import {
   AccumulativeShadows,
@@ -9,7 +9,6 @@ import {
   GizmoHelper,
   GizmoViewport,
   RandomizedLight,
-  Float,
 } from "@react-three/drei";
 import { OrbitControls } from "@react-three/drei";
 import Plane from "./Plane";
@@ -17,8 +16,32 @@ import Model from "./Model";
 import CinematicCamera from "./CinematicCamera";
 import Lights from "./Lights";
 
+const CursorSphere = ({ cursorRef }) => {
+  const sphereRef = useRef();
+  const { camera, mouse } = useThree();
+
+  useFrame(() => {
+    const targetZ = 0.2;
+    const distance = camera.position.z - targetZ;
+
+    sphereRef.current.position.x = mouse.x * distance * Math.tan((camera.fov * Math.PI) / 360) * camera.aspect;
+    sphereRef.current.position.y = mouse.y * distance * Math.tan((camera.fov * Math.PI) / 360);
+    sphereRef.current.position.z = targetZ;
+
+    cursorRef.current.copy(sphereRef.current.position);
+  });
+
+  return (
+    <mesh ref={sphereRef} renderOrder={10}>
+      <sphereGeometry args={[0.06, 24, 24]} />
+      <meshStandardMaterial color="#ffffff" emissive="#9ad7ff" emissiveIntensity={1.2} />
+    </mesh>
+  );
+};
+
 const Scene = () => {
   const [shadowKey, setShadowKey] = useState(0);
+  const cursorRef = useRef(new THREE.Vector3());
 
   const { position, rotation, scale } = useControls({
     position: { value: [0.6, -1.15, 2.5], step: 0.1 },
@@ -30,12 +53,9 @@ const Scene = () => {
     timeline: { value: 0.6, min: 0, max: 1, step: 0.01 },
   });
 
-  const { particleSize, particleSpread, particleSpeed, particleWobble, particleGap } = useControls("Particles", {
-    particleSize: { value: 0.03, min: 0.005, max: 0.1, step: 0.005 },
-    particleSpread: { value: 0.22, min: 0.01, max: 0.8, step: 0.01 },
-    particleSpeed: { value: 0.32, min: 0.05, max: 1.5, step: 0.01 },
-    particleWobble: { value: 0.01, min: 0, max: 0.08, step: 0.001 },
-    particleGap: { value: 0.08, min: 0, max: 0.3, step: 0.005 },
+  const { separationDistance, triangleGap } = useControls("Hover Effects", {
+    separationDistance: { value: 0.4, min: 0.1, max: 2, step: 0.1 },
+    triangleGap: { value: 0.08, min: 0, max: 0.5, step: 0.02 },
   });
 
   // Trigger shadow refresh when dragging
@@ -55,26 +75,16 @@ const Scene = () => {
       {/* --- Soft Dynamic Shadows --- */}
       <Shadows shadowKey={shadowKey} />
 
-      {/* --- Draggable + Floating Model (adjust live in Leva) --- */}
+      {/* --- Draggable Model --- */}
       <group position={position} rotation={rotation} scale={scale}>
         <DragControls onDrag={handleDrag}>
           <Suspense fallback={null}>
-            <Float
-              speed={1.5 + timeline * 1.5}
-              rotationIntensity={0.25 + timeline * 0.35}
-              floatIntensity={0.7 + timeline * 0.6}
-            >
-              <Model
-                particleSize={particleSize}
-                particleSpread={particleSpread}
-                particleSpeed={particleSpeed}
-                particleWobble={particleWobble}
-                particleGap={particleGap}
-              />
-            </Float>
+            <Model separationDistance={separationDistance} triangleGap={triangleGap} cursorPosition={cursorRef} />
           </Suspense>
         </DragControls>
       </group>
+
+      <CursorSphere cursorRef={cursorRef} />
 
       <OrbitControls makeDefault />
       <Environment preset="sunset" />
