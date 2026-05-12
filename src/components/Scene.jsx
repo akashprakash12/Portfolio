@@ -1,7 +1,8 @@
-import React, { memo, Suspense, useEffect, useRef, useState } from "react";
+import React, { memo, Suspense, useRef, useState } from "react";
 import { useControls } from "leva";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
+import * as THREE from "three";
 import {
   AccumulativeShadows,
   DragControls,
@@ -19,16 +20,19 @@ import Lights from "./Lights";
 const CursorSphere = ({ cursorRef }) => {
   const sphereRef = useRef();
   const { camera, mouse } = useThree();
+  const raycasterRef = useRef(new THREE.Raycaster());
+  const planeRef = useRef(new THREE.Plane(new THREE.Vector3(0, 0, 1), -0.2));
+  const hitPointRef = useRef(new THREE.Vector3());
 
   useFrame(() => {
-    const targetZ = 0.2;
-    const distance = camera.position.z - targetZ;
+    if (!sphereRef.current) return;
 
-    sphereRef.current.position.x = mouse.x * distance * Math.tan((camera.fov * Math.PI) / 360) * camera.aspect;
-    sphereRef.current.position.y = mouse.y * distance * Math.tan((camera.fov * Math.PI) / 360);
-    sphereRef.current.position.z = targetZ;
+    raycasterRef.current.setFromCamera(mouse, camera);
 
-    cursorRef.current.copy(sphereRef.current.position);
+    if (raycasterRef.current.ray.intersectPlane(planeRef.current, hitPointRef.current)) {
+      sphereRef.current.position.copy(hitPointRef.current);
+      cursorRef.current.copy(hitPointRef.current);
+    }
   });
 
   return (
@@ -53,8 +57,7 @@ const Scene = () => {
     timeline: { value: 0.6, min: 0, max: 1, step: 0.01 },
   });
 
-  const { separationDistance, triangleGap } = useControls("Hover Effects", {
-    separationDistance: { value: 0.4, min: 0.1, max: 2, step: 0.1 },
+  const { triangleGap } = useControls("Hover Effects", {
     triangleGap: { value: 0.08, min: 0, max: 0.5, step: 0.02 },
   });
 
@@ -79,7 +82,7 @@ const Scene = () => {
       <group position={position} rotation={rotation} scale={scale}>
         <DragControls onDrag={handleDrag}>
           <Suspense fallback={null}>
-            <Model separationDistance={separationDistance} triangleGap={triangleGap} cursorPosition={cursorRef} />
+            <Model triangleGap={triangleGap} cursorPosition={cursorRef} />
           </Suspense>
         </DragControls>
       </group>
