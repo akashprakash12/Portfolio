@@ -4,12 +4,10 @@ import { Canvas } from "@react-three/fiber";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import {
   AccumulativeShadows,
-  Center,
   DragControls,
   Environment,
   GizmoHelper,
   GizmoViewport,
-  Grid,
   RandomizedLight,
   Float,
 } from "@react-three/drei";
@@ -23,9 +21,21 @@ const Scene = () => {
   const [shadowKey, setShadowKey] = useState(0);
 
   const { position, rotation, scale } = useControls({
-    position: { value: [2, -1, 0], step: 0.1 },
-    rotation: { value: [0, -0.4, 0], step: 0.01 },
-    scale: { value: 1, min: 0.1, max: 5 },
+    position: { value: [0.6, -1.15, 2.5], step: 0.1 },
+    rotation: { value: [0.05, 0.91, 0], step: 0.01 },
+    scale: { value: 3.15, min: 0.1, max: 5 },
+  });
+
+  const { timeline } = useControls("Animation", {
+    timeline: { value: 0.6, min: 0, max: 1, step: 0.01 },
+  });
+
+  const { particleSize, particleSpread, particleSpeed, particleWobble, particleGap } = useControls("Particles", {
+    particleSize: { value: 0.03, min: 0.005, max: 0.1, step: 0.005 },
+    particleSpread: { value: 0.22, min: 0.01, max: 0.8, step: 0.01 },
+    particleSpeed: { value: 0.32, min: 0.05, max: 1.5, step: 0.01 },
+    particleWobble: { value: 0.01, min: 0, max: 0.08, step: 0.001 },
+    particleGap: { value: 0.08, min: 0, max: 0.3, step: 0.005 },
   });
 
   // Trigger shadow refresh when dragging
@@ -34,7 +44,7 @@ const Scene = () => {
   };
 
   return (
-    <Canvas shadows camera={{ position: [0, 0, 6], fov: 45 }}>
+    <Canvas shadows camera={{ position: [0, 0, 6], fov: 20 }}>
       <color attach="background" args={["#050816"]} />
       <fog attach="fog" args={["#050816", 8, 20]} />
 
@@ -45,32 +55,26 @@ const Scene = () => {
       {/* --- Soft Dynamic Shadows --- */}
       <Shadows shadowKey={shadowKey} />
 
-      {/* --- Draggable + Floating Model (Leva-controlled) --- */}
+      {/* --- Draggable + Floating Model (adjust live in Leva) --- */}
       <group position={position} rotation={rotation} scale={scale}>
         <DragControls onDrag={handleDrag}>
           <Suspense fallback={null}>
-            <Float speed={2} rotationIntensity={0.4} floatIntensity={1}>
-              <Model />
+            <Float
+              speed={1.5 + timeline * 1.5}
+              rotationIntensity={0.25 + timeline * 0.35}
+              floatIntensity={0.7 + timeline * 0.6}
+            >
+              <Model
+                particleSize={particleSize}
+                particleSpread={particleSpread}
+                particleSpeed={particleSpeed}
+                particleWobble={particleWobble}
+                particleGap={particleGap}
+              />
             </Float>
           </Suspense>
         </DragControls>
       </group>
-
-      {/* --- Grid Floor --- */}
-      <Grid
-        gridSize={[10, 10]}
-        position={[0, -0.01, 0]}
-        infiniteGrid={true}
-        cellSize={10}
-        cellThickness={2}
-        sectionColor="#9d4b4b"
-        sectionSize={3}
-        sectionThickness={1.2}
-        side={2}
-        fadeDistance={43}
-        followCamera={false}
-        cellColor="#6f6f6f"
-      />
 
       <OrbitControls makeDefault />
       <Environment preset="sunset" />

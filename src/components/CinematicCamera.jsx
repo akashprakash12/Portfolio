@@ -13,7 +13,7 @@ export default function CinematicCamera() {
   const { camPos, target, fov } = useControls("Camera Controls", {
     camPos: { value: [0, 0, 6], step: 0.1 },
     target: { value: [0, 1, 0], step: 0.1 },
-    fov: { value: 45, min: 10, max: 80, step: 1 }
+    fov: { value: 20, min: 10, max: 80, step: 1 }
   });
 
   // keep a base camera position for subtle idle motion
