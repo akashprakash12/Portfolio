@@ -1,5 +1,5 @@
 // CinematicCamera.jsx
-import { useThree } from "@react-three/fiber";
+import { useThree, useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
@@ -11,10 +11,13 @@ export default function CinematicCamera() {
 
   // Leva controls (sliders)
   const { camPos, target, fov } = useControls("Camera Controls", {
-    camPos: { value: [-9, 2, 6], step: 0.1 },
+    camPos: { value: [0, 0, 6], step: 0.1 },
     target: { value: [0, 1, 0], step: 0.1 },
-    fov: { value: 10, min: 10, max: 80, step: 1 }
+    fov: { value: 45, min: 10, max: 80, step: 1 }
   });
+
+  // keep a base camera position for subtle idle motion
+  const baseCam = useRef([...camPos]);
 
   /* ========================
         🎬 GSAP CINEMATIC INTRO
@@ -71,7 +74,18 @@ export default function CinematicCamera() {
     camera.fov = fov;
     camera.lookAt(...target);
     camera.updateProjectionMatrix();
+    baseCam.current = [...camPos];
   }, [camPos, target, fov, camera]);
+
+  // slow idle camera motion
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    const offset = Math.sin(t * 0.1) * 0.3;
+    camera.position.x = baseCam.current[0] + offset;
+    camera.position.y = baseCam.current[1];
+    camera.position.z = baseCam.current[2];
+    camera.lookAt(...target);
+  });
 
   return null;
 }

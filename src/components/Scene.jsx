@@ -1,5 +1,7 @@
 import React, { memo, Suspense, useState } from "react";
+import { useControls } from "leva";
 import { Canvas } from "@react-three/fiber";
+import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import {
   AccumulativeShadows,
   Center,
@@ -9,6 +11,7 @@ import {
   GizmoViewport,
   Grid,
   RandomizedLight,
+  Float,
 } from "@react-three/drei";
 import { OrbitControls } from "@react-three/drei";
 import Plane from "./Plane";
@@ -19,32 +22,39 @@ import Lights from "./Lights";
 const Scene = () => {
   const [shadowKey, setShadowKey] = useState(0);
 
+  const { position, rotation, scale } = useControls({
+    position: { value: [2, -1, 0], step: 0.1 },
+    rotation: { value: [0, -0.4, 0], step: 0.01 },
+    scale: { value: 1, min: 0.1, max: 5 },
+  });
+
   // Trigger shadow refresh when dragging
   const handleDrag = () => {
     setShadowKey((prev) => prev + 1);
   };
 
   return (
-    <Canvas shadows camera={{ position: [-15, 10, 12], fov: 12 }}>
-<color attach="background" args={[0x000000]} />
-<fog attach="fog" args={[0x000000, 10, 40]} />
+    <Canvas shadows camera={{ position: [0, 0, 6], fov: 45 }}>
+      <color attach="background" args={["#050816"]} />
+      <fog attach="fog" args={["#050816", 8, 20]} />
 
-
-    <Lights></Lights>
+      <Lights></Lights>
       <CinematicCamera />
       <Plane />
 
       {/* --- Soft Dynamic Shadows --- */}
       <Shadows shadowKey={shadowKey} />
 
-      {/* --- Draggable Sphere --- */}
-      <Center top position={[-2, 0, 2]}>
+      {/* --- Draggable + Floating Model (Leva-controlled) --- */}
+      <group position={position} rotation={rotation} scale={scale}>
         <DragControls onDrag={handleDrag}>
           <Suspense fallback={null}>
-            <Model ></Model>
+            <Float speed={2} rotationIntensity={0.4} floatIntensity={1}>
+              <Model />
+            </Float>
           </Suspense>
         </DragControls>
-      </Center>
+      </group>
 
       {/* --- Grid Floor --- */}
       <Grid
@@ -65,12 +75,11 @@ const Scene = () => {
       <OrbitControls makeDefault />
       <Environment preset="sunset" />
 
+      <EffectComposer>
+        <Bloom intensity={1.2} luminanceThreshold={0.2} />
+      </EffectComposer>
+
     {/* {/* <Environment preset="sunset" background={false} environment={false} /> */}
-
-
- <color attach="background" args={["#000000"]} />
-<fog attach="fog" args={["#000000", 10, 40]} />
-
 
       {/* --- Axis Helper --- */}
       <GizmoHelper alignment="bottom-right" margin={[80, 80]}>

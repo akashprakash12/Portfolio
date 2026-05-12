@@ -3,6 +3,12 @@ export default function Lights() {
     <>
       <ambientLight intensity={0.4} />
 
+      <pointLight
+        position={[2, 3, 2]}
+        intensity={15}
+        color="#4f8cff"
+      />
+
       <directionalLight
         position={[5, 10, 5]}
         castShadow

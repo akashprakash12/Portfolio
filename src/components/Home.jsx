@@ -249,6 +249,8 @@ const Home = () => {
         <Scene key={sceneKey} {...getSceneConfig()} />
       </div>
 
+      <div className="absolute inset-0 bg-gradient-to-b from-[#050816] via-[#0a1124] to-black pointer-events-none" />
+
       {/* Dark overlay for better text visibility */}
       <div className="fixed inset-0 z-1 bg-gradient-to-r from-black/80 via-black/60 to-transparent pointer-events-none"></div>
 
