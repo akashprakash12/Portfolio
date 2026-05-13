@@ -1,11 +1,10 @@
 import { useGLTF } from "@react-three/drei";
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
 export default function Model(props) {
   const { scene } = useGLTF("./models/angel.glb");
-  const [isHovered, setIsHovered] = useState(false);
   const triangleGap = props.triangleGap ?? 0.01;
   const cursorPosition = props.cursorPosition ?? null;
   const touchRadius = props.touchRadius ?? 0.4;
@@ -18,10 +17,8 @@ export default function Model(props) {
 
   const meshesRef = useRef([]);
   const originalGeometriesRef = useRef(new Map());
-  const progressRef = useRef(0);
-  
+
   // Pre-allocate Vector3 objects for performance
-  const tmpVec3 = useMemo(() => new THREE.Vector3(), []);
   const tmpCentroid = useMemo(() => new THREE.Vector3(), []);
   const localCursorVec = useMemo(() => new THREE.Vector3(), []);
 
@@ -46,7 +43,6 @@ export default function Model(props) {
       const triangleCount = positionAttribute.count / 3;
       const centroids = new Float32Array(triangleCount * 3);
       const directions = new Float32Array(triangleCount * 3);
-      const sizes = new Float32Array(triangleCount);
 
       for (let triangleIndex = 0; triangleIndex < triangleCount; triangleIndex++) {
         const vertexIndex = triangleIndex * 9;
@@ -68,9 +64,6 @@ export default function Model(props) {
 
         const centroid = new THREE.Vector3().copy(a).add(b).add(c).multiplyScalar(1 / 3);
         const direction = centroid.clone().sub(modelCenter).normalize();
-        const edge1 = a.distanceTo(b);
-        const edge2 = b.distanceTo(c);
-        const edge3 = c.distanceTo(a);
 
         centroids[triangleIndex * 3] = centroid.x;
         centroids[triangleIndex * 3 + 1] = centroid.y;
@@ -79,14 +72,11 @@ export default function Model(props) {
         directions[triangleIndex * 3] = direction.x;
         directions[triangleIndex * 3 + 1] = direction.y;
         directions[triangleIndex * 3 + 2] = direction.z;
-
-        sizes[triangleIndex] = (edge1 + edge2 + edge3) / 3;
       }
 
       dataByMesh.set(child, {
         centroids,
         directions,
-        sizes,
       });
     });
 
@@ -119,14 +109,7 @@ export default function Model(props) {
   }, [scene]);
 
   // Animation loop for face separation
-  useFrame((state, delta) => {
-    progressRef.current = THREE.MathUtils.damp(
-      progressRef.current,
-      isHovered ? 1 : 0,
-      isHovered ? 8 : 3,
-      delta
-    );
-
+  useFrame((state) => {
     meshesRef.current.forEach((mesh) => {
       if (!mesh.geometry || !originalGeometriesRef.current.has(mesh)) return;
 
@@ -218,14 +201,6 @@ export default function Model(props) {
         object={scene}
         castShadow
         receiveShadow
-        onPointerOver={(event) => {
-          event.stopPropagation();
-          setIsHovered(true);
-        }}
-        onPointerOut={(event) => {
-          event.stopPropagation();
-          setIsHovered(false);
-        }}
         onClick={(event) => {
           event.stopPropagation();
         }}

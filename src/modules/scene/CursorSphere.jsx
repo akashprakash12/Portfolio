@@ -8,8 +8,12 @@ export default function CursorSphere({ cursorRef, modelZ = 2.5 }) {
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
   const ndcMouse = useRef(new THREE.Vector2(0, 0));
   const tmpPoint = useMemo(() => new THREE.Vector3(), []);
+  const visualPoint = useMemo(() => new THREE.Vector3(), []);
+  const cameraDir = useMemo(() => new THREE.Vector3(), []);
   const planePoint = useMemo(() => new THREE.Vector3(), []);
   const floorPlane = useMemo(() => new THREE.Plane(new THREE.Vector3(0, 1, 0), 0.85), []);
+  const floorLift = useMemo(() => new THREE.Vector3(0, 0.12, 0), []);
+  const cameraLift = 0.18;
 
   useFrame(() => {
     if (!sphereRef.current) return;
@@ -36,16 +40,28 @@ export default function CursorSphere({ cursorRef, modelZ = 2.5 }) {
 
       if (intersects.length > 0) {
         const p = intersects[0].point;
-        sphereRef.current.position.copy(p);
+        if (intersects[0].object?.geometry?.type === "PlaneGeometry") {
+          cursorRef.current.copy(p).add(floorLift);
+          camera.getWorldDirection(cameraDir);
+          visualPoint.copy(p).add(floorLift).addScaledVector(cameraDir, -cameraLift);
+          sphereRef.current.position.copy(visualPoint);
+          return;
+        }
+
         cursorRef.current.copy(p);
+        camera.getWorldDirection(cameraDir);
+        visualPoint.copy(p).addScaledVector(cameraDir, -cameraLift);
+        sphereRef.current.position.copy(visualPoint);
         return;
       }
     }
 
     // If nothing in the scene is hit, project onto the floor plane.
     if (raycaster.ray.intersectPlane(floorPlane, planePoint)) {
-      sphereRef.current.position.copy(planePoint);
-      cursorRef.current.copy(planePoint);
+      cursorRef.current.copy(planePoint).add(floorLift);
+      camera.getWorldDirection(cameraDir);
+      visualPoint.copy(planePoint).add(floorLift).addScaledVector(cameraDir, -cameraLift);
+      sphereRef.current.position.copy(visualPoint);
       return;
     }
 
@@ -55,8 +71,10 @@ export default function CursorSphere({ cursorRef, modelZ = 2.5 }) {
     const t = (modelZ - rayOrigin.z) / rayDir.z;
     if (isFinite(t) && t > 0) {
       tmpPoint.copy(rayOrigin).addScaledVector(rayDir, t);
-      sphereRef.current.position.copy(tmpPoint);
       cursorRef.current.copy(tmpPoint);
+      camera.getWorldDirection(cameraDir);
+      visualPoint.copy(tmpPoint).addScaledVector(cameraDir, -cameraLift);
+      sphereRef.current.position.copy(visualPoint);
     }
   });
 
