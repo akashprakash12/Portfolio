@@ -1,4 +1,4 @@
-import React, { memo, Suspense, useRef, useState } from "react";
+import React, { memo, Suspense, useRef, useState, useEffect, useMemo } from "react";
 import { useControls } from "leva";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
@@ -16,35 +16,13 @@ import Plane from "./Plane";
 import Model from "./Model";
 import CinematicCamera from "./CinematicCamera";
 import Lights from "./Lights";
+import CursorSphere from "../modules/scene/CursorSphere";
 
-const CursorSphere = ({ cursorRef }) => {
-  const sphereRef = useRef();
-  const { camera, mouse } = useThree();
-  const raycasterRef = useRef(new THREE.Raycaster());
-  const planeRef = useRef(new THREE.Plane(new THREE.Vector3(0, 0, 1), -0.2));
-  const hitPointRef = useRef(new THREE.Vector3());
-
-  useFrame(() => {
-    if (!sphereRef.current) return;
-
-    raycasterRef.current.setFromCamera(mouse, camera);
-
-    if (raycasterRef.current.ray.intersectPlane(planeRef.current, hitPointRef.current)) {
-      sphereRef.current.position.copy(hitPointRef.current);
-      cursorRef.current.copy(hitPointRef.current);
-    }
-  });
-
-  return (
-    <mesh ref={sphereRef} renderOrder={10}>
-      <sphereGeometry args={[0.06, 24, 24]} />
-      <meshStandardMaterial color="#ffffff" emissive="#9ad7ff" emissiveIntensity={1.2} />
-    </mesh>
-  );
-};
+// CursorSphere moved to modules/scene/CursorSphere.jsx
 
 const Scene = () => {
   const [shadowKey, setShadowKey] = useState(0);
+  const [debugDistance, setDebugDistance] = useState(0);
   const cursorRef = useRef(new THREE.Vector3());
 
   const { position, rotation, scale } = useControls({
@@ -61,51 +39,89 @@ const Scene = () => {
     triangleGap: { value: 0.08, min: 0, max: 0.5, step: 0.02 },
   });
 
+  const { touchRadius } = useControls("Cursor Settings", {
+    touchRadius: { value: 0.4, min: 0.1, max: 2, step: 0.05 },
+  });
+
   // Trigger shadow refresh when dragging
   const handleDrag = () => {
     setShadowKey((prev) => prev + 1);
   };
 
+  // Update debug distance display
+  const modelCenterWorld = new THREE.Vector3(
+    position[0],
+    position[1],
+    position[2]
+  );
+  const dist = cursorRef.current.distanceTo(modelCenterWorld);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDebugDistance(dist);
+    }, 100);
+    return () => clearInterval(interval);
+  }, [dist]);
+
   return (
-    <Canvas shadows camera={{ position: [0, 0, 6], fov: 20 }}>
-      <color attach="background" args={["#050816"]} />
-      <fog attach="fog" args={["#050816", 8, 20]} />
+    <>
+      <Canvas shadows camera={{ position: [0, 0, 6], fov: 20 }}>
+        <color attach="background" args={["#050816"]} />
+        <fog attach="fog" args={["#050816", 8, 20]} />
 
-      <Lights></Lights>
-      <CinematicCamera />
-      <Plane />
+        <Lights></Lights>
+        <CinematicCamera />
+        <Plane />
 
-      {/* --- Soft Dynamic Shadows --- */}
-      <Shadows shadowKey={shadowKey} />
+        {/* --- Soft Dynamic Shadows --- */}
+        <Shadows shadowKey={shadowKey} />
 
-      {/* --- Draggable Model --- */}
-      <group position={position} rotation={rotation} scale={scale}>
-        <DragControls onDrag={handleDrag}>
-          <Suspense fallback={null}>
-            <Model triangleGap={triangleGap} cursorPosition={cursorRef} />
-          </Suspense>
-        </DragControls>
-      </group>
+        {/* --- Draggable Model --- */}
+        <group position={position} rotation={rotation} scale={scale}>
+          <DragControls onDrag={handleDrag}>
+            <Suspense fallback={null}>
+              <Model triangleGap={triangleGap} cursorPosition={cursorRef} touchRadius={touchRadius} />
+            </Suspense>
+          </DragControls>
+        </group>
 
-      <CursorSphere cursorRef={cursorRef} />
+        <CursorSphere cursorRef={cursorRef} modelZ={position[2]} />
 
-      <OrbitControls makeDefault />
-      <Environment preset="sunset" />
+        <OrbitControls enablePan={false} enableZoom={false} />
+        <Environment preset="sunset" />
 
-      <EffectComposer>
-        <Bloom intensity={1.2} luminanceThreshold={0.2} />
-      </EffectComposer>
+        <EffectComposer>
+          <Bloom intensity={1.2} luminanceThreshold={0.2} />
+        </EffectComposer>
 
-    {/* {/* <Environment preset="sunset" background={false} environment={false} /> */}
+      {/* {/* <Environment preset="sunset" background={false} environment={false} /> */}
 
-      {/* --- Axis Helper --- */}
-      <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
-        <GizmoViewport
-          axisColors={["#9d4b4b", "#2f7f4f", "#3b5b9d"]}
-          labelColor="white"
-        />
-      </GizmoHelper>
-    </Canvas>
+        {/* --- Axis Helper --- */}
+        <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
+          <GizmoViewport
+            axisColors={["#9d4b4b", "#2f7f4f", "#3b5b9d"]}
+            labelColor="white"
+          />
+        </GizmoHelper>
+      </Canvas>
+      {/* Debug Distance Display */}
+      <div style={{
+        position: 'fixed',
+        bottom: 20,
+        left: 20,
+        color: '#9ad7ff',
+        fontSize: '14px',
+        fontFamily: 'monospace',
+        pointerEvents: 'none',
+        zIndex: 100,
+        background: 'rgba(0,0,0,0.6)',
+        padding: '8px 12px',
+        borderRadius: '4px',
+        border: '1px solid rgba(154, 215, 255, 0.3)'
+      }}>
+        Cursor Distance: {debugDistance.toFixed(2)}
+      </div>
+    </>
   );
 };
 

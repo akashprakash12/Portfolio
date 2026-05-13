@@ -207,7 +207,6 @@ export default function Model(props) {
         }}
         onClick={(event) => {
           event.stopPropagation();
-          console.log("Angel model clicked");
         }}
       />
     </group>
