@@ -17,10 +17,14 @@ export default function Model(props) {
 
   const meshesRef = useRef([]);
   const originalGeometriesRef = useRef(new Map());
+  const frameAccumulatorRef = useRef(0);
 
   // Pre-allocate Vector3 objects for performance
   const tmpCentroid = useMemo(() => new THREE.Vector3(), []);
   const localCursorVec = useMemo(() => new THREE.Vector3(), []);
+  const edgeAB = useMemo(() => new THREE.Vector3(), []);
+  const edgeAC = useMemo(() => new THREE.Vector3(), []);
+  const faceNormal = useMemo(() => new THREE.Vector3(), []);
 
   const triangleDataRef = useMemo(() => {
     const dataByMesh = new Map();
@@ -32,17 +36,10 @@ export default function Model(props) {
       const positionAttribute = geometry.attributes.position;
       if (!positionAttribute) return;
 
-      const modelCenter = new THREE.Vector3();
-      for (let i = 0; i < positionAttribute.count; i++) {
-        modelCenter.x += positionAttribute.getX(i);
-        modelCenter.y += positionAttribute.getY(i);
-        modelCenter.z += positionAttribute.getZ(i);
-      }
-      modelCenter.multiplyScalar(1 / positionAttribute.count);
-
       const triangleCount = positionAttribute.count / 3;
       const centroids = new Float32Array(triangleCount * 3);
       const directions = new Float32Array(triangleCount * 3);
+      const smoothedInfluences = new Float32Array(triangleCount);
 
       for (let triangleIndex = 0; triangleIndex < triangleCount; triangleIndex++) {
         const vertexIndex = triangleIndex * 9;
@@ -63,20 +60,30 @@ export default function Model(props) {
         );
 
         const centroid = new THREE.Vector3().copy(a).add(b).add(c).multiplyScalar(1 / 3);
-        const direction = centroid.clone().sub(modelCenter).normalize();
+
+        // Use face normal as motion direction to avoid center-radial cone deformation.
+        edgeAB.copy(b).sub(a);
+        edgeAC.copy(c).sub(a);
+        faceNormal.copy(edgeAB).cross(edgeAC);
+        if (faceNormal.lengthSq() < 1e-10) {
+          faceNormal.set(0, 1, 0);
+        } else {
+          faceNormal.normalize();
+        }
 
         centroids[triangleIndex * 3] = centroid.x;
         centroids[triangleIndex * 3 + 1] = centroid.y;
         centroids[triangleIndex * 3 + 2] = centroid.z;
 
-        directions[triangleIndex * 3] = direction.x;
-        directions[triangleIndex * 3 + 1] = direction.y;
-        directions[triangleIndex * 3 + 2] = direction.z;
+        directions[triangleIndex * 3] = faceNormal.x;
+        directions[triangleIndex * 3 + 1] = faceNormal.y;
+        directions[triangleIndex * 3 + 2] = faceNormal.z;
       }
 
       dataByMesh.set(child, {
         centroids,
         directions,
+        smoothedInfluences,
       });
     });
 
@@ -109,16 +116,19 @@ export default function Model(props) {
   }, [scene]);
 
   // Animation loop for face separation
-  useFrame((state) => {
+  useFrame((state, delta) => {
+    frameAccumulatorRef.current += delta;
+    const updateInterval = 1 / 60;
+    if (frameAccumulatorRef.current < updateInterval) return;
+    const stepDelta = frameAccumulatorRef.current;
+    frameAccumulatorRef.current = 0;
+
     meshesRef.current.forEach((mesh) => {
       if (!mesh.geometry || !originalGeometriesRef.current.has(mesh)) return;
 
       const originalGeometry = originalGeometriesRef.current.get(mesh);
       const positionAttribute = originalGeometry.attributes.position;
       if (!positionAttribute) return;
-
-      // Clone position for modification
-      mesh.geometry.attributes.position.array.set(positionAttribute.array);
 
       const positionArray = mesh.geometry.attributes.position.array;
       const triangleCount = positionAttribute.count / 3;
@@ -135,6 +145,12 @@ export default function Model(props) {
         localCursor = localCursorVec;
       }
 
+      const smoothSpeed = 10;
+      const epsilon = 0.0005;
+      const radiusSq = touchRadius * touchRadius;
+      const elapsed = state.clock.elapsedTime;
+      let didChange = false;
+
       for (let i = 0; i < triangleCount; i++) {
         const idx0 = i * 3;
         const idx1 = i * 3 + 1;
@@ -150,16 +166,42 @@ export default function Model(props) {
         let cursorInfluence = 0;
         if (localCursor) {
           tmpCentroid.set(centroidX, centroidY, centroidZ);
-          const distance = localCursor.distanceTo(tmpCentroid);
-          cursorInfluence = THREE.MathUtils.clamp(1 - distance / touchRadius, 0, 1);
+          const distanceSq = localCursor.distanceToSquared(tmpCentroid);
+          if (distanceSq < radiusSq) {
+            const distance = Math.sqrt(distanceSq);
+            cursorInfluence = THREE.MathUtils.clamp(1 - distance / touchRadius, 0, 1);
+          }
         }
 
-        // Wiggle effect with oscillation
-        const wiggleAmount = cursorInfluence * Math.sin(state.clock.elapsedTime * 14 + i * 0.35) * 0.04;
+        // Smoothly ease each triangle toward target influence for fluid scattering.
+        const previousSmoothed = triangleData.smoothedInfluences[i];
+        const smoothed = THREE.MathUtils.damp(
+          previousSmoothed,
+          cursorInfluence,
+          smoothSpeed,
+          stepDelta
+        );
+        triangleData.smoothedInfluences[i] = smoothed;
+
+        // Skip untouched triangles and avoid rewriting vertices unnecessarily.
+        if (cursorInfluence <= epsilon && smoothed <= epsilon) {
+          if (previousSmoothed > epsilon) {
+            const baseOffset = idx0 * 3;
+            for (let j = 0; j < 9; j++) {
+              positionArray[baseOffset + j] = positionAttribute.array[baseOffset + j];
+            }
+            didChange = true;
+          }
+          continue;
+        }
+
+        // Gentle low-frequency pulse keeps motion alive without harsh vibration.
+        const pulse = 0.5 + 0.5 * Math.sin(elapsed * 4 + i * 0.18);
+        const wiggleAmount = smoothed * pulse * 0.015;
 
         // Scattering effect: triangles separate and expand when touched
-        const scatterAmount = cursorInfluence * cursorInfluence * scatterIntensity;
-        const separation = triangleGap * cursorInfluence * 1.0;
+        const scatterAmount = smoothed * smoothed * scatterIntensity;
+        const separation = triangleGap * smoothed;
         const shrink = 1 - scatterAmount * 0.5;
 
         // Process 3 vertices of the triangle
@@ -188,10 +230,13 @@ export default function Model(props) {
           positionArray[vertexOffset] = newPosX;
           positionArray[vertexOffset + 1] = newPosY;
           positionArray[vertexOffset + 2] = newPosZ;
+          didChange = true;
         }
       }
 
-      mesh.geometry.attributes.position.needsUpdate = true;
+      if (didChange) {
+        mesh.geometry.attributes.position.needsUpdate = true;
+      }
     });
   });
 
