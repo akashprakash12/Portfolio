@@ -12,16 +12,32 @@ export default function CursorSphere({ cursorRef, modelZ = 2.5 }) {
   useFrame(() => {
     if (!sphereRef.current) return;
 
+    // Force camera matrices to be current BEFORE raycasting.
+    // The idle sine motion in CinematicCamera mutates camera.position
+    // every frame without calling these, so the raycaster was using
+    // stale view data — causing the sphere to drift from the cursor.
+    camera.updateProjectionMatrix();
+    camera.updateMatrixWorld(true);
+
     raycaster.setFromCamera(ndcMouse.current, camera);
 
     let intersects = raycaster.intersectObjects(scene.children, true);
+
     if (intersects && intersects.length > 0) {
       intersects = intersects.filter((it) => {
+        // Skip the cursor sphere itself
         let obj = it.object;
         while (obj) {
           if (obj === sphereRef.current) return false;
           obj = obj.parent;
         }
+
+        // Skip the floor plane (y ≈ -0.85) — it causes the sphere to
+        // snap downward when the ray misses the model geometry.
+        const worldPos = new THREE.Vector3();
+        it.object.getWorldPosition(worldPos);
+        if (worldPos.y < -0.5) return false;
+
         return true;
       });
 
@@ -33,6 +49,7 @@ export default function CursorSphere({ cursorRef, modelZ = 2.5 }) {
       }
     }
 
+    // Fallback: project onto a virtual plane at modelZ depth
     const rayOrigin = raycaster.ray.origin;
     const rayDir = raycaster.ray.direction;
     const t = (modelZ - rayOrigin.z) / rayDir.z;
@@ -43,27 +60,27 @@ export default function CursorSphere({ cursorRef, modelZ = 2.5 }) {
     }
   });
 
-useEffect(() => {
-  const onPointerMove = (event) => {
-    ndcMouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+  useEffect(() => {
+    const canvas = gl.domElement;
 
-    ndcMouse.current.y =
-      -(event.clientY / window.innerHeight) * 2 + 1;
-  };
+    const onPointerMove = (event) => {
+      const rect = canvas.getBoundingClientRect();
+      ndcMouse.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      ndcMouse.current.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    };
 
-  window.addEventListener("pointermove", onPointerMove, {
-    passive: true,
-  });
-
-  return () => {
-    window.removeEventListener("pointermove", onPointerMove);
-  };
-}, []);
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    return () => window.removeEventListener("pointermove", onPointerMove);
+  }, [gl]);
 
   return (
     <mesh ref={sphereRef} renderOrder={10}>
       <sphereGeometry args={[0.06, 24, 24]} />
-      <meshStandardMaterial color="#ffffff" emissive="#9ad7ff" emissiveIntensity={1.2} />
+      <meshStandardMaterial
+        color="#ffffff"
+        emissive="#9ad7ff"
+        emissiveIntensity={1.2}
+      />
     </mesh>
   );
 }
