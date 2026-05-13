@@ -8,14 +8,13 @@ export default function CursorSphere({ cursorRef, modelZ = 2.5 }) {
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
   const ndcMouse = useRef(new THREE.Vector2(0, 0));
   const tmpPoint = useMemo(() => new THREE.Vector3(), []);
+  const planePoint = useMemo(() => new THREE.Vector3(), []);
+  const floorPlane = useMemo(() => new THREE.Plane(new THREE.Vector3(0, 1, 0), 0.85), []);
 
   useFrame(() => {
     if (!sphereRef.current) return;
 
     // Force camera matrices to be current BEFORE raycasting.
-    // The idle sine motion in CinematicCamera mutates camera.position
-    // every frame without calling these, so the raycaster was using
-    // stale view data — causing the sphere to drift from the cursor.
     camera.updateProjectionMatrix();
     camera.updateMatrixWorld(true);
 
@@ -32,12 +31,6 @@ export default function CursorSphere({ cursorRef, modelZ = 2.5 }) {
           obj = obj.parent;
         }
 
-        // Skip the floor plane (y ≈ -0.85) — it causes the sphere to
-        // snap downward when the ray misses the model geometry.
-        const worldPos = new THREE.Vector3();
-        it.object.getWorldPosition(worldPos);
-        if (worldPos.y < -0.5) return false;
-
         return true;
       });
 
@@ -47,6 +40,13 @@ export default function CursorSphere({ cursorRef, modelZ = 2.5 }) {
         cursorRef.current.copy(p);
         return;
       }
+    }
+
+    // If nothing in the scene is hit, project onto the floor plane.
+    if (raycaster.ray.intersectPlane(floorPlane, planePoint)) {
+      sphereRef.current.position.copy(planePoint);
+      cursorRef.current.copy(planePoint);
+      return;
     }
 
     // Fallback: project onto a virtual plane at modelZ depth
@@ -74,12 +74,17 @@ export default function CursorSphere({ cursorRef, modelZ = 2.5 }) {
   }, [gl]);
 
   return (
-    <mesh ref={sphereRef} renderOrder={10}>
+    <mesh ref={sphereRef} renderOrder={999}>
       <sphereGeometry args={[0.06, 24, 24]} />
+      {/* depthTest=false ensures the sphere always renders on top of
+          every other mesh, including the floor plane and the model */}
       <meshStandardMaterial
         color="#ffffff"
         emissive="#9ad7ff"
-        emissiveIntensity={1.2}
+        emissiveIntensity={2}
+        depthTest={false}
+        depthWrite={false}
+        transparent={true}
       />
     </mesh>
   );

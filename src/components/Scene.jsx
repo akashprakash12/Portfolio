@@ -35,8 +35,9 @@ const Scene = () => {
     timeline: { value: 0.6, min: 0, max: 1, step: 0.01 },
   });
 
-  const { triangleGap } = useControls("Hover Effects", {
+  const { triangleGap, scatterIntensity } = useControls("Hover Effects", {
     triangleGap: { value: 0.08, min: 0, max: 0.5, step: 0.02 },
+    scatterIntensity: { value: 0.35, min: 0, max: 1, step: 0.05 },
   });
 
   const { touchRadius } = useControls("Cursor Settings", {
@@ -65,7 +66,7 @@ const Scene = () => {
 
   return (
     <>
-      <Canvas shadows camera={{ position: [0, 0, 6], fov: 20 }}>
+      <Canvas shadows camera={{ position: [0, 0, 6], fov: 20, near: 0.01, far: 100 }}>
         <color attach="background" args={["#050816"]} />
         <fog attach="fog" args={["#050816", 8, 20]} />
 
@@ -80,7 +81,7 @@ const Scene = () => {
         <group position={position} rotation={rotation} scale={scale}>
           <DragControls onDrag={handleDrag}>
             <Suspense fallback={null}>
-              <Model triangleGap={triangleGap} cursorPosition={cursorRef} touchRadius={touchRadius} />
+              <Model triangleGap={triangleGap} cursorPosition={cursorRef} touchRadius={touchRadius} scatterIntensity={scatterIntensity} />
             </Suspense>
           </DragControls>
         </group>

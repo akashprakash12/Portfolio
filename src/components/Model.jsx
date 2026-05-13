@@ -9,14 +9,21 @@ export default function Model(props) {
   const triangleGap = props.triangleGap ?? 0.01;
   const cursorPosition = props.cursorPosition ?? null;
   const touchRadius = props.touchRadius ?? 0.4;
+  const scatterIntensity = props.scatterIntensity ?? 0.35;
   const groupProps = { ...props };
   delete groupProps.triangleGap;
   delete groupProps.cursorPosition;
   delete groupProps.touchRadius;
+  delete groupProps.scatterIntensity;
 
   const meshesRef = useRef([]);
   const originalGeometriesRef = useRef(new Map());
   const progressRef = useRef(0);
+  
+  // Pre-allocate Vector3 objects for performance
+  const tmpVec3 = useMemo(() => new THREE.Vector3(), []);
+  const tmpCentroid = useMemo(() => new THREE.Vector3(), []);
+  const localCursorVec = useMemo(() => new THREE.Vector3(), []);
 
   const triangleDataRef = useMemo(() => {
     const dataByMesh = new Map();
@@ -137,6 +144,14 @@ export default function Model(props) {
 
       if (!triangleData) return;
 
+      // Convert cursor to local space once per mesh
+      let localCursor = null;
+      if (cursor) {
+        localCursorVec.copy(cursor);
+        mesh.worldToLocal(localCursorVec);
+        localCursor = localCursorVec;
+      }
+
       for (let i = 0; i < triangleCount; i++) {
         const idx0 = i * 3;
         const idx1 = i * 3 + 1;
@@ -147,44 +162,50 @@ export default function Model(props) {
         const directionX = triangleData.directions[idx0];
         const directionY = triangleData.directions[idx0 + 1];
         const directionZ = triangleData.directions[idx0 + 2];
-        const triangleSize = triangleData.sizes[i];
 
-        const cursorInfluence = cursor
-          ? THREE.MathUtils.clamp(
-              1 - cursor.distanceTo(new THREE.Vector3(centroidX, centroidY, centroidZ)) / touchRadius,
-              0,
-              1
-            )
-          : 0;
-        const wiggleAmount = cursorInfluence * Math.sin(state.clock.elapsedTime * 14 + i * 0.35) * 0.015;
+        // Calculate cursor influence using pre-allocated vector
+        let cursorInfluence = 0;
+        if (localCursor) {
+          tmpCentroid.set(centroidX, centroidY, centroidZ);
+          const distance = localCursor.distanceTo(tmpCentroid);
+          cursorInfluence = THREE.MathUtils.clamp(1 - distance / touchRadius, 0, 1);
+        }
 
-        // Keep triangles in place; only allow local motion from the cursor
-        const separation = triangleGap * 0;
-        const shrink = 1;
+        // Wiggle effect with oscillation
+        const wiggleAmount = cursorInfluence * Math.sin(state.clock.elapsedTime * 14 + i * 0.35) * 0.04;
 
-        // Move all 3 vertices of the triangle in the same direction
-        [
-          { idx: idx0 },
-          { idx: idx1 },
-          { idx: idx2 },
-        ].forEach(({ idx, origV }) => {
+        // Scattering effect: triangles separate and expand when touched
+        const scatterAmount = cursorInfluence * cursorInfluence * scatterIntensity;
+        const separation = triangleGap * cursorInfluence * 1.0;
+        const shrink = 1 - scatterAmount * 0.5;
+
+        // Process 3 vertices of the triangle
+        for (let j = 0; j < 3; j++) {
+          const idx = idx0 + j;
           const vertexOffset = idx * 3;
           const originalX = positionAttribute.array[vertexOffset];
           const originalY = positionAttribute.array[vertexOffset + 1];
           const originalZ = positionAttribute.array[vertexOffset + 2];
 
+          // Apply shrink to center vertices around centroid
           const centeredX = centroidX + (originalX - centroidX) * shrink;
           const centeredY = centroidY + (originalY - centroidY) * shrink;
           const centeredZ = centroidZ + (originalZ - centroidZ) * shrink;
 
-          const newPosX = centeredX + directionX * wiggleAmount;
-          const newPosY = centeredY + directionY * wiggleAmount;
-          const newPosZ = centeredZ + directionZ * wiggleAmount;
+          // Scattering push: move triangle outward from centroid along its normal direction
+          const scatterPushX = directionX * scatterAmount * 0.8;
+          const scatterPushY = directionY * scatterAmount * 0.8;
+          const scatterPushZ = directionZ * scatterAmount * 0.8;
+
+          // Combine wiggle (oscillation) and scatter (radial push)
+          const newPosX = centeredX + directionX * wiggleAmount + scatterPushX + directionX * separation;
+          const newPosY = centeredY + directionY * wiggleAmount + scatterPushY + directionY * separation;
+          const newPosZ = centeredZ + directionZ * wiggleAmount + scatterPushZ + directionZ * separation;
 
           positionArray[vertexOffset] = newPosX;
           positionArray[vertexOffset + 1] = newPosY;
           positionArray[vertexOffset + 2] = newPosZ;
-        });
+        }
       }
 
       mesh.geometry.attributes.position.needsUpdate = true;
