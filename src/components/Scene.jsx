@@ -8,6 +8,7 @@ import { useSceneControls } from "../modules/scene/useSceneControls";
 import { SceneShadows } from "../modules/scene/SceneShadows";
 import SceneModelRig from "../modules/scene/SceneModelRig";
 import SceneViewport from "../modules/scene/SceneViewport";
+import CinematicLighting from "../modules/scene/CinematicLighting";
 
 const Scene = () => {
   const [shadowKey, setShadowKey] = useState(0);
@@ -25,7 +26,8 @@ const Scene = () => {
       <color attach="background" args={["#050816"]} />
       <fog attach="fog" args={["#050816", 8, 20]} />
 
-      <Lights />
+      {/* <Lights /> */}
+      <CinematicLighting />
       <CinematicCamera />
       <Plane />
 
