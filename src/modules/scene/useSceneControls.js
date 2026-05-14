@@ -2,7 +2,7 @@ import { useControls } from "leva";
 
 // Centralized scene controls so the model, cursor, and hover tuning stay in one place.
 export function useSceneControls() {
-  const { position, rotation, scale } = useControls({
+  const { position, rotation, scale } = useControls("Model", {
     position: { value: [1.9, -2.3, 1.3], step: 0.1 },
     rotation: { value: [0.05, -0.16, 0], step: 0.01 },
     scale: { value: 0.1, min: 0.1, max: 5 },
@@ -17,12 +17,40 @@ export function useSceneControls() {
     touchRadius: { value: 0.4, min: 0.1, max: 2, step: 0.05 },
   });
 
+  // --- Key Light ---
+  const { keyIntensity, keyColor, keyPosition } = useControls("Key Light", {
+    keyPosition: { value: [6, 12, 6], step: 0.5 },
+    keyIntensity: { value: 1.7, min: 0, max: 5, step: 0.05 },
+    keyColor: { value: "#c8d9ff" },
+  });
+
+  // --- Fill Light ---
+  const { fillIntensity, fillColor, fillPosition, fillDistance } =
+    useControls("Fill Light", {
+      fillPosition: { value: [-1, 3.5, -2], step: 0.5 },
+      fillIntensity: { value: 13.5, min: 0, max: 20, step: 0.5 },
+      fillColor: { value: "#ffd3a1" },
+      fillDistance: { value: 28, min: 5, max: 100, step: 1 },
+    });
+
   return {
+    // Model
     position,
     rotation,
     scale,
+    // Hover
     triangleGap,
     scatterIntensity,
+    // Cursor
     touchRadius,
+    // Key light
+    keyIntensity,
+    keyColor,
+    keyPosition,
+    // Fill light
+    fillIntensity,
+    fillColor,
+    fillPosition,
+    fillDistance,
   };
 }
