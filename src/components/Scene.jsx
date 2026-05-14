@@ -43,7 +43,7 @@ const Scene = () => {
       camera={{ position: [0, 0, 6], fov: 20, near: 0.01, far: 100 }}
     >
       <color attach="background" args={["#050816"]} />
-      <fog attach="fog" args={["#050816", 8, 20]} />
+      <fog attach="fog" args={["#050816", 2, 10]} />
 
       <CinematicLighting
         keyPosition={keyPosition}
