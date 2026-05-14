@@ -4,7 +4,7 @@ import { useThree } from '@react-three/fiber'
 
 // Finds the `windows` group in the scene, makes its material emissive, and
 // attaches a point light so bloom and lighting work without editing the GLTF.
-export default function WindowLight({ color = '#3fa5ff', intensity = 2, distance = 8 }) {
+export default function WindowLight({ color = '#2f80ff', intensity = 2, distance = 8 }) {
   const { scene } = useThree()
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export default function WindowLight({ color = '#3fa5ff', intensity = 2, distance
         mats.forEach((mat) => {
           if (!mat) return
           mat.emissive = new THREE.Color(color)
-          mat.emissiveIntensity = 2
+          mat.emissiveIntensity = intensity
           mat.needsUpdate = true
         })
       }

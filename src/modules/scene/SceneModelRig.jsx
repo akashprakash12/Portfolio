@@ -33,7 +33,7 @@ export default function SceneModelRig({
       <CursorSphere cursorRef={cursorRef} modelZ={position[2]} />
 
       {/* Window emission + point light (separate module) */}
-      <WindowLight color="#3fa5ff" intensity={3} distance={8} />
+      <WindowLight color="#2f80ff" intensity={3} distance={8} />
     </>
   );
 }
