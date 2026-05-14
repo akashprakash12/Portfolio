@@ -4,7 +4,7 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
 export default function Model(props) {
-  const { scene } = useGLTF("./models/angel.glb");
+  const { scene } = useGLTF("./models/house.glb");
   const triangleGap = props.triangleGap ?? 0.01;
   const cursorPosition = props.cursorPosition ?? null;
   const touchRadius = props.touchRadius ?? 0.4;
@@ -255,4 +255,4 @@ export default function Model(props) {
 }
 
 // Required for caching
-useGLTF.preload("./models/angel.glb");
+useGLTF.preload("./models/house.glb");
