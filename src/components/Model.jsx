@@ -100,7 +100,7 @@ export default function Model(props) {
         const materials = Array.isArray(child.material) ? child.material : [child.material];
         materials.forEach((material) => {
           if (!material) return;
-          material.wireframe = true;
+          material.wireframe = false;
           material.needsUpdate = true;
           material.shadowSide = 2;
         });

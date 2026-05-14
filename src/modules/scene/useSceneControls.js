@@ -3,9 +3,9 @@ import { useControls } from "leva";
 // Centralized scene controls so the model, cursor, and hover tuning stay in one place.
 export function useSceneControls() {
   const { position, rotation, scale } = useControls({
-    position: { value: [0.6, -1.15, 2.5], step: 0.1 },
-    rotation: { value: [0.05, 0.91, 0], step: 0.01 },
-    scale: { value: 3.15, min: 0.1, max: 5 },
+    position: { value: [1.9, -2.3, 1.3], step: 0.1 },
+    rotation: { value: [0.05, -0.16, 0], step: 0.01 },
+    scale: { value: 0.1, min: 0.1, max: 5 },
   });
 
   const { triangleGap, scatterIntensity } = useControls("Hover Effects", {
