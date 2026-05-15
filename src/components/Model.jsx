@@ -2,7 +2,6 @@ import { useGLTF } from "@react-three/drei";
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-
 export default function Model(props) {
   const { scene } = useGLTF("./models/house.glb");
   const { camera, gl } = useThree();
@@ -15,24 +14,16 @@ export default function Model(props) {
   delete groupProps.cursorPosition;
   delete groupProps.touchRadius;
   delete groupProps.scatterIntensity;
-  delete groupProps.cubeHoverEnabled;
-  delete groupProps.cubeFloatHeight;
-  delete groupProps.cubeFloatSpeed;
-  delete groupProps.cubeFloatBob;
-  delete groupProps.cubeFloatScale;
-  delete groupProps.cubeFloatTilt;
-  delete groupProps.cubeBloomEnabled;
-  delete groupProps.cubeBloomColor;
-  delete groupProps.cubeBloomIntensity;
-  delete groupProps.cubeGlossRoughness;
-  delete groupProps.cubeGlossMetalness;
+  const seedBloomColor = props.seedBloomColor ?? "#fff6d8";
+  const seedBloomIntensity = props.seedBloomIntensity ?? 0.6;
 
   const meshesRef = useRef([]);
-  const cubeMeshesRef = useRef([]);
-  const cubeBasePositionsRef = useRef(new Map());
-  const cubeHoverProgressRef = useRef(new Map());
-  const hoveredCubeRef = useRef(null);
-  const cubeBaseMaterialRef = useRef(new Map());
+  const seedMeshesRef = useRef([]);
+  const seedBasePositionsRef = useRef(new Map());
+  const seedHoverStartPositionsRef = useRef(new Map());
+  const seedHoverProgressRef = useRef(new Map());
+  const hoveredSeedRef = useRef(null);
+  const seedBaseMaterialRef = useRef(new Map());
   const originalGeometriesRef = useRef(new Map());
   const frameAccumulatorRef = useRef(0);
   const raycasterRef = useRef(new THREE.Raycaster());
@@ -111,17 +102,35 @@ export default function Model(props) {
   }, [scene]);
 
   useEffect(() => {
+    meshesRef.current = [];
+    seedMeshesRef.current = [];
+    seedBasePositionsRef.current.clear();
+    seedHoverStartPositionsRef.current.clear();
+    seedHoverProgressRef.current.clear();
+    seedBaseMaterialRef.current.clear();
+
     scene.traverse((child) => {
       if (child.isMesh) {
         child.castShadow = true;
         child.receiveShadow = true;
         meshesRef.current.push(child);
 
-        if (child.name?.startsWith("Cube")) {
-          cubeMeshesRef.current.push(child);
-          cubeBasePositionsRef.current.set(child, child.position.clone());
-          cubeHoverProgressRef.current.set(child, 0);
-          cubeBaseMaterialRef.current.set(
+        // Robust seed detection: check mesh name and ancestor names for 'seed'
+        let o = child;
+        let isSeed = false;
+        while (o) {
+          if (o.name && o.name.toLowerCase().includes("seed")) {
+            isSeed = true;
+            break;
+          }
+          o = o.parent;
+        }
+
+        if (isSeed) {
+          seedMeshesRef.current.push(child);
+          seedBasePositionsRef.current.set(child, child.position.clone());
+          seedHoverProgressRef.current.set(child, 0);
+          seedBaseMaterialRef.current.set(
             child,
             Array.isArray(child.material)
               ? child.material.map((material) => ({
@@ -139,6 +148,19 @@ export default function Model(props) {
                   },
                 ]
           );
+
+          // Ensure seed materials have emissive properties initialized (start dark)
+          const seedMaterials = Array.isArray(child.material) ? child.material : [child.material];
+          seedMaterials.forEach((m) => {
+            if (!m) return;
+            try {
+              if (!m.emissive) m.emissive = new THREE.Color(0x000000);
+              if (typeof m.emissiveIntensity === "undefined") m.emissiveIntensity = 0;
+              m.needsUpdate = true;
+            } catch (e) {
+              // ignore materials that don't support emissive
+            }
+          });
         }
 
         const materials = Array.isArray(child.material) ? child.material : [child.material];
@@ -162,26 +184,40 @@ export default function Model(props) {
   useEffect(() => {
     const canvas = gl.domElement;
 
-    const updateHoveredCube = (event) => {
+    const updateHoveredSeed = (event) => {
       const rect = canvas.getBoundingClientRect();
       ndcMouseRef.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       ndcMouseRef.current.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
       raycasterRef.current.setFromCamera(ndcMouseRef.current, camera);
-      const hits = raycasterRef.current.intersectObjects(cubeMeshesRef.current, true);
-      hoveredCubeRef.current = hits.length > 0 ? hits[0].object : null;
+      // Raycast against all meshes and then walk up the hit object's parent
+      // chain to find the nearest ancestor whose name starts with 'seed'.
+      const hits = raycasterRef.current.intersectObjects(meshesRef.current, true);
+      let found = null;
+      for (let i = 0; i < hits.length; i++) {
+        let o = hits[i].object;
+        while (o) {
+          if (o.name && o.name.toLowerCase().includes("seed")) {
+            found = o;
+            break;
+          }
+          o = o.parent;
+        }
+        if (found) break;
+      }
+      hoveredSeedRef.current = found;
     };
 
-    const clearHoveredCube = () => {
-      hoveredCubeRef.current = null;
+    const clearHoveredSeed = () => {
+      hoveredSeedRef.current = null;
     };
 
-    window.addEventListener("pointermove", updateHoveredCube, { passive: true });
-    canvas.addEventListener("pointerleave", clearHoveredCube);
+    window.addEventListener("pointermove", updateHoveredSeed, { passive: true });
+    canvas.addEventListener("pointerleave", clearHoveredSeed);
 
     return () => {
-      window.removeEventListener("pointermove", updateHoveredCube);
-      canvas.removeEventListener("pointerleave", clearHoveredCube);
+      window.removeEventListener("pointermove", updateHoveredSeed);
+      canvas.removeEventListener("pointerleave", clearHoveredSeed);
     };
   }, [camera, gl]);
 
@@ -309,37 +345,48 @@ export default function Model(props) {
       }
     });
 
-    const hoveredCube = hoveredCubeRef.current;
+    const hoveredSeed = hoveredSeedRef.current;
     const hoverElapsed = state.clock.elapsedTime;
-    const bloomEnabled = props.cubeBloomEnabled ?? true;
-    const bloomColor = props.cubeBloomColor ?? "#ffffff";
-    const bloomIntensity = props.cubeBloomIntensity ?? 1.1;
-    const glossRoughness = props.cubeGlossRoughness ?? 0.22;
-    const glossMetalness = props.cubeGlossMetalness ?? 0.35;
-    const cubeFloatHeight = props.cubeFloatHeight ?? 0.22;
-    const cubeFloatSpeed = props.cubeFloatSpeed ?? 8;
-    const cubeFloatBob = props.cubeFloatBob ?? 0.04;
-    const cubeFloatScale = props.cubeFloatScale ?? 0.03;
-    const cubeFloatTilt = props.cubeFloatTilt ?? 0.04;
 
-    cubeMeshesRef.current.forEach((mesh, index) => {
-      const isHovered = hoveredCube && (hoveredCube === mesh || hoveredCube.parent === mesh);
+    const bloomEnabled = true;
+    const bloomColor = "#fff6d8";
+    const bloomIntensity = 1.25;
+    const glossRoughness = 0.12;
+    const glossMetalness = 0.5;
+    const seedFloatHeight = 0.18;
+    const seedFloatSpeed = 8;
+    const seedFloatBob = 0.03;
+    const seedFloatScale = 0.025;
+    const seedFloatTilt = 0.03;
+
+    seedMeshesRef.current.forEach((mesh, index) => {
+      const isHovered = hoveredSeed && (hoveredSeed === mesh || hoveredSeed.parent === mesh);
       const target = isHovered ? 1 : 0;
-      const previous = cubeHoverProgressRef.current.get(mesh) ?? 0;
-      const progress = THREE.MathUtils.damp(previous, target, cubeFloatSpeed, delta);
-      cubeHoverProgressRef.current.set(mesh, progress);
+      const previous = seedHoverProgressRef.current.get(mesh) ?? 0;
+      const progress = THREE.MathUtils.damp(previous, target, seedFloatSpeed, delta);
+      seedHoverProgressRef.current.set(mesh, progress);
 
-      const basePosition = cubeBasePositionsRef.current.get(mesh);
+      if (isHovered && !seedHoverStartPositionsRef.current.has(mesh)) {
+        seedHoverStartPositionsRef.current.set(mesh, mesh.position.clone());
+      }
+
+      const basePosition = isHovered
+        ? seedHoverStartPositionsRef.current.get(mesh) ?? seedBasePositionsRef.current.get(mesh)
+        : seedBasePositionsRef.current.get(mesh);
       if (!basePosition) return;
 
+      if (!isHovered && progress <= 0.001) {
+        seedHoverStartPositionsRef.current.delete(mesh);
+      }
+
       hoverTargetPositionRef.copy(basePosition);
-      hoverTargetPositionRef.y += progress * cubeFloatHeight + Math.sin(hoverElapsed * 4 + index * 0.35) * progress * cubeFloatBob;
+      hoverTargetPositionRef.y += progress * seedFloatHeight + Math.sin(hoverElapsed * 4 + index * 0.35) * progress * seedFloatBob;
       mesh.position.lerp(hoverTargetPositionRef, isHovered ? 0.14 : 0.08);
-      mesh.rotation.z = Math.sin(hoverElapsed * 2.8 + index * 0.25) * progress * cubeFloatTilt;
-      mesh.scale.setScalar(1 + progress * cubeFloatScale);
+      mesh.rotation.z = Math.sin(hoverElapsed * 2.8 + index * 0.25) * progress * seedFloatTilt;
+      mesh.scale.setScalar(1 + progress * seedFloatScale);
 
       const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-      const materialStates = cubeBaseMaterialRef.current.get(mesh) || [];
+      const materialStates = seedBaseMaterialRef.current.get(mesh) || [];
 
       materials.forEach((material, materialIndex) => {
         if (!material) return;
@@ -363,7 +410,9 @@ export default function Model(props) {
 
         if (bloomEnabled && material.emissive) {
           const glow = new THREE.Color(bloomColor);
-          material.emissive.lerp(glow, progress * 0.65);
+          // Smoothly ramp emissive color/intensity based on hover progress
+          const targetEmissive = glow;
+          material.emissive.lerp(targetEmissive, progress * 0.65);
           material.emissiveIntensity = THREE.MathUtils.damp(
             material.emissiveIntensity ?? 0,
             progress * bloomIntensity,
