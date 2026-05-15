@@ -3,7 +3,6 @@ import { DragControls } from "@react-three/drei";
 import Model from "../../components/Model";
 import CursorSphere from "./CursorSphere";
 import WindowLight from "./WindowLight";
-import WindowRays from "./WindowRays";
 
 // Draggable model layer and the cursor sphere that drives triangle scattering.
 export default function SceneModelRig({
@@ -37,15 +36,14 @@ export default function SceneModelRig({
 
       <CursorSphere cursorRef={cursorRef} modelZ={position[2]} />
 
-      {/* Window emission + point light (separate module) */}
-      <WindowLight color={windowColor} intensity={3} distance={8} />
-
-      {/* Window rays emanating outward */}
-      <WindowRays
+      {/* Window emission + point light + rays (merged) */}
+      <WindowLight
         color={windowColor}
+        intensity={3}
+        distance={8}
         rayCount={windowRayCount}
-        baseOpacity={windowRayOpacity}
-        baseLength={windowRayLength}
+        rayOpacity={windowRayOpacity}
+        rayLength={windowRayLength}
       />
     </>
   );
