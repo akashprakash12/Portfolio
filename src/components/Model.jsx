@@ -1,10 +1,11 @@
 import { useGLTF } from "@react-three/drei";
 import { useEffect, useMemo, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
 export default function Model(props) {
   const { scene } = useGLTF("./models/house.glb");
+  const { camera, gl } = useThree();
   const triangleGap = props.triangleGap ?? 0.01;
   const cursorPosition = props.cursorPosition ?? null;
   const touchRadius = props.touchRadius ?? 0.4;
@@ -14,10 +15,29 @@ export default function Model(props) {
   delete groupProps.cursorPosition;
   delete groupProps.touchRadius;
   delete groupProps.scatterIntensity;
+  delete groupProps.cubeHoverEnabled;
+  delete groupProps.cubeFloatHeight;
+  delete groupProps.cubeFloatSpeed;
+  delete groupProps.cubeFloatBob;
+  delete groupProps.cubeFloatScale;
+  delete groupProps.cubeFloatTilt;
+  delete groupProps.cubeBloomEnabled;
+  delete groupProps.cubeBloomColor;
+  delete groupProps.cubeBloomIntensity;
+  delete groupProps.cubeGlossRoughness;
+  delete groupProps.cubeGlossMetalness;
 
   const meshesRef = useRef([]);
+  const cubeMeshesRef = useRef([]);
+  const cubeBasePositionsRef = useRef(new Map());
+  const cubeHoverProgressRef = useRef(new Map());
+  const hoveredCubeRef = useRef(null);
+  const cubeBaseMaterialRef = useRef(new Map());
   const originalGeometriesRef = useRef(new Map());
   const frameAccumulatorRef = useRef(0);
+  const raycasterRef = useRef(new THREE.Raycaster());
+  const ndcMouseRef = useRef(new THREE.Vector2(9999, 9999));
+  const hoverTargetPositionRef = useMemo(() => new THREE.Vector3(), []);
 
   // Pre-allocate Vector3 objects for performance
   const tmpCentroid = useMemo(() => new THREE.Vector3(), []);
@@ -97,6 +117,30 @@ export default function Model(props) {
         child.receiveShadow = true;
         meshesRef.current.push(child);
 
+        if (child.name?.startsWith("Cube")) {
+          cubeMeshesRef.current.push(child);
+          cubeBasePositionsRef.current.set(child, child.position.clone());
+          cubeHoverProgressRef.current.set(child, 0);
+          cubeBaseMaterialRef.current.set(
+            child,
+            Array.isArray(child.material)
+              ? child.material.map((material) => ({
+                  roughness: material?.roughness,
+                  metalness: material?.metalness,
+                  emissive: material?.emissive?.clone?.() ?? null,
+                  emissiveIntensity: material?.emissiveIntensity,
+                }))
+              : [
+                  {
+                    roughness: child.material?.roughness,
+                    metalness: child.material?.metalness,
+                    emissive: child.material?.emissive?.clone?.() ?? null,
+                    emissiveIntensity: child.material?.emissiveIntensity,
+                  },
+                ]
+          );
+        }
+
         const materials = Array.isArray(child.material) ? child.material : [child.material];
         materials.forEach((material) => {
           if (!material) return;
@@ -114,6 +158,32 @@ export default function Model(props) {
       }
     });
   }, [scene]);
+
+  useEffect(() => {
+    const canvas = gl.domElement;
+
+    const updateHoveredCube = (event) => {
+      const rect = canvas.getBoundingClientRect();
+      ndcMouseRef.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      ndcMouseRef.current.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycasterRef.current.setFromCamera(ndcMouseRef.current, camera);
+      const hits = raycasterRef.current.intersectObjects(cubeMeshesRef.current, true);
+      hoveredCubeRef.current = hits.length > 0 ? hits[0].object : null;
+    };
+
+    const clearHoveredCube = () => {
+      hoveredCubeRef.current = null;
+    };
+
+    window.addEventListener("pointermove", updateHoveredCube, { passive: true });
+    canvas.addEventListener("pointerleave", clearHoveredCube);
+
+    return () => {
+      window.removeEventListener("pointermove", updateHoveredCube);
+      canvas.removeEventListener("pointerleave", clearHoveredCube);
+    };
+  }, [camera, gl]);
 
   // Animation loop for face separation
   useFrame((state, delta) => {
@@ -238,6 +308,74 @@ export default function Model(props) {
         mesh.geometry.attributes.position.needsUpdate = true;
       }
     });
+
+    const hoveredCube = hoveredCubeRef.current;
+    const hoverElapsed = state.clock.elapsedTime;
+    const bloomEnabled = props.cubeBloomEnabled ?? true;
+    const bloomColor = props.cubeBloomColor ?? "#ffffff";
+    const bloomIntensity = props.cubeBloomIntensity ?? 1.1;
+    const glossRoughness = props.cubeGlossRoughness ?? 0.22;
+    const glossMetalness = props.cubeGlossMetalness ?? 0.35;
+    const cubeFloatHeight = props.cubeFloatHeight ?? 0.22;
+    const cubeFloatSpeed = props.cubeFloatSpeed ?? 8;
+    const cubeFloatBob = props.cubeFloatBob ?? 0.04;
+    const cubeFloatScale = props.cubeFloatScale ?? 0.03;
+    const cubeFloatTilt = props.cubeFloatTilt ?? 0.04;
+
+    cubeMeshesRef.current.forEach((mesh, index) => {
+      const isHovered = hoveredCube && (hoveredCube === mesh || hoveredCube.parent === mesh);
+      const target = isHovered ? 1 : 0;
+      const previous = cubeHoverProgressRef.current.get(mesh) ?? 0;
+      const progress = THREE.MathUtils.damp(previous, target, cubeFloatSpeed, delta);
+      cubeHoverProgressRef.current.set(mesh, progress);
+
+      const basePosition = cubeBasePositionsRef.current.get(mesh);
+      if (!basePosition) return;
+
+      hoverTargetPositionRef.copy(basePosition);
+      hoverTargetPositionRef.y += progress * cubeFloatHeight + Math.sin(hoverElapsed * 4 + index * 0.35) * progress * cubeFloatBob;
+      mesh.position.lerp(hoverTargetPositionRef, isHovered ? 0.14 : 0.08);
+      mesh.rotation.z = Math.sin(hoverElapsed * 2.8 + index * 0.25) * progress * cubeFloatTilt;
+      mesh.scale.setScalar(1 + progress * cubeFloatScale);
+
+      const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+      const materialStates = cubeBaseMaterialRef.current.get(mesh) || [];
+
+      materials.forEach((material, materialIndex) => {
+        if (!material) return;
+        const baseState = materialStates[materialIndex] || {};
+
+        const targetRoughness = isHovered ? glossRoughness : baseState.roughness ?? material.roughness;
+        const targetMetalness = isHovered ? glossMetalness : baseState.metalness ?? material.metalness;
+
+        material.roughness = THREE.MathUtils.damp(
+          material.roughness ?? targetRoughness,
+          targetRoughness,
+          10,
+          delta
+        );
+        material.metalness = THREE.MathUtils.damp(
+          material.metalness ?? targetMetalness,
+          targetMetalness,
+          10,
+          delta
+        );
+
+        if (bloomEnabled && material.emissive) {
+          const glow = new THREE.Color(bloomColor);
+          material.emissive.lerp(glow, progress * 0.65);
+          material.emissiveIntensity = THREE.MathUtils.damp(
+            material.emissiveIntensity ?? 0,
+            progress * bloomIntensity,
+            10,
+            delta
+          );
+        }
+
+        material.needsUpdate = true;
+      });
+    });
+
   });
 
   return (

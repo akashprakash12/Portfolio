@@ -14,6 +14,17 @@ export default function SceneModelRig({
   scatterIntensity,
   cursorRef,
   onDrag,
+  cubeHoverEnabled,
+  cubeFloatHeight,
+  cubeFloatSpeed,
+  cubeFloatBob,
+  cubeFloatScale,
+  cubeFloatTilt,
+  cubeBloomEnabled,
+  cubeBloomColor,
+  cubeBloomIntensity,
+  cubeGlossRoughness,
+  cubeGlossMetalness,
   windowColor,
   windowRayCount,
   windowRayOpacity,
@@ -29,12 +40,23 @@ export default function SceneModelRig({
               cursorPosition={cursorRef}
               touchRadius={touchRadius}
               scatterIntensity={scatterIntensity}
+              cubeHoverEnabled={cubeHoverEnabled}
+              cubeFloatHeight={cubeFloatHeight}
+              cubeFloatSpeed={cubeFloatSpeed}
+              cubeFloatBob={cubeFloatBob}
+              cubeFloatScale={cubeFloatScale}
+              cubeFloatTilt={cubeFloatTilt}
+              cubeBloomEnabled={cubeBloomEnabled}
+              cubeBloomColor={cubeBloomColor}
+              cubeBloomIntensity={cubeBloomIntensity}
+              cubeGlossRoughness={cubeGlossRoughness}
+              cubeGlossMetalness={cubeGlossMetalness}
             />
           </Suspense>
         </DragControls>
       </group>
 
-      <CursorSphere cursorRef={cursorRef} modelZ={position[2]} />
+      {/* <CursorSphere cursorRef={cursorRef} modelZ={position[2]} /> */}
 
       {/* Window emission + point light + rays (merged) */}
       <WindowLight

@@ -17,6 +17,36 @@ export function useSceneControls() {
     touchRadius: { value: 0.4, min: 0.1, max: 2, step: 0.05 },
   });
 
+  const {
+    cubeHoverEnabled,
+    cubeFloatHeight,
+    cubeFloatSpeed,
+    cubeFloatBob,
+    cubeFloatScale,
+    cubeFloatTilt,
+  } = useControls("Cube Hover", {
+    cubeHoverEnabled: { value: true },
+    cubeFloatHeight: { value: 0.22, min: 0, max: 1, step: 0.01 },
+    cubeFloatSpeed: { value: 8, min: 1, max: 20, step: 0.1 },
+    cubeFloatBob: { value: 0.04, min: 0, max: 0.2, step: 0.005 },
+    cubeFloatScale: { value: 0.03, min: 0, max: 0.2, step: 0.005 },
+    cubeFloatTilt: { value: 0.04, min: 0, max: 0.2, step: 0.005 },
+  });
+
+  const {
+    cubeBloomEnabled,
+    cubeBloomColor,
+    cubeBloomIntensity,
+    cubeGlossRoughness,
+    cubeGlossMetalness,
+  } = useControls("Cube Bloom", {
+    cubeBloomEnabled: { value: true },
+    cubeBloomColor: { value: "#ffffff" },
+    cubeBloomIntensity: { value: 1.1, min: 0, max: 8, step: 0.05 },
+    cubeGlossRoughness: { value: 0.22, min: 0, max: 1, step: 0.01 },
+    cubeGlossMetalness: { value: 0.35, min: 0, max: 1, step: 0.01 },
+  });
+
   // --- Key Light ---
   const { keyIntensity, keyColor, keyPosition } = useControls("Key Light", {
     keyPosition: { value: [6, 12, 6], step: 0.5 },
@@ -60,6 +90,18 @@ export function useSceneControls() {
     scatterIntensity,
     // Cursor
     touchRadius,
+    // Cube hover
+    cubeHoverEnabled,
+    cubeFloatHeight,
+    cubeFloatSpeed,
+    cubeFloatBob,
+    cubeFloatScale,
+    cubeFloatTilt,
+    cubeBloomEnabled,
+    cubeBloomColor,
+    cubeBloomIntensity,
+    cubeGlossRoughness,
+    cubeGlossMetalness,
     // Key light
     keyIntensity,
     keyColor,

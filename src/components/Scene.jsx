@@ -19,6 +19,17 @@ const Scene = () => {
     triangleGap,
     scatterIntensity,
     touchRadius,
+    cubeHoverEnabled,
+    cubeFloatHeight,
+    cubeFloatSpeed,
+    cubeFloatBob,
+    cubeFloatScale,
+    cubeFloatTilt,
+    cubeBloomEnabled,
+    cubeBloomColor,
+    cubeBloomIntensity,
+    cubeGlossRoughness,
+    cubeGlossMetalness,
     keyPosition,
     keyIntensity,
     keyColor,
@@ -84,6 +95,17 @@ const Scene = () => {
         touchRadius={touchRadius}
         cursorRef={cursorRef}
         onDrag={handleDrag}
+        cubeHoverEnabled={cubeHoverEnabled}
+        cubeFloatHeight={cubeFloatHeight}
+        cubeFloatSpeed={cubeFloatSpeed}
+        cubeFloatBob={cubeFloatBob}
+        cubeFloatScale={cubeFloatScale}
+        cubeFloatTilt={cubeFloatTilt}
+        cubeBloomEnabled={cubeBloomEnabled}
+        cubeBloomColor={cubeBloomColor}
+        cubeBloomIntensity={cubeBloomIntensity}
+        cubeGlossRoughness={cubeGlossRoughness}
+        cubeGlossMetalness={cubeGlossMetalness}
         windowColor={windowColor}
         windowRayCount={windowRayCount}
         windowRayOpacity={windowRayOpacity}
