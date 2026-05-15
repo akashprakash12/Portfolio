@@ -30,6 +30,15 @@ const Scene = () => {
     glowSize,
     glowPulseSpeed,
     glowPulseAmount,
+    // Bloom
+    bloomIntensity,
+    luminanceThreshold,
+    luminanceSmoothing,
+    // Window rays
+    windowColor,
+    windowRayCount,
+    windowRayOpacity,
+    windowRayLength,
   } = useSceneControls();
 
   // Trigger shadow refresh when dragging
@@ -40,7 +49,7 @@ const Scene = () => {
   return (
     <Canvas
       shadows
-      camera={{ position: [0, 0, 6], fov: 20, near: 0.01, far: 100 }}
+      camera={{ position: [0, 0, 6], fov: 53, near: 0.01, far: 100 }}
     >
       <color attach="background" args={["#050816"]} />
       <fog attach="fog" args={["#050816", 2, 10]} />
@@ -70,10 +79,18 @@ const Scene = () => {
         touchRadius={touchRadius}
         cursorRef={cursorRef}
         onDrag={handleDrag}
+        windowColor={windowColor}
+        windowRayCount={windowRayCount}
+        windowRayOpacity={windowRayOpacity}
+        windowRayLength={windowRayLength}
       />
 
       {/* Viewport polish: orbit limits, environment light, bloom, and axis helper. */}
-      <SceneViewport />
+      <SceneViewport
+        bloomIntensity={bloomIntensity}
+        luminanceThreshold={luminanceThreshold}
+        luminanceSmoothing={luminanceSmoothing}
+      />
     </Canvas>
   );
 };

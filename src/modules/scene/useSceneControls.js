@@ -3,8 +3,8 @@ import { useControls } from "leva";
 // Centralized scene controls so the model, cursor, and hover tuning stay in one place.
 export function useSceneControls() {
   const { position, rotation, scale } = useControls("Model", {
-    position: { value: [1.9, -2.3, 1.3], step: 0.1 },
-    rotation: { value: [0.05, -0.16, 0], step: 0.01 },
+    position: { value: [1.9, -1, 1.3], step: 0.1 },
+    rotation: { value: [0.05, -0.78, 0], step: 0.01 },
     scale: { value: 0.1, min: 0.1, max: 5 },
   });
 
@@ -33,6 +33,23 @@ export function useSceneControls() {
       fillDistance: { value: 28, min: 5, max: 100, step: 1 },
     });
 
+  // --- Postprocessing / Bloom ---
+  const { bloomIntensity, luminanceThreshold, luminanceSmoothing } =
+    useControls("Postprocessing", {
+      bloomIntensity: { value: 2.2, min: 0, max: 10, step: 0.1 },
+      luminanceThreshold: { value: 0.05, min: 0, max: 1, step: 0.01 },
+      luminanceSmoothing: { value: 0.12, min: 0, max: 1, step: 0.01 },
+    });
+
+  // --- Window rays / bloom color ---
+  const { windowColor, windowRayCount, windowRayOpacity, windowRayLength } =
+    useControls("Window Rays", {
+      windowColor: { value: "#FFFF00" },
+      windowRayCount: { value: 3, min: 0, max: 8, step: 1 },
+      windowRayOpacity: { value: 0.3, min: 0, max: 1, step: 0.01 },
+      windowRayLength: { value: 6, min: 0.1, max: 20, step: 0.1 },
+    });
+
   return {
     // Model
     position,
@@ -52,5 +69,14 @@ export function useSceneControls() {
     fillColor,
     fillPosition,
     fillDistance,
+    // Bloom
+    bloomIntensity,
+    luminanceThreshold,
+    luminanceSmoothing,
+    // Window rays
+    windowColor,
+    windowRayCount,
+    windowRayOpacity,
+    windowRayLength,
   };
 }
