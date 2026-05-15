@@ -50,6 +50,11 @@ const Scene = () => {
     <Canvas
       shadows
       camera={{ position: [0, 0, 6], fov: 53, near: 0.01, far: 100 }}
+      onCreated={({ gl }) => {
+        // enable softer PCF shadows to reduce banding/zebra artifacts
+        gl.shadowMap.enabled = true
+        gl.shadowMap.type = THREE.PCFSoftShadowMap
+      }}
     >
       <color attach="background" args={["#050816"]} />
       <fog attach="fog" args={["#050816", 2, 10]} />
@@ -67,7 +72,7 @@ const Scene = () => {
       <Plane />
 
       {/* Soft shadow layer, refreshed when the model is dragged. */}
-      {/* <SceneShadows shadowKey={shadowKey} /> */}
+      <SceneShadows shadowKey={shadowKey} />
 
       {/* Draggable model and the visible cursor sphere. */}
       <SceneModelRig

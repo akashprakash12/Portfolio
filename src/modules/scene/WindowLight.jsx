@@ -42,6 +42,12 @@ export default function WindowLight({
       if (!windowsGroup.userData._windowLightAdded) {
         const light = new THREE.PointLight(color, intensity * 1.4, distance, 2)
         light.castShadow = true
+        // reduce shadow acne / banding by tuning bias and map size
+        if (light.shadow) {
+          light.shadow.mapSize.set(1024, 1024)
+          light.shadow.bias = -0.0005
+          light.shadow.radius = 2
+        }
         light.position.set(0, 0, 0)
         light.userData._windowLightSource = true
         windowsGroup.add(light)
