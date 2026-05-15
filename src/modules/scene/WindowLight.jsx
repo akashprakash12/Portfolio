@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import * as THREE from 'three'
-import { useThree } from '@react-three/fiber'
+import { useThree, useFrame } from '@react-three/fiber'
 
 const WINDOW_GROUP_NAMES = ['vitre', 'vitre001']
 
@@ -101,6 +101,21 @@ export default function WindowLight({
       })
     }
   }, [scene, color, intensity, distance, rayCount, rayOpacity, rayLength])
+
+  // animate ray meshes
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime
+    const windowGroups = WINDOW_GROUP_NAMES.map((name) => scene.getObjectByName(name)).filter(Boolean)
+    windowGroups.forEach((wg, gi) => {
+      const rays = wg.userData._windowRays || []
+      rays.forEach((ray, i) => {
+        if (!ray || !ray.material) return
+        const pulse = 1.2 + Math.sin(t * 2 + gi * 0.6 + i * 0.4) * 0.25
+        ray.scale.y = 1.4 * pulse
+        ray.material.opacity = Math.max(0.05, rayOpacity * (0.7 + Math.cos(t * 1.8 + i * 0.5) * 0.3))
+      })
+    })
+  })
 
   return null
 }
