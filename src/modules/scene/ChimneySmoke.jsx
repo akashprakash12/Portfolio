@@ -140,11 +140,6 @@ export default function ChimneySmoke({ count: initialCount = 40 }) {
 
   return (
     <group ref={groupRef}>
-      {/* helper: shows chimney mouth world position for debugging */}
-      <mesh ref={helperRef} visible position={[0, 0, 0]}>
-        <sphereGeometry args={[1, 12, 12]} />
-        <meshBasicMaterial color="#ffea61" depthTest={false} />
-      </mesh>
       {Array.from({ length: count }).map((_, i) => (
         <mesh
           key={i}

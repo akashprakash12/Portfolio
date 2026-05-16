@@ -44,7 +44,7 @@ export function useSceneControls() {
   // --- Window rays / bloom color ---
   const { windowColor, windowRayCount, windowRayOpacity, windowRayLength } =
     useControls("Window Rays", {
-      windowColor: { value: "#FFFF00" },
+      windowColor: { value: "#8fa380" },
       windowRayCount: { value: 3, min: 0, max: 8, step: 1 },
       windowRayOpacity: { value: 0.3, min: 0, max: 1, step: 0.01 },
       windowRayLength: { value: 6, min: 0.1, max: 20, step: 0.1 },
