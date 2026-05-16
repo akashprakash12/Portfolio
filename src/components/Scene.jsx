@@ -15,13 +15,16 @@ const Scene = ({ activeSection = 0 }) => {
   const cursorRef = useRef(new THREE.Vector3());
 
   // Camera positions for each section (memoized)
-  const cameraPositions = useMemo(() => [
-    [0, 0, 6],                              // Home
-    [-5.900000000000002, 0, 6],             // About
-    [3, 1, 7],                              // Skills
-    [-2, 1, 8],                             // Projects
-    [4, 0.5, 6],                            // Contact
-  ], []);
+  const cameraPositions = useMemo(
+    () => [
+      [0, 0, 6], // Home
+      [-5.900000000000002, 0, 6], // About
+      [-5.9, 0, -6.1000000000000005], // Skills
+      [-2, 1, 8], // Projects
+      [4, 0.5, 6], // Contact
+    ],
+    [],
+  );
 
   const targetCamPos = cameraPositions[activeSection] || cameraPositions[0];
   const {
@@ -47,6 +50,9 @@ const Scene = ({ activeSection = 0 }) => {
     windowRayCount,
     windowRayOpacity,
     windowRayLength,
+    // Mushroom
+    mushroomPosition,
+    mushroomScale,
   } = useSceneControls();
 
   // Trigger shadow refresh when dragging (memoized)
@@ -60,8 +66,8 @@ const Scene = ({ activeSection = 0 }) => {
       camera={{ position: [0, 0, 6], fov: 53, near: 0.01, far: 100 }}
       onCreated={({ gl }) => {
         // enable softer PCF shadows to reduce banding/zebra artifacts
-        gl.shadowMap.enabled = true
-        gl.shadowMap.type = THREE.PCFSoftShadowMap
+        gl.shadowMap.enabled = true;
+        gl.shadowMap.type = THREE.PCFSoftShadowMap;
       }}
     >
       <color attach="background" args={["#050816"]} />
@@ -76,7 +82,10 @@ const Scene = ({ activeSection = 0 }) => {
         fillColor={fillColor}
         fillDistance={fillDistance}
       />
-      <CinematicCamera targetCamPos={targetCamPos} activeSection={activeSection} />
+      <CinematicCamera
+        targetCamPos={targetCamPos}
+        activeSection={activeSection}
+      />
       <Plane />
 
       {/* Soft shadow layer, refreshed when the model is dragged. */}
@@ -100,7 +109,11 @@ const Scene = ({ activeSection = 0 }) => {
 
       {/* Mushroom model on the left side (always rendered, hidden when not needed) */}
       <Suspense fallback={null}>
-        <Mushroom position={[-5.5, -1, 0]} scale={[1.5, 1.5, 1.5]} visible={activeSection >= 1} />
+        <Mushroom
+          position={mushroomPosition}
+          scale={mushroomScale}
+          visible={activeSection >= 1}
+        />
       </Suspense>
 
       {/* Viewport polish: orbit limits, environment light, bloom, and axis helper. */}

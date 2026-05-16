@@ -55,6 +55,20 @@ export function useSceneControls() {
     doorLabelOffset: { value: [-6.180000000000003, 11.279999999999987, 2.3000000000000007], step: 0.01 },
   });
 
+// --- Mushroom Model ---
+const { mushroomPosition, mushroomScale } = useControls("Mushroom Model", {
+  mushroomPosition: {
+    value: [-4.9, -0.6, 2.2],
+    step: 0.1,
+  },
+  mushroomScale: {
+    value: 2,
+    min: 0.1,
+    max: 5,
+    step: 0.05,
+  },
+});
+
   // --- Water ---
   const { waterColor, waveSpeed, waveFreq, waveAmp, waterScale } = useControls(
     "Water",
@@ -154,5 +168,8 @@ export function useSceneControls() {
     smokeColor,
     smokeBuoyancy,
     smokeOpacity,
+    // Mushroom
+    mushroomPosition,
+    mushroomScale,
   };
 }

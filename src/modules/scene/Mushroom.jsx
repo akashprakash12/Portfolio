@@ -1,30 +1,58 @@
-import React, { useEffect, useRef, useMemo } from "react";
-import { useLoader } from "@react-three/fiber";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import React, { memo, useRef } from "react";
+import { useGLTF, useAnimations } from "@react-three/drei";
+import * as THREE from "three";
 
-export default React.memo(function Mushroom({ position = [-5, 0, 0], scale = [2, 2, 2], visible = true }) {
-  const gltf = useLoader(GLTFLoader, "/models/mushroom.glb");
+function Mushroom({
+  position = [-4.9, -0.6, 2.2],
+  rotation = [0, 0, 0],
+  scale = 1.5,
+  visible = true,
+  ...props
+}) {
   const groupRef = useRef();
-  const loadedRef = useRef(false);
+  const { scene, animations } = useGLTF("/models/mushroom.glb");
+  const { actions, names } = useAnimations(animations, groupRef);
 
-  // Only clone once
-  const clonedScene = useMemo(() => {
-    if (gltf.scene && !loadedRef.current) {
-      loadedRef.current = true;
-      return gltf.scene.clone();
-    }
-    return null;
-  }, [gltf]);
+  const handlePointerEnter = () => {
+    if (names.length === 0) return;
+    const action = actions[names[0]];
+    if (!action) return;
 
-  useEffect(() => {
-    if (groupRef.current && clonedScene && !groupRef.current.children.length) {
-      groupRef.current.add(clonedScene);
-    }
-  }, [clonedScene]);
+    action
+      .reset()
+      .fadeIn(0.2)
+      .setLoop(THREE.LoopOnce, 1)   // ✅ play once on hover
+      .play();
+
+    action.clampWhenFinished = true; // hold last frame
+  };
+
+  const handlePointerLeave = () => {
+    if (names.length === 0) return;
+    const action = actions[names[0]];
+    if (!action) return;
+
+    action.fadeOut(0.3);             // ✅ smoothly rewind/stop on leave
+  };
+
+  const s = typeof scale === "number" ? [scale, scale, scale] : scale;
 
   return (
-    <group ref={groupRef} position={position} scale={scale} visible={visible}>
-      {/* Mushroom will be loaded into this group */}
+    <group
+      ref={groupRef}
+      position={position}
+      rotation={rotation}
+      scale={s}
+      visible={visible}
+      onPointerEnter={handlePointerEnter}  // ✅ R3F pointer events
+      onPointerLeave={handlePointerLeave}
+      {...props}
+    >
+      <primitive object={scene} />
     </group>
   );
-});
+}
+
+export default memo(Mushroom);
+
+useGLTF.preload("/models/mushroom.glb");
