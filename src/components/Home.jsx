@@ -287,8 +287,8 @@ const Home = () => {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg">
-                <span className="font-bold text-lg">A</span>
+              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-amber-500/50 shadow-lg">
+                <img src="/profile.jpeg" alt="Akash" className="w-full h-full object-cover object-top" />
               </div>
               <span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-amber-600">
                 AKASH
@@ -351,22 +351,66 @@ const Home = () => {
           >
             <div className="container mx-auto max-w-7xl relative z-30">
               <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+
                 {/* Left Content */}
                 <motion.div
                   initial={{ opacity: 0, x: -50 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.8 }}
-                  className="space-y-8 relative z-40"
+                  className="space-y-4 relative z-40"
                 >
+                  {/* Profile Picture — 50×50 */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
+                    className="flex items-center gap-3"
+                  >
+                    <div className="relative">
+                      {/* Spinning amber ring */}
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                        className="absolute -inset-[2px] rounded-full"
+                        style={{
+                          background: "conic-gradient(from 0deg, #f59e0b, #d97706, transparent, #f59e0b)",
+                          borderRadius: "9999px",
+                        }}
+                      />
+                      {/* Glow */}
+                      <div className="absolute -inset-2 rounded-full bg-amber-500/15 blur-md" />
+                      {/* Image — exactly 50×50 */}
+                      <div className="relative w-52 h-52 rounded-full overflow-hidden border-2 border-amber-500/60 shadow-lg shadow-amber-500/20">
+                        <img
+                          src="/profile.jpeg"
+                          alt="Akash"
+                          className="w-full h-full object-cover object-top"
+                        />
+                      </div>
+                      {/* Online dot */}
+                      <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-400 border-2 border-black animate-pulse" />
+                    </div>
+                    {/* Available badge */}
+                    {/* <motion.div
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.5 }}
+                      className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-2.5 py-1"
+                    >
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                      <span className="text-xs font-medium text-gray-200">Available for work</span>
+                    </motion.div> */}
+                  </motion.div>
+
                   {/* Welcome Badge */}
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 to-transparent border border-amber-500/30 backdrop-blur-sm"
+                    className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 to-transparent border border-amber-500/30 backdrop-blur-sm"
                   >
-                    <div className="w-2 h-2 rounded-full bg-amber-500 mr-2 animate-pulse"></div>
-                    <span className="text-sm font-medium text-gray-200">
+                    <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-2 animate-pulse"></div>
+                    <span className="text-xs font-medium text-gray-200">
                       Welcome to my digital space
                     </span>
                   </motion.div>
@@ -376,12 +420,10 @@ const Home = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold leading-tight text-shadow-xl"
+                    className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-shadow-xl"
                   >
                     Hello, I'm <br />
-                    <span className="bg-clip-text text-amber-400 font-bold">
-                      AKASH
-                    </span>
+                    <span className="text-amber-400 font-bold">AKASH</span>
                   </motion.h1>
 
                   {/* Animated Typing Text */}
@@ -389,12 +431,12 @@ const Home = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
-                    className="h-20"
+                    className="h-10"
                   >
-                    <div className="text-2xl md:text-3xl lg:text-4xl font-semibold text-shadow">
+                    <div className="text-base md:text-lg font-semibold text-shadow">
                       <span className="text-gray-200">I'm a </span>
                       <span className="text-amber-400 font-bold">{text}</span>
-                      <span className="inline-block w-[4px] h-12 bg-amber-500 ml-1 animate-blink"></span>
+                      <span className="inline-block w-[3px] h-5 bg-amber-500 ml-1 animate-blink"></span>
                     </div>
                   </motion.div>
 
@@ -403,12 +445,11 @@ const Home = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.7 }}
-                    className="text-lg md:text-xl text-gray-300 max-w-xl leading-relaxed text-shadow"
+                    className="text-sm md:text-base text-gray-300 max-w-sm leading-relaxed text-shadow"
                   >
                     I craft immersive digital experiences by blending cutting-edge
                     technology with elegant design. Passionate about solving
-                    complex problems and building scalable solutions that make a
-                    real impact.
+                    complex problems and building scalable solutions.
                   </motion.p>
 
                   {/* CTA Buttons */}
@@ -416,20 +457,20 @@ const Home = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.9 }}
-                    className="flex flex-wrap gap-4 pt-6"
+                    className="flex flex-wrap gap-3 pt-2"
                   >
                     <button
                       onClick={() => scrollToSection(4)}
-                      className="px-8 py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold rounded-xl hover:from-amber-400 hover:to-amber-500 transition-all duration-300 transform hover:scale-105 flex items-center shadow-lg shadow-amber-500/25"
+                      className="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold rounded-xl hover:from-amber-400 hover:to-amber-500 transition-all duration-300 transform hover:scale-105 flex items-center text-sm shadow-lg shadow-amber-500/25"
                     >
-                      <FiMail className="mr-2" size={20} />
+                      <FiMail className="mr-2" size={16} />
                       Start a Conversation
                     </button>
                     <a
                       href="#"
-                      className="px-8 py-3.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:border-amber-500 hover:text-amber-400 transition-all duration-300 transform hover:scale-105 flex items-center"
+                      className="px-5 py-2.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:border-amber-500 hover:text-amber-400 transition-all duration-300 transform hover:scale-105 flex items-center text-sm"
                     >
-                      <FiDownload className="mr-2" size={20} />
+                      <FiDownload className="mr-2" size={16} />
                       Download Resume
                     </a>
                   </motion.div>
@@ -439,25 +480,25 @@ const Home = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1.1 }}
-                    className="flex space-x-4 pt-8"
+                    className="flex space-x-3 pt-2"
                   >
                     <a
                       href="https://github.com"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-3.5 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 transform hover:scale-110 hover:rotate-12 group"
+                      className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 transform hover:scale-110 hover:rotate-12 group"
                       aria-label="GitHub"
                     >
-                      <FiGithub size={22} className="group-hover:text-amber-400" />
+                      <FiGithub size={18} className="group-hover:text-amber-400" />
                     </a>
                     <a
                       href="https://linkedin.com"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-3.5 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 transform hover:scale-110 hover:rotate-12 group"
+                      className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 transform hover:scale-110 hover:rotate-12 group"
                       aria-label="LinkedIn"
                     >
-                      <FiLinkedin size={22} className="group-hover:text-amber-400" />
+                      <FiLinkedin size={18} className="group-hover:text-amber-400" />
                     </a>
                   </motion.div>
                 </motion.div>
