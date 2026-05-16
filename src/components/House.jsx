@@ -9,569 +9,1493 @@ export function Model(props) {
   const { nodes, materials } = useGLTF('/house.glb')
   return (
     <group {...props} dispose={null}>
-      <group name="RootNode" position={[4.24, 10.976, -23.174]} scale={0.01}>
-        <group
-          name="bloome"
-          position={[411.546, 1137.923, -2540.866]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          scale={71.339}>
-          <mesh
-            name="Cube080_Material013_0"
-            castShadow
-            receiveShadow
-            geometry={nodes.Cube080_Material013_0.geometry}
-            material={materials['Material.013']}
-          />
-          <mesh
-            name="Cube080_Material013_0_1"
-            castShadow
-            receiveShadow
-            geometry={nodes.Cube080_Material013_0_1.geometry}
-            material={materials['Material.012']}
-          />
-        </group>
-        <mesh
-          name="chapeau001_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.chapeau001_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-222.857, 2190.94, 881.872]}
-          rotation={[-1.397, -0.217, 0.038]}
-          scale={[1277.152, 1277.152, 1277.153]}
-        />
-        <mesh
-          name="chapeau004_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.chapeau004_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-1480.386, 1313.583, 164.082]}
-          rotation={[-2.249, 0.448, 0.401]}
-          scale={611.384}
-        />
-        <mesh
-          name="chapeau005_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.chapeau005_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-1160.2, 1660.338, -1091.856]}
-          rotation={[-1.637, -0.235, 2.888]}
-          scale={1191.418}
-        />
-        <mesh
-          name="chapeau_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.chapeau_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[1133.599, 2186.064, -1032.332]}
-          rotation={[-1.588, -0.098, 0.015]}
-          scale={1277.152}
-        />
-        <mesh
-          name="chemine_Material007_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.chemine_Material007_0.geometry}
-          material={materials['Material.007']}
-          position={[562.521, 2766.474, 1072.726]}
-          rotation={[-1.499, 0.378, -1.037]}
-          scale={50.757}
-        />
-        <mesh
-          name="Cube005_Material008_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube005_Material008_0.geometry}
-          material={materials['Material.012']}
-          position={[1670.808, 3884.431, 570.698]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          scale={114.817}
-        />
-        <mesh
-          name="Cube006_Material008_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube006_Material008_0.geometry}
-          material={materials['Material.012']}
-          position={[1562.087, 3916.703, 585.573]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          scale={59.725}
-        />
-        <mesh
-          name="Cube010_Material008_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube010_Material008_0.geometry}
-          material={materials['Material.012']}
-          position={[1670.064, 4033.49, 549.461]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          scale={39.418}
-        />
-        <mesh
-          name="Cube035_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube035_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-1475.3, 1591.502, 269.662]}
-          rotation={[1.613, -0.113, -1.359]}
-          scale={61.118}
-        />
-        <mesh
-          name="Cube036_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube036_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-1269.36, 1397.132, 69.557]}
-          rotation={[0.338, -0.8, -2.053]}
-          scale={61.118}
-        />
-        <mesh
-          name="Cube037_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube037_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-1217.443, 1413.81, 181.644]}
-          rotation={[1.577, -1.147, -1.662]}
-          scale={41.743}
-        />
-        <mesh
-          name="Cube038_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube038_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-1414.055, 1264.887, -10.364]}
-          rotation={[-0.085, -0.189, -1.659]}
-          scale={61.118}
-        />
-        <mesh
-          name="Cube039_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube039_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-1481.737, 1484.936, 503.244]}
-          rotation={[2.82, -0.124, -0.917]}
-          scale={41.743}
-        />
-        <mesh
-          name="Cube040_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube040_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-1517.119, 1591.501, 417.042]}
-          rotation={[2.133, -0.239, -0.953]}
-          scale={41.743}
-        />
-        <mesh
-          name="Cube041_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube041_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-1619.78, 1456.004, 38.99]}
-          rotation={[0.483, 0.302, -2.584]}
-          scale={61.118}
-        />
-        <mesh
-          name="Cube042_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube042_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-1581.529, 1129.424, -0.614]}
-          rotation={[-0.127, -0.17, -1.677]}
-          scale={48.18}
-        />
-        <mesh
-          name="Cube043_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube043_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-1596.799, 1618.517, 367.022]}
-          rotation={[1.78, 0.153, -1.38]}
-          scale={26.44}
-        />
-        <mesh
-          name="Cube044_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube044_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-1415.756, 2147.807, -1255.386]}
-          rotation={[-1.574, -0.527, -0.192]}
-          scale={183.792}
-        />
-        <mesh
-          name="Cube045_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube045_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-735.002, 2068.159, -1199.096]}
-          rotation={[-1.665, 0.472, -0.626]}
-          scale={115.762}
-        />
-        <mesh
-          name="Cube046_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube046_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-910.7, 1831.296, -1641.834]}
-          rotation={[-2.507, 0.18, 0.159]}
-          scale={148.047}
-        />
-        <mesh
-          name="Cube047_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube047_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-1116.086, 1902.866, -610.698]}
-          rotation={[-0.822, -0.278, -0.27]}
-          scale={115.762}
-        />
-        <mesh
-          name="Cube048_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube048_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-1724.264, 1703.141, -1413.556]}
-          rotation={[-2.057, -1.088, -2.231]}
-          scale={115.762}
-        />
-        <mesh
-          name="Cube049_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube049_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-1776.89, 1607.573, -1222.803]}
-          rotation={[-1.721, -1.134, -1.993]}
-          scale={86.691}
-        />
-        <mesh
-          name="Cube050_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube050_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-1475.814, 2010.111, -1008.516]}
-          rotation={[-1.096, -0.605, -0.062]}
-          scale={113.956}
-        />
-        <mesh
-          name="Cube051_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube051_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-1311.277, 1768.87, -645.943]}
-          rotation={[-0.811, -0.472, -0.221]}
-          scale={70.877}
-        />
-        <mesh
-          name="Cube052_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube052_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-560.214, 1946.808, -767.762]}
-          rotation={[-1.332, 0.372, -0.183]}
-          scale={115.762}
-        />
-        <mesh
-          name="Cube053_Material002_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube053_Material002_0.geometry}
-          material={materials['Material.003']}
-          position={[-494.128, 1922.01, -961.667]}
-          rotation={[-1.656, 0.418, -0.106]}
-          scale={49.717}
-        />
-        <mesh
-          name="Cube054_Material009_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube054_Material009_0.geometry}
-          material={materials['Material.009']}
-          position={[1432.586, 820.395, 710.854]}
-          rotation={[-Math.PI / 2, 0.13, 0]}
-          scale={265.226}
-        />
-        <mesh
-          name="Cube055_Material009_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube055_Material009_0.geometry}
-          material={materials['Material.009']}
-          position={[984.068, 816.17, 1010.197]}
-          rotation={[-1.553, -0.353, 2.136]}
-          scale={153.433}
-        />
-        <mesh
-          name="Cube056_Material009_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube056_Material009_0.geometry}
-          material={materials['Material.009']}
-          position={[1000.043, 801.918, 464.736]}
-          rotation={[-1.361, 0.08, -2.801]}
-          scale={176.609}
-        />
-        <mesh
-          name="Cube057_Material009_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube057_Material009_0.geometry}
-          material={materials['Material.009']}
-          position={[-581.202, 820.395, -401.413]}
-          rotation={[-2.006, 0.205, 0.088]}
-          scale={265.226}
-        />
-        <mesh
-          name="Cube058_Material009_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube058_Material009_0.geometry}
-          material={materials['Material.009']}
-          position={[-156.784, 820.395, -225.792]}
-          rotation={[-1.327, 0.162, -2.55]}
-          scale={157.348}
-        />
-        <mesh
-          name="Cube059_Material009_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube059_Material009_0.geometry}
-          material={materials['Material.009']}
-          position={[-216.07, 820.395, -584.329]}
-          rotation={[-1.753, 0.229, -0.874]}
-          scale={100.476}
-        />
-        <mesh
-          name="Cube_Material008_0"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cube_Material008_0.geometry}
-          material={materials['Material.012']}
-          position={[837.24, 3450.714, 997.788]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          scale={52.654}
-        />
-        <group name="dore" position={[-45.254, 951.65, 1192.054]} scale={8.25}>
-          <mesh
-            name="poigne_Material005_0"
-            castShadow
-            receiveShadow
-            geometry={nodes.poigne_Material005_0.geometry}
-            material={materials['Material.006']}
-          />
-          <mesh
-            name="poigne_Material005_0_1"
-            castShadow
-            receiveShadow
-            geometry={nodes.poigne_Material005_0_1.geometry}
-            material={materials['Material.004']}
-          />
-          <mesh
-            name="poigne_Material005_0_2"
-            castShadow
-            receiveShadow
-            geometry={nodes.poigne_Material005_0_2.geometry}
-            material={materials['Material.005']}
-          />
-        </group>
-        <mesh
-          name="ground"
-          castShadow
-          receiveShadow
-          geometry={nodes.ground.geometry}
-          material={materials['Material.010']}
-          position={[45.883, 810.545, 2.919]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          scale={[2195.716, 2195.715, 2195.715]}
-        />
-        <mesh
-          name="mushroom_2"
-          castShadow
-          receiveShadow
-          geometry={nodes.mushroom_2.geometry}
-          material={materials['Material.002']}
-          position={[1133.599, 2186.064, -1032.332]}
-          rotation={[-1.588, -0.098, 0.015]}
-          scale={1277.152}
-        />
-        <mesh
-          name="mushroom_3"
-          castShadow
-          receiveShadow
-          geometry={nodes.mushroom_3.geometry}
-          material={materials['Material.002']}
-          position={[-222.857, 2190.94, 881.872]}
-          rotation={[-1.397, -0.217, 0.038]}
-          scale={[1277.152, 1277.152, 1277.153]}
-        />
-        <mesh
-          name="mushroom_4"
-          castShadow
-          receiveShadow
-          geometry={nodes.mushroom_4.geometry}
-          material={materials['Material.002']}
-          position={[-1480.386, 1313.583, 164.082]}
-          rotation={[-2.249, 0.448, 0.401]}
-          scale={611.384}
-        />
-        <mesh
-          name="mushroom_seed"
-          castShadow
-          receiveShadow
-          geometry={nodes.mushroom_seed.geometry}
-          material={materials['Material.003']}
-          position={[1381.258, 2371.419, -167.401]}
-          rotation={[-0.922, 0.011, -0.006]}
-          scale={70.45}
-        />
-        <mesh
-          name="mushroom_seed_"
-          castShadow
-          receiveShadow
-          geometry={nodes.mushroom_seed_.geometry}
-          material={materials['Material.003']}
-          position={[606.556, 2593.789, 823.889]}
-          rotation={[1.522, -0.782, -2.363]}
-          scale={92.075}
-        />
-        <mesh
-          name="mushroom1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mushroom1.geometry}
-          material={materials['Material.002']}
-          position={[-1160.2, 1660.338, -1091.856]}
-          rotation={[-1.637, -0.235, 2.888]}
-          scale={1191.418}
-        />
-        <mesh
-          name="plant_2"
-          castShadow
-          receiveShadow
-          geometry={nodes.plant_2.geometry}
-          material={materials['Material.011']}
-          position={[-506.692, 781.54, 1333.317]}
-          rotation={[-Math.PI / 2, -0.007, -2.11]}
-          scale={16.495}
-        />
-        <mesh
-          name="plant_3"
-          castShadow
-          receiveShadow
-          geometry={nodes.plant_3.geometry}
-          material={materials['Material.011']}
-          position={[365.058, 777.95, -72.391]}
-          rotation={[-Math.PI / 2, 0, -0.18]}
-          scale={30.53}
-        />
-        <mesh
-          name="plant_4"
-          castShadow
-          receiveShadow
-          geometry={nodes.plant_4.geometry}
-          material={materials['Material.011']}
-          position={[-1043.23, 778.854, -55.886]}
-          rotation={[-Math.PI / 2, 0, 3.008]}
-          scale={27.26}
-        />
-        <mesh
-          name="plant_5"
-          castShadow
-          receiveShadow
-          geometry={nodes.plant_5.geometry}
-          material={materials['Material.011']}
-          position={[195.418, 775.323, -1654.867]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          scale={49.872}
-        />
-        <mesh
-          name="plant1"
-          castShadow
-          receiveShadow
-          geometry={nodes.plant1.geometry}
-          material={materials['Material.011']}
-          position={[1265.852, 780.738, 1057.885]}
-          rotation={[-Math.PI / 2, 0, -0.698]}
-          scale={20.44}
-        />
-        <mesh
-          name="stem1"
-          castShadow
-          receiveShadow
-          geometry={nodes.stem1.geometry}
-          material={materials['Material.001']}
-          position={[1242.693, 1078.941, -1019.361]}
-          rotation={[-Math.PI / 2, -0.096, 0]}
-          scale={61.754}
-        />
-        <mesh
-          name="stem2"
-          castShadow
-          receiveShadow
-          geometry={nodes.stem2.geometry}
-          material={materials['Material.001']}
-          position={[-91.195, 914.409, 818.48]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          scale={100}
-        />
-        <mesh
-          name="stem3"
-          castShadow
-          receiveShadow
-          geometry={nodes.stem3.geometry}
-          material={materials['Material.001']}
-          position={[-855.161, 825.048, -1229.883]}
-          rotation={[-Math.PI / 2, 0, 2.979]}
-          scale={68.293}
-        />
-        <mesh
-          name="stem4"
-          castShadow
-          receiveShadow
-          geometry={nodes.stem4.geometry}
-          material={materials['Material.001']}
-          position={[-1632.207, 777.617, 353.183]}
-          rotation={[-Math.PI / 2, 0, 0.371]}
-          scale={47.871}
-        />
-        <group
-          name="windows"
-          position={[230.925, 1209.857, 799.07]}
-          rotation={[-1.521, 1.182, -0.345]}
-          scale={100}>
-          <mesh
-            name="vitre_Material006_0"
-            castShadow
-            receiveShadow
-            geometry={nodes.vitre_Material006_0.geometry}
-            material={materials['Material.008']}
-          />
-          <mesh
-            name="vitre_Material006_0_1"
-            castShadow
-            receiveShadow
-            geometry={nodes.vitre_Material006_0_1.geometry}
-            material={materials['Material.004']}
-          />
+      <group name="Scene">
+        <group name="Sketchfab_model" rotation={[-Math.PI / 2, 0, 0]}>
+          <group
+            name="4b1a9b494feb433881c9eda498dce783fbx"
+            rotation={[Math.PI / 2, 0, 0]}
+            scale={0.01}>
+            <group name="RootNode">
+              <group
+                name="chapeau"
+                position={[1133.599, 2186.065, -1032.332]}
+                rotation={[-1.588, -0.098, 0.015]}
+                scale={1277.152}>
+                <mesh
+                  name="mushroom_4"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.mushroom_4.geometry}
+                  material={materials['Material.002']}
+                  position={[-0.026, -0.009, 0.029]}
+                />
+                <mesh
+                  name="mushroom_bottam"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.mushroom_bottam.geometry}
+                  material={materials['Material.008']}
+                  position={[-0.007, -0.011, -0.137]}
+                />
+              </group>
+              <group
+                name="chapeau001"
+                position={[-222.857, 2190.941, 881.872]}
+                rotation={[-1.397, -0.217, 0.038]}
+                scale={1277.152}>
+                <mesh
+                  name="mushroom_3"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.mushroom_3.geometry}
+                  material={materials['Material.002']}
+                  position={[-0.012, -0.009, 0.126]}
+                />
+                <mesh
+                  name="mushroom_bottam001"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.mushroom_bottam001.geometry}
+                  material={materials['Material.008']}
+                  position={[-0.005, -0.009, -0.131]}
+                />
+              </group>
+              <group
+                name="chapeau004"
+                position={[-1480.386, 1313.583, 164.082]}
+                rotation={[-2.249, 0.448, 0.401]}
+                scale={611.384}>
+                <mesh
+                  name="chapeau004_Material002_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.chapeau004_Material002_0.geometry}
+                  material={materials['Material.008']}
+                  position={[0.011, -0.014, -0.139]}
+                />
+                <mesh
+                  name="mushroom_bottam003"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.mushroom_bottam003.geometry}
+                  material={materials['Material.002']}
+                  position={[-0.037, -0.087, 0.077]}
+                />
+              </group>
+              <group
+                name="chapeau005"
+                position={[-1160.2, 1660.339, -1091.856]}
+                rotation={[-1.637, -0.235, 2.888]}
+                scale={1191.418}>
+                <mesh
+                  name="mushroom_2"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.mushroom_2.geometry}
+                  material={materials['Material.002']}
+                  position={[-0.042, -0.079, 0.086]}
+                />
+                <mesh
+                  name="mushroom_bottam002"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.mushroom_bottam002.geometry}
+                  material={materials['Material.008']}
+                  position={[0.057, -0.045, -0.115]}
+                />
+              </group>
+              <group
+                name="chemine"
+                position={[562.521, 2766.475, 1072.725]}
+                rotation={[-1.499, 0.378, -1.037]}
+                scale={50.757}>
+                <mesh
+                  name="chemine_Material007_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.chemine_Material007_0.geometry}
+                  material={materials['Material.007']}
+                  position={[-0.931, -1.132, 7.336]}
+                />
+              </group>
+              <group
+                name="Circle"
+                position={[45.883, 810.546, 2.919]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={[2195.716, 2195.715, 2195.715]}>
+                <mesh
+                  name="Circle_Material010_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Circle_Material010_0.geometry}
+                  material={materials['Material.010']}
+                  position={[0, 0, -0.267]}
+                />
+              </group>
+              <group
+                name="Cube"
+                position={[837.24, 3450.715, 997.787]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={52.654}>
+                <mesh
+                  name="Cube_Material008_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube_Material008_0.geometry}
+                  material={materials['Material.012']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube001"
+                position={[900.071, 3532.542, 1005.924]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={110.577}>
+                <mesh
+                  name="Cube001_Material008_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube001_Material008_0.geometry}
+                  material={materials['Material.012']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube002"
+                position={[824.772, 3590.5, 946.757]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={84.206}>
+                <mesh
+                  name="Cube002_Material008_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube002_Material008_0.geometry}
+                  material={materials['Material.012']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube003"
+                position={[1303.122, 3611.438, 776.221]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={117.914}>
+                <mesh
+                  name="Cube003_Material008_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube003_Material008_0.geometry}
+                  material={materials['Material.012']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube004"
+                position={[1298.528, 3602.602, 853.721]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={72.911}>
+                <mesh
+                  name="Cube004_Material008_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube004_Material008_0.geometry}
+                  material={materials['Material.012']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube005"
+                position={[1670.808, 3884.432, 570.697]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={114.817}>
+                <mesh
+                  name="Cube005_Material008_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube005_Material008_0.geometry}
+                  material={materials['Material.012']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube006"
+                position={[1562.087, 3916.704, 585.573]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={59.725}>
+                <mesh
+                  name="Cube006_Material008_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube006_Material008_0.geometry}
+                  material={materials['Material.012']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube007"
+                position={[1603.859, 3959.943, 491.454]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={123.421}>
+                <mesh
+                  name="Cube007_Material008_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube007_Material008_0.geometry}
+                  material={materials['Material.012']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube008"
+                position={[-923.727, 2716.957, 932.278]}
+                rotation={[-1.473, -0.651, 0.056]}
+                scale={143.335}>
+                <mesh
+                  name="seed_8"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_8.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube009"
+                position={[193.054, 2836.884, 1431.187]}
+                rotation={[-1.108, 0.202, 0.039]}
+                scale={231.321}>
+                <mesh
+                  name="seed_3001"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_3001.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube010"
+                position={[1670.064, 4033.49, 549.461]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={39.418}>
+                <mesh
+                  name="Cube010_Material008_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube010_Material008_0.geometry}
+                  material={materials['Material.012']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube011"
+                position={[-562.231, 2397.903, 1837.29]}
+                rotation={[-0.55, -0.357, 0.414]}
+                scale={231.321}>
+                <mesh
+                  name="seed_1001"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_1001.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube012"
+                position={[-226.228, 2687.802, -64.902]}
+                rotation={[-2.363, -0.034, -2.576]}
+                scale={231.321}>
+                <mesh
+                  name="seed_10"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_10.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube013"
+                position={[113.468, 3014.049, 721.774]}
+                rotation={[-1.623, 0.211, 0.113]}
+                scale={190.719}>
+                <mesh
+                  name="seed_6"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_6.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube014"
+                position={[-385.1, 2951.104, 1072.061]}
+                rotation={[-1.37, -0.11, 0.072]}
+                scale={134.741}>
+                <mesh
+                  name="seed_7"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_7.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube015"
+                position={[-1088.515, 2161.09, 790.448]}
+                rotation={[1.669, 1.258, 2.236]}
+                scale={231.321}>
+                <mesh
+                  name="seed_2"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_2.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube016"
+                position={[-585.824, 2606.325, 416.002]}
+                rotation={[1.325, 0.344, 2.345]}
+                scale={197.957}>
+                <mesh
+                  name="seed_9"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_9.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube017"
+                position={[170.121, 2244.936, 1707.576]}
+                rotation={[2.566, -0.263, -1.027]}
+                scale={174.541}>
+                <mesh
+                  name="seed_4001"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_4001.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube018"
+                position={[632.863, 2425, 1085.351]}
+                rotation={[1.685, -1.013, -2.296]}
+                scale={174.541}>
+                <mesh
+                  name="seed_5"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_5.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube019"
+                position={[606.556, 2593.79, 823.889]}
+                rotation={[1.522, -0.782, -2.363]}
+                scale={92.075}>
+                <mesh
+                  name="seed_11"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_11.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube020"
+                position={[-595.587, 2621.756, 1547.777]}
+                rotation={[-0.749, -0.359, 0.367]}
+                scale={117.847}>
+                <mesh
+                  name="Cube020_Material002_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube020_Material002_0.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube021"
+                position={[1128.26, 2559.812, -351.176]}
+                rotation={[-1.1, -0.182, -0.003]}
+                scale={175.809}>
+                <mesh
+                  name="seed_4003"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_4003.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube022"
+                position={[818.091, 2618.618, -1436.207]}
+                rotation={[-1.955, -0.298, -0.528]}
+                scale={230.852}>
+                <mesh
+                  name="seed_12"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_12.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube023"
+                position={[1650.844, 2632.73, -1342.014]}
+                rotation={[-1.848, 0.231, -0.379]}
+                scale={230.852}>
+                <mesh
+                  name="seed_5002"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_5002.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube024"
+                position={[504.569, 2523.824, -910.273]}
+                rotation={[-1.557, -0.609, -0.424]}
+                scale={149.641}>
+                <mesh
+                  name="seed_8002"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_8002.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube025"
+                position={[1898.513, 2527.215, -736.891]}
+                rotation={[-1.409, 0.406, -0.354]}
+                scale={175.48}>
+                <mesh
+                  name="seed_3003"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_3003.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube026"
+                position={[1628.437, 2222.654, -1975.6]}
+                rotation={[-2.314, 0.294, -0.316]}
+                scale={113.799}>
+                <mesh
+                  name="seed_1003"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_1003.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube027"
+                position={[1967.035, 2290.677, -1610.106]}
+                rotation={[-2.147, 0.508, -0.132]}
+                scale={86.738}>
+                <mesh
+                  name="seed_2003"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_2003.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube028"
+                position={[487.08, 2394.492, -1511.866]}
+                rotation={[-2.03, -0.465, -0.589]}
+                scale={138.547}>
+                <mesh
+                  name="seed_10001"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_10001.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube029"
+                position={[501.776, 2201.691, -1833.924]}
+                rotation={[-2.286, -0.442, -0.629]}
+                scale={108.668}>
+                <mesh
+                  name="seed_11001"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_11001.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube030"
+                position={[419.582, 2356.144, -506.012]}
+                rotation={[-1.171, -0.704, -0.297]}
+                scale={113.433}>
+                <mesh
+                  name="seed_7002"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_7002.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube031"
+                position={[14.305, 2070.846, -831.814]}
+                rotation={[-1.441, -0.899, -0.441]}
+                scale={113.433}>
+                <mesh
+                  name="seed_9001"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_9001.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube032"
+                position={[1233.355, 2235.811, 13.367]}
+                rotation={[-0.907, -0.008, 0.002]}
+                scale={103.143}>
+                <mesh
+                  name="seed_5003"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_5003.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube033"
+                position={[1381.259, 2371.419, -167.401]}
+                rotation={[-0.922, 0.011, -0.006]}
+                scale={70.45}>
+                <mesh
+                  name="seed_6002"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_6002.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube034"
+                position={[2033.155, 2239.74, -337.205]}
+                rotation={[-1.101, 0.589, -0.505]}
+                scale={71.658}>
+                <mesh
+                  name="seed_1"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_1.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube035"
+                position={[-1475.3, 1591.502, 269.662]}
+                rotation={[1.613, -0.113, -1.359]}
+                scale={61.118}>
+                <mesh
+                  name="seed_14"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_14.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube036"
+                position={[-1269.36, 1397.132, 69.556]}
+                rotation={[0.338, -0.8, -2.053]}
+                scale={61.118}>
+                <mesh
+                  name="seed_16"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_16.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube037"
+                position={[-1217.443, 1413.81, 181.643]}
+                rotation={[1.577, -1.147, -1.662]}
+                scale={41.743}>
+                <mesh
+                  name="seed_17"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_17.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube038"
+                position={[-1414.055, 1264.887, -10.364]}
+                rotation={[-0.085, -0.189, -1.659]}
+                scale={61.118}>
+                <mesh
+                  name="seed_15"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_15.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube039"
+                position={[-1481.737, 1484.937, 503.243]}
+                rotation={[2.82, -0.124, -0.917]}
+                scale={41.743}>
+                <mesh
+                  name="seed_20"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_20.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube040"
+                position={[-1517.119, 1591.501, 417.042]}
+                rotation={[2.133, -0.239, -0.953]}
+                scale={41.743}>
+                <mesh
+                  name="seed_18001"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_18001.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube041"
+                position={[-1619.78, 1456.004, 38.99]}
+                rotation={[0.483, 0.302, -2.584]}
+                scale={61.118}>
+                <mesh
+                  name="seed_13"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_13.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube042"
+                position={[-1581.529, 1129.425, -0.615]}
+                rotation={[-0.127, -0.17, -1.677]}
+                scale={48.18}>
+                <mesh
+                  name="seed_4"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_4.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube043"
+                position={[-1596.799, 1618.517, 367.022]}
+                rotation={[1.78, 0.153, -1.38]}
+                scale={26.44}>
+                <mesh
+                  name="seed_18"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_18.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube044"
+                position={[-1415.756, 2147.807, -1255.387]}
+                rotation={[-1.574, -0.527, -0.192]}
+                scale={183.792}>
+                <mesh
+                  name="seed_2002"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_2002.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube045"
+                position={[-735.002, 2068.16, -1199.097]}
+                rotation={[-1.665, 0.472, -0.626]}
+                scale={115.762}>
+                <mesh
+                  name="seed_6001"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_6001.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube046"
+                position={[-910.7, 1831.296, -1641.834]}
+                rotation={[-2.507, 0.18, 0.159]}
+                scale={148.047}>
+                <mesh
+                  name="seed_7001"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_7001.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube047"
+                position={[-1116.086, 1902.866, -610.698]}
+                rotation={[-0.822, -0.278, -0.27]}
+                scale={115.762}>
+                <mesh
+                  name="Cube047_Material002_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube047_Material002_0.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube048"
+                position={[-1724.264, 1703.141, -1413.556]}
+                rotation={[-2.057, -1.088, -2.231]}
+                scale={115.762}>
+                <mesh
+                  name="seed_1002"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_1002.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube049"
+                position={[-1776.89, 1607.574, -1222.804]}
+                rotation={[-1.721, -1.134, -1.993]}
+                scale={86.691}>
+                <mesh
+                  name="seed_4002"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_4002.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube050"
+                position={[-1475.814, 2010.112, -1008.517]}
+                rotation={[-1.096, -0.605, -0.062]}
+                scale={113.956}>
+                <mesh
+                  name="seed_3002"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_3002.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube051"
+                position={[-1311.277, 1768.87, -645.943]}
+                rotation={[-0.811, -0.472, -0.221]}
+                scale={70.877}>
+                <mesh
+                  name="seed_5001"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_5001.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube052"
+                position={[-560.214, 1946.808, -767.763]}
+                rotation={[-1.332, 0.372, -0.183]}
+                scale={115.762}>
+                <mesh
+                  name="seed_8001"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_8001.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube053"
+                position={[-494.128, 1922.011, -961.667]}
+                rotation={[-1.656, 0.418, -0.106]}
+                scale={49.717}>
+                <mesh
+                  name="seed_3"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.seed_3.geometry}
+                  material={materials['Material.003']}
+                  position={[-0.066, -0.022, -0.575]}
+                />
+              </group>
+              <group
+                name="Cube054"
+                position={[1432.586, 820.396, 710.853]}
+                rotation={[-Math.PI / 2, 0.13, 0]}
+                scale={265.226}>
+                <mesh
+                  name="Cube054_Material009_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube054_Material009_0.geometry}
+                  material={materials['Material.009']}
+                  position={[-0.159, -0.044, -0.011]}
+                />
+              </group>
+              <group
+                name="Cube055"
+                position={[984.068, 816.17, 1010.197]}
+                rotation={[-1.553, -0.353, 2.136]}
+                scale={153.433}>
+                <mesh
+                  name="_stone_1"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes._stone_1.geometry}
+                  material={materials['Material.009']}
+                  position={[-0.159, -0.044, -0.011]}
+                />
+              </group>
+              <group
+                name="Cube056"
+                position={[1000.043, 801.919, 464.736]}
+                rotation={[-1.361, 0.08, -2.801]}
+                scale={176.609}>
+                <mesh
+                  name="Cube056_Material009_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube056_Material009_0.geometry}
+                  material={materials['Material.009']}
+                  position={[-0.159, -0.044, -0.011]}
+                />
+              </group>
+              <group
+                name="Cube057"
+                position={[-581.202, 820.396, -401.414]}
+                rotation={[-2.006, 0.205, 0.088]}
+                scale={265.226}>
+                <mesh
+                  name="Cube057_Material009_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube057_Material009_0.geometry}
+                  material={materials['Material.009']}
+                  position={[-0.159, -0.044, -0.011]}
+                />
+              </group>
+              <group
+                name="Cube058"
+                position={[-156.784, 820.396, -225.793]}
+                rotation={[-1.327, 0.162, -2.55]}
+                scale={157.348}>
+                <mesh
+                  name="Cube058_Material009_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube058_Material009_0.geometry}
+                  material={materials['Material.009']}
+                  position={[-0.159, -0.044, -0.011]}
+                />
+              </group>
+              <group
+                name="Cube059"
+                position={[-216.07, 820.396, -584.33]}
+                rotation={[-1.753, 0.229, -0.874]}
+                scale={100.476}>
+                <mesh
+                  name="stone_2"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.stone_2.geometry}
+                  material={materials['Material.009']}
+                  position={[-0.159, -0.044, -0.011]}
+                />
+              </group>
+              <group
+                name="Cube060"
+                position={[195.418, 775.324, -1654.867]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={49.872}>
+                <mesh
+                  name="Cube060_Material011_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube060_Material011_0.geometry}
+                  material={materials['Material.011']}
+                  position={[-0.049, 4.139, 5.144]}
+                />
+              </group>
+              <group
+                name="Cube061"
+                position={[117.5, 775.324, -1515.969]}
+                rotation={[-Math.PI / 2, 0, 1.832]}
+                scale={40.037}>
+                <mesh
+                  name="grass_4"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.grass_4.geometry}
+                  material={materials['Material.011']}
+                  position={[-0.049, 4.139, 5.144]}
+                />
+              </group>
+              <group
+                name="Cube062"
+                position={[205.581, 808.511, -1556.622]}
+                rotation={[-Math.PI / 2, 0, -2.313]}
+                scale={32.309}>
+                <mesh
+                  name="Cube062_Material011_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube062_Material011_0.geometry}
+                  material={materials['Material.011']}
+                  position={[-0.049, 4.139, 5.144]}
+                />
+              </group>
+              <group
+                name="Cube063"
+                position={[-1110.112, 778.854, -141.239]}
+                rotation={[-Math.PI / 2, 0, 1.176]}
+                scale={33.957}>
+                <mesh
+                  name="Cube063_Material011_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube063_Material011_0.geometry}
+                  material={materials['Material.011']}
+                  position={[-0.049, 4.139, 5.144]}
+                />
+              </group>
+              <group
+                name="Cube064"
+                position={[-1043.23, 778.854, -55.886]}
+                rotation={[-Math.PI / 2, 0, 3.008]}
+                scale={27.26}>
+                <mesh
+                  name="grass_5"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.grass_5.geometry}
+                  material={materials['Material.011']}
+                  position={[-0.049, 4.139, 5.144]}
+                />
+              </group>
+              <group
+                name="Cube065"
+                position={[-1045.707, 801.45, -121.891]}
+                rotation={[-Math.PI / 2, 0, -1.137]}
+                scale={21.998}>
+                <mesh
+                  name="Cube065_Material011_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube065_Material011_0.geometry}
+                  material={materials['Material.011']}
+                  position={[-0.049, 4.139, 5.144]}
+                />
+              </group>
+              <group
+                name="Cube066"
+                position={[1274.023, 780.738, 1138.782]}
+                rotation={[-Math.PI / 2, 0, -2.53]}
+                scale={25.462}>
+                <mesh
+                  name="Cube066_Material011_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube066_Material011_0.geometry}
+                  material={materials['Material.011']}
+                  position={[-0.049, 4.139, 5.144]}
+                />
+              </group>
+              <group
+                name="Cube067"
+                position={[1265.851, 780.738, 1057.885]}
+                rotation={[-Math.PI / 2, 0, -0.698]}
+                scale={20.44}>
+                <mesh
+                  name="grass_2"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.grass_2.geometry}
+                  material={materials['Material.011']}
+                  position={[-0.049, 4.139, 5.144]}
+                />
+              </group>
+              <group
+                name="Cube068"
+                position={[1240.964, 797.682, 1100.706]}
+                rotation={[-Math.PI / 2, 0, 1.44]}
+                scale={16.495}>
+                <mesh
+                  name="Cube068_Material011_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube068_Material011_0.geometry}
+                  material={materials['Material.011']}
+                  position={[-0.049, 4.139, 5.144]}
+                />
+              </group>
+              <group
+                name="Cube069"
+                position={[-521.808, 764.498, 1285.245]}
+                rotation={[-Math.PI / 2, -0.007, 0.204]}
+                scale={25.462}>
+                <mesh
+                  name="grass_1"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.grass_1.geometry}
+                  material={materials['Material.011']}
+                  position={[-0.049, 4.139, 5.144]}
+                />
+              </group>
+              <group
+                name="Cube070"
+                position={[-546.423, 764.337, 1362.738]}
+                rotation={[-Math.PI / 2, -0.007, 2.035]}
+                scale={20.44}>
+                <mesh
+                  name="Cube070_Material011_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube070_Material011_0.geometry}
+                  material={materials['Material.011']}
+                  position={[-0.049, 4.139, 5.144]}
+                />
+              </group>
+              <group
+                name="Cube071"
+                position={[-506.692, 781.54, 1333.317]}
+                rotation={[-Math.PI / 2, -0.007, -2.11]}
+                scale={16.495}>
+                <mesh
+                  name="Cube071_Material011_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube071_Material011_0.geometry}
+                  material={materials['Material.011']}
+                  position={[-0.049, 4.139, 5.144]}
+                />
+              </group>
+              <group
+                name="Cube072"
+                position={[435.436, 777.951, 26.581]}
+                rotation={[-Math.PI / 2, 0, -2.012]}
+                scale={38.03}>
+                <mesh
+                  name="Cube072_Material011_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube072_Material011_0.geometry}
+                  material={materials['Material.011']}
+                  position={[-0.049, 4.139, 5.144]}
+                />
+              </group>
+              <group
+                name="Cube073"
+                position={[365.058, 777.951, -72.391]}
+                rotation={[-Math.PI / 2, 0, -0.18]}
+                scale={30.53}>
+                <mesh
+                  name="Cube073_Material011_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube073_Material011_0.geometry}
+                  material={materials['Material.011']}
+                  position={[-0.049, 4.139, 5.144]}
+                />
+              </group>
+              <group
+                name="Cube074"
+                position={[364.39, 803.257, 1.581]}
+                rotation={[-Math.PI / 2, 0, 1.958]}
+                scale={24.637}>
+                <mesh
+                  name="grass_3"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.grass_3.geometry}
+                  material={materials['Material.011']}
+                  position={[-0.049, 4.139, 5.144]}
+                />
+              </group>
+              <group
+                name="Cube075"
+                position={[2136.456, 2468.848, 1704.727]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={99.616}>
+                <mesh
+                  name="Cube075_Material013_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube075_Material013_0.geometry}
+                  material={materials['Material.013']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube076"
+                position={[-940.623, 3674.674, 1627.457]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={254.334}>
+                <mesh
+                  name="Cube076_Material013_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube076_Material013_0.geometry}
+                  material={materials['Material.013']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube077"
+                position={[1086.39, 3318.337, -129.208]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={92.319}>
+                <mesh
+                  name="Cube077_Material013_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube077_Material013_0.geometry}
+                  material={materials['Material.013']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube078"
+                position={[-1484.747, 1641.362, 1189.742]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={71.178}>
+                <mesh
+                  name="Cube078_Material013_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube078_Material013_0.geometry}
+                  material={materials['Material.013']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube079"
+                position={[1630.45, 1641.362, 212.426]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={65.119}>
+                <mesh
+                  name="Cube079_Material013_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube079_Material013_0.geometry}
+                  material={materials['Material.013']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube080"
+                position={[411.546, 1137.924, -2540.867]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={71.339}>
+                <mesh
+                  name="Cube080_Material013_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube080_Material013_0.geometry}
+                  material={materials['Material.013']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube081"
+                position={[-199.646, 4197.756, -1647.671]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={96.673}>
+                <mesh
+                  name="Cube081_Material013_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube081_Material013_0.geometry}
+                  material={materials['Material.013']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube082"
+                position={[1630.693, 3066.523, -2120.784]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={62.821}>
+                <mesh
+                  name="Cube082_Material013_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube082_Material013_0.geometry}
+                  material={materials['Material.013']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube083"
+                position={[988.256, 1760.584, 2484.809]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={77.929}>
+                <mesh
+                  name="Cube083_Material013_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube083_Material013_0.geometry}
+                  material={materials['Material.013']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube084"
+                position={[-1249.576, 3550.534, -824.012]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={130.346}>
+                <mesh
+                  name="Cube084_Material013_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube084_Material013_0.geometry}
+                  material={materials['Material.013']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube085"
+                position={[2092.528, 1222.816, -948.486]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={130.346}>
+                <mesh
+                  name="Cube085_Material013_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube085_Material013_0.geometry}
+                  material={materials['Material.013']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="Cube086"
+                position={[-2092.374, 2794.059, -214.306]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={96.673}>
+                <mesh
+                  name="Cube086_Material013_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Cube086_Material013_0.geometry}
+                  material={materials['Material.013']}
+                  position={[-0.066, -0.022, 0]}
+                />
+              </group>
+              <group
+                name="pied"
+                position={[1242.693, 1078.941, -1019.361]}
+                rotation={[-Math.PI / 2, -0.096, 0]}
+                scale={61.754}>
+                <mesh
+                  name="stem_2"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.stem_2.geometry}
+                  material={materials['Material.014']}
+                  position={[-0.062, -0.127, 6.215]}
+                />
+              </group>
+              <group
+                name="pied001"
+                position={[-91.195, 914.41, 818.48]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={100}>
+                <mesh
+                  name="stem_1"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.stem_1.geometry}
+                  material={materials['Material.001']}
+                  position={[-0.35, -0.349, 6.601]}
+                />
+              </group>
+              <group
+                name="pied004"
+                position={[-1632.207, 777.617, 353.183]}
+                rotation={[-Math.PI / 2, 0, 0.371]}
+                scale={47.871}>
+                <mesh
+                  name="stem_4"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.stem_4.geometry}
+                  material={materials['Material.001']}
+                  position={[1.483, 0.691, 5.921]}
+                />
+              </group>
+              <group
+                name="pied005"
+                position={[-855.161, 825.048, -1229.883]}
+                rotation={[-Math.PI / 2, 0, 2.979]}
+                scale={68.293}>
+                <mesh
+                  name="stem_3"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.stem_3.geometry}
+                  material={materials['Material.001']}
+                  position={[1.722, 0.822, 5.294]}
+                />
+              </group>
+              <group name="poigne" position={[-45.254, 951.65, 1192.053]} scale={8.25}>
+                <mesh
+                  name="poigne_Material005_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.poigne_Material005_0.geometry}
+                  material={materials['Material.006']}
+                  position={[0, 0, 2.096]}
+                />
+              </group>
+              <group name="porte_cadre" position={[-99.457, 1022.193, 1202.183]} scale={107.3}>
+                <mesh
+                  name="porte_cadre_Material003_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.porte_cadre_Material003_0.geometry}
+                  material={materials['Material.004']}
+                  position={[0, -0.72, -0.21]}
+                />
+              </group>
+              <group
+                name="porte001"
+                position={[-91.195, 908.531, 1244.211]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={100}>
+                <mesh
+                  name="doore"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.doore.geometry}
+                  material={materials['Material.005']}
+                  position={[-0.087, 0.547, 0.064]}
+                />
+              </group>
+              <group
+                name="vitre"
+                position={[230.925, 1209.857, 799.069]}
+                rotation={[-1.521, 1.182, -0.345]}
+                scale={100}>
+                <mesh
+                  name="window_2"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.window_2.geometry}
+                  material={materials['Material.008']}
+                />
+              </group>
+              <group
+                name="vitre001"
+                position={[-350.518, 1247.791, 1001.729]}
+                rotation={[-0.697, -0.808, 0.51]}
+                scale={100}>
+                <mesh
+                  name="window_1"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.window_1.geometry}
+                  material={materials['Material.008']}
+                />
+              </group>
+              <group
+                name="window"
+                position={[207.182, 1190.492, 801.047]}
+                rotation={[-Math.PI / 2, 1.185, 0]}
+                scale={124.093}>
+                <mesh
+                  name="window_Material003_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.window_Material003_0.geometry}
+                  material={materials['Material.004']}
+                  position={[0, 0, 0.146]}
+                />
+              </group>
+              <group
+                name="window001"
+                position={[-337.23, 1236.914, 993.778]}
+                rotation={[2.504, 0.821, 2.151]}
+                scale={118.812}>
+                <mesh
+                  name="window001_Material003_0"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.window001_Material003_0.geometry}
+                  material={materials['Material.004']}
+                  position={[0, 0, 0.064]}
+                />
+              </group>
+            </group>
+          </group>
         </group>
       </group>
     </group>

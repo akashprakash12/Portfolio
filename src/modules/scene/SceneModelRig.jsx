@@ -1,9 +1,9 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import { DragControls } from "@react-three/drei";
 import Model from "../../components/Model";
 import CursorSphere from "./CursorSphere";
 import WindowLight from "./WindowLight";
-import WindowRays from "./WindowRays";
+import DoorBloomToggle from "./DoorBloomToggle";
 
 // Draggable model layer and the cursor sphere that drives triangle scattering.
 export default function SceneModelRig({
@@ -15,9 +15,17 @@ export default function SceneModelRig({
   scatterIntensity,
   cursorRef,
   onDrag,
+  windowColor,
+  windowRayCount,
+  windowRayOpacity,
+  windowRayLength,
 }) {
+  const [seedBloomEnabled, setSeedBloomEnabled] = useState(false);
+
   return (
     <>
+      <DoorBloomToggle onToggle={() => setSeedBloomEnabled((current) => !current)} />
+
       <group position={position} rotation={rotation} scale={scale}>
         <DragControls onDrag={onDrag}>
           <Suspense fallback={null}>
@@ -26,18 +34,23 @@ export default function SceneModelRig({
               cursorPosition={cursorRef}
               touchRadius={touchRadius}
               scatterIntensity={scatterIntensity}
+              seedBloomEnabled={seedBloomEnabled}
             />
           </Suspense>
         </DragControls>
       </group>
 
-      <CursorSphere cursorRef={cursorRef} modelZ={position[2]} />
+      {/* <CursorSphere cursorRef={cursorRef} modelZ={position[2]} /> */}
 
-      {/* Window emission + point light (separate module) */}
-      <WindowLight color="#FFFF00" intensity={3} distance={8} />
-
-      {/* Window rays emanating outward */}
-      <WindowRays color="#FFFF00" rayCount={3} />
+      {/* Window emission + point light + rays (merged) */}
+      <WindowLight
+        color={windowColor}
+        intensity={3}
+        distance={8}
+        rayCount={windowRayCount}
+        rayOpacity={windowRayOpacity}
+        rayLength={windowRayLength}
+      />
     </>
   );
 }

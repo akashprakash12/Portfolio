@@ -10,7 +10,7 @@ export default function SceneViewport() {
       {/* <Environment preset="sunset" /> */}
 
       <EffectComposer>
-        <Bloom intensity={2.2} luminanceThreshold={0.05} luminanceSmoothing={0.12} />
+        <Bloom intensity={2.6} luminanceThreshold={0.0} luminanceSmoothing={0.18} />
       </EffectComposer>
 
       <GizmoHelper alignment="bottom-right" margin={[80, 80]}>

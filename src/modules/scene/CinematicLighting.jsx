@@ -37,6 +37,12 @@ export default function CinematicLighting({
         intensity={keyIntensity}
         color={keyColor}
         castShadow
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+        shadow-bias={-0.0005}
+        shadow-camera-near={0.5}
+        shadow-camera-far={50}
+        shadow-radius={4}
       />
 
       <pointLight
