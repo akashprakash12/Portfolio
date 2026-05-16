@@ -1,8 +1,9 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import { DragControls } from "@react-three/drei";
 import Model from "../../components/Model";
 import CursorSphere from "./CursorSphere";
 import WindowLight from "./WindowLight";
+import DoorBloomToggle from "./DoorBloomToggle";
 
 // Draggable model layer and the cursor sphere that drives triangle scattering.
 export default function SceneModelRig({
@@ -19,8 +20,12 @@ export default function SceneModelRig({
   windowRayOpacity,
   windowRayLength,
 }) {
+  const [seedBloomEnabled, setSeedBloomEnabled] = useState(false);
+
   return (
     <>
+      <DoorBloomToggle onToggle={() => setSeedBloomEnabled((current) => !current)} />
+
       <group position={position} rotation={rotation} scale={scale}>
         <DragControls onDrag={onDrag}>
           <Suspense fallback={null}>
@@ -29,6 +34,7 @@ export default function SceneModelRig({
               cursorPosition={cursorRef}
               touchRadius={touchRadius}
               scatterIntensity={scatterIntensity}
+              seedBloomEnabled={seedBloomEnabled}
             />
           </Suspense>
         </DragControls>

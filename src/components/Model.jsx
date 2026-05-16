@@ -9,25 +9,27 @@ export default function Model(props) {
   const cursorPosition = props.cursorPosition ?? null;
   const touchRadius = props.touchRadius ?? 0.4;
   const scatterIntensity = props.scatterIntensity ?? 0.35;
+  const seedBloomEnabled = props.seedBloomEnabled ?? false;
   const groupProps = { ...props };
   delete groupProps.triangleGap;
   delete groupProps.cursorPosition;
   delete groupProps.touchRadius;
   delete groupProps.scatterIntensity;
-  const seedBloomColor = props.seedBloomColor ?? "#fff6d8";
+  const seedBloomColor = props.seedBloomColor ?? "#ff4fd8";
   const seedBloomIntensity = props.seedBloomIntensity ?? 0.6;
 
   const meshesRef = useRef([]);
   const seedMeshesRef = useRef([]);
   const seedBasePositionsRef = useRef(new Map());
-  const seedHoverStartPositionsRef = useRef(new Map());
+  const seedBloomStartPositionsRef = useRef(new Map());
+  const seedBloomProgressRef = useRef(new Map());
   const seedHoverProgressRef = useRef(new Map());
-  const hoveredSeedRef = useRef(null);
   const seedBaseMaterialRef = useRef(new Map());
   const originalGeometriesRef = useRef(new Map());
   const frameAccumulatorRef = useRef(0);
-  const raycasterRef = useRef(new THREE.Raycaster());
-  const ndcMouseRef = useRef(new THREE.Vector2(9999, 9999));
+  const hoveredSeedRef = useRef(null);
+  const hoverRaycasterRef = useRef(new THREE.Raycaster());
+  const hoverMouseRef = useRef(new THREE.Vector2(9999, 9999));
   const hoverTargetPositionRef = useMemo(() => new THREE.Vector3(), []);
 
   // Pre-allocate Vector3 objects for performance
@@ -105,7 +107,8 @@ export default function Model(props) {
     meshesRef.current = [];
     seedMeshesRef.current = [];
     seedBasePositionsRef.current.clear();
-    seedHoverStartPositionsRef.current.clear();
+    seedBloomStartPositionsRef.current.clear();
+    seedBloomProgressRef.current.clear();
     seedHoverProgressRef.current.clear();
     seedBaseMaterialRef.current.clear();
 
@@ -115,18 +118,10 @@ export default function Model(props) {
         child.receiveShadow = true;
         meshesRef.current.push(child);
 
-        // Seed detection by material: treat meshes using 'Material.003' as seeds
+        // Seed detection: only meshes named like `seed_*` are allowed to bloom/float.
         const childMaterials = Array.isArray(child.material) ? child.material : [child.material];
-        let isSeed = false;
-        for (let mi = 0; mi < childMaterials.length; mi++) {
-          const mat = childMaterials[mi];
-          if (!mat) continue;
-          const matName = (mat.name || "").toLowerCase();
-          if (matName.includes("material.003") || matName.includes("material 003")) {
-            isSeed = true;
-            break;
-          }
-        }
+        const meshName = (child.name || "").toLowerCase();
+        const isSeed = meshName.startsWith("seed_");
 
         if (isSeed) {
           seedMeshesRef.current.push(child);
@@ -136,6 +131,7 @@ export default function Model(props) {
             child,
             Array.isArray(child.material)
               ? child.material.map((material) => ({
+                  color: material?.color?.clone?.() ?? null,
                   roughness: material?.roughness,
                   metalness: material?.metalness,
                   emissive: material?.emissive?.clone?.() ?? null,
@@ -143,6 +139,7 @@ export default function Model(props) {
                 }))
               : [
                   {
+                    color: child.material?.color?.clone?.() ?? null,
                     roughness: child.material?.roughness,
                     metalness: child.material?.metalness,
                     emissive: child.material?.emissive?.clone?.() ?? null,
@@ -222,82 +219,40 @@ export default function Model(props) {
   useEffect(() => {
     const canvas = gl.domElement;
 
-    const updateHoveredSeed = (event) => {
+    const handlePointerMove = (event) => {
       const rect = canvas.getBoundingClientRect();
-      ndcMouseRef.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      ndcMouseRef.current.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      hoverMouseRef.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      hoverMouseRef.current.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
-      raycasterRef.current.setFromCamera(ndcMouseRef.current, camera);
-      // Raycast against all meshes and then walk up the hit object's parent
-      // chain to find the nearest ancestor whose name starts with 'seed'.
-      const hits = raycasterRef.current.intersectObjects(meshesRef.current, true);
+      hoverRaycasterRef.current.setFromCamera(hoverMouseRef.current, camera);
+      const hits = hoverRaycasterRef.current.intersectObjects(meshesRef.current, true);
       let found = null;
+
       for (let i = 0; i < hits.length; i++) {
-        let o = hits[i].object;
-        while (o) {
-          if (o.isMesh && o.material) {
-            const mats = Array.isArray(o.material) ? o.material : [o.material];
-            for (let mi = 0; mi < mats.length; mi++) {
-              const mn = (mats[mi]?.name || "").toLowerCase();
-              if (mn.includes("material.003") || mn.includes("material 003")) {
-                found = o;
-                break;
-              }
-            }
-            if (found) break;
+        let current = hits[i].object;
+        while (current) {
+          if (current.isMesh && (current.name || "").toLowerCase().startsWith("seed_")) {
+            found = current;
+            break;
           }
-          o = o.parent;
+          current = current.parent;
         }
         if (found) break;
       }
-      const previous = hoveredSeedRef.current;
-      if (found !== previous) {
-        try {
-          if (found) {
-            const worldPos = new THREE.Vector3();
-            found.getWorldPosition(worldPos);
-            const geom = found.geometry;
-            const materials = Array.isArray(found.material) ? found.material : [found.material];
-            console.groupCollapsed(`Hovered seed: ${found.name || found.uuid}`);
-            console.log({
-              name: found.name,
-              uuid: found.uuid,
-              position: found.position.clone(),
-              worldPosition: worldPos.clone(),
-              geometry: {
-                id: geom?.id ?? null,
-                vertexCount: geom?.attributes?.position?.count ?? null,
-              },
-              material: materials.map((mat) => ({
-                name: mat?.name ?? null,
-                color: mat?.color ? `#${mat.color.getHexString()}` : null,
-                emissive: mat?.emissive ? `#${mat.emissive.getHexString()}` : null,
-                emissiveIntensity: mat?.emissiveIntensity ?? null,
-                roughness: mat?.roughness ?? null,
-                metalness: mat?.metalness ?? null,
-              })),
-            });
-            console.groupEnd();
-          } else if (previous) {
-            console.log(`Seed hover cleared: ${previous.name || previous.uuid}`);
-          }
-        } catch (e) {
-          console.log('Hover dump error:', e);
-        }
-      }
+
       hoveredSeedRef.current = found;
     };
 
-    const clearHoveredSeed = () => {
+    const handlePointerLeave = () => {
       hoveredSeedRef.current = null;
     };
 
-    window.addEventListener("pointermove", updateHoveredSeed, { passive: true });
-    canvas.addEventListener("pointerleave", clearHoveredSeed);
+    canvas.addEventListener("pointermove", handlePointerMove, { passive: true });
+    canvas.addEventListener("pointerleave", handlePointerLeave);
 
     return () => {
-      window.removeEventListener("pointermove", updateHoveredSeed);
-      canvas.removeEventListener("pointerleave", clearHoveredSeed);
+      canvas.removeEventListener("pointermove", handlePointerMove);
+      canvas.removeEventListener("pointerleave", handlePointerLeave);
     };
   }, [camera, gl]);
 
@@ -425,12 +380,11 @@ export default function Model(props) {
       }
     });
 
-    const hoveredSeed = hoveredSeedRef.current;
     const hoverElapsed = state.clock.elapsedTime;
 
     const bloomEnabled = true;
-    const bloomColor = "#fff6d8";
-    const bloomIntensity = 1.25;
+    const bloomColor = seedBloomColor;
+    const bloomIntensity = 3.1;
     const glossRoughness = 0.12;
     const glossMetalness = 0.5;
     const seedFloatHeight = 0.18;
@@ -441,32 +395,38 @@ export default function Model(props) {
     const seedFloatTilt = 0.03;
 
     seedMeshesRef.current.forEach((mesh, index) => {
-      const isHovered = hoveredSeed && (hoveredSeed === mesh || hoveredSeed.parent === mesh);
-      const target = isHovered ? 1 : 0;
-      const previous = seedHoverProgressRef.current.get(mesh) ?? 0;
-      const progress = THREE.MathUtils.damp(previous, target, seedFloatSpeed, delta);
-      seedHoverProgressRef.current.set(mesh, progress);
+      const isBloomActive = seedBloomEnabled;
+      const isHovered = hoveredSeedRef.current === mesh;
 
-      if (isHovered && !seedHoverStartPositionsRef.current.has(mesh)) {
-        seedHoverStartPositionsRef.current.set(mesh, mesh.position.clone());
+      const previousBloom = seedBloomProgressRef.current.get(mesh) ?? 0;
+      const bloomProgress = THREE.MathUtils.damp(previousBloom, isBloomActive ? 1 : 0, seedFloatSpeed, delta);
+      seedBloomProgressRef.current.set(mesh, bloomProgress);
+
+      const previousHover = seedHoverProgressRef.current.get(mesh) ?? 0;
+      const hoverProgress = THREE.MathUtils.damp(previousHover, isHovered ? 1 : 0, seedFloatSpeed, delta);
+      seedHoverProgressRef.current.set(mesh, hoverProgress);
+
+      if (isBloomActive && !seedBloomStartPositionsRef.current.has(mesh)) {
+        seedBloomStartPositionsRef.current.set(mesh, mesh.position.clone());
       }
 
-      const basePosition = isHovered
-        ? seedHoverStartPositionsRef.current.get(mesh) ?? seedBasePositionsRef.current.get(mesh)
+      const basePosition = isBloomActive
+        ? seedBloomStartPositionsRef.current.get(mesh) ?? seedBasePositionsRef.current.get(mesh)
         : seedBasePositionsRef.current.get(mesh);
       if (!basePosition) return;
 
-      if (!isHovered && progress <= 0.001) {
-        seedHoverStartPositionsRef.current.delete(mesh);
+      if (!isBloomActive && bloomProgress <= 0.001) {
+        seedBloomStartPositionsRef.current.delete(mesh);
       }
 
       hoverTargetPositionRef.copy(basePosition);
       hoverTargetPositionRef.y +=
-        progress * (seedFloatHeight + seedFloatRise) +
-        Math.sin(hoverElapsed * 4 + index * 0.35) * progress * seedFloatBob;
-      mesh.position.lerp(hoverTargetPositionRef, isHovered ? 0.14 : 0.08);
-      mesh.rotation.z = Math.sin(hoverElapsed * 2.8 + index * 0.25) * progress * seedFloatTilt;
-      mesh.scale.setScalar(1 + progress * seedFloatScale);
+        bloomProgress * (seedFloatHeight + seedFloatRise) +
+        Math.sin(hoverElapsed * 4 + index * 0.35) * bloomProgress * seedFloatBob +
+        hoverProgress * 0.06;
+      mesh.position.lerp(hoverTargetPositionRef, isBloomActive ? 0.14 : 0.08);
+      mesh.rotation.z = Math.sin(hoverElapsed * 2.8 + index * 0.25) * (bloomProgress + hoverProgress * 0.35) * seedFloatTilt;
+      mesh.scale.setScalar(1 + bloomProgress * seedFloatScale + hoverProgress * 0.01);
 
       const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
       const materialStates = seedBaseMaterialRef.current.get(mesh) || [];
@@ -475,8 +435,9 @@ export default function Model(props) {
         if (!material) return;
         const baseState = materialStates[materialIndex] || {};
 
-        const targetRoughness = isHovered ? glossRoughness : baseState.roughness ?? material.roughness;
-        const targetMetalness = isHovered ? glossMetalness : baseState.metalness ?? material.metalness;
+        const targetRoughness = isBloomActive ? glossRoughness : baseState.roughness ?? material.roughness;
+        const targetMetalness = isBloomActive ? glossMetalness : baseState.metalness ?? material.metalness;
+        const targetColor = isBloomActive ? new THREE.Color(bloomColor) : baseState.color ?? material.color;
 
         material.roughness = THREE.MathUtils.damp(
           material.roughness ?? targetRoughness,
@@ -491,14 +452,17 @@ export default function Model(props) {
           delta
         );
 
+        if (material.color && targetColor) {
+          material.color.lerp(targetColor, isBloomActive ? 0.55 : 0.08 + hoverProgress * 0.06);
+        }
+
         if (bloomEnabled && material.emissive) {
           const glow = new THREE.Color(bloomColor);
           // Smoothly ramp emissive color/intensity based on hover progress
-          const targetEmissive = glow;
-          material.emissive.lerp(targetEmissive, progress * 0.65);
+          material.emissive.copy(glow);
           material.emissiveIntensity = THREE.MathUtils.damp(
             material.emissiveIntensity ?? 0,
-            progress * bloomIntensity,
+            bloomProgress * bloomIntensity,
             10,
             delta
           );
@@ -516,9 +480,6 @@ export default function Model(props) {
         object={scene}
         castShadow
         receiveShadow
-        onClick={(event) => {
-          event.stopPropagation();
-        }}
       />
     </group>
   );
