@@ -5,7 +5,7 @@ import { useControls } from "leva";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
-function CinematicCamera({ targetCamPos = null, activeSection = 0 }) {
+function CinematicCamera({ targetCamPos = null }) {
   const { camera, controls } = useThree();
 
   const hasAnimated = useRef(false); // prevent running twice
@@ -19,8 +19,6 @@ function CinematicCamera({ targetCamPos = null, activeSection = 0 }) {
     fov: { value: 53, min: 10, max: 80, step: 1 },
   });
 
-  // keep a base camera position for subtle idle motion
-  const baseCam = useRef([...camPos]);
   const camPosKey = camPos.join(",");
   const targetKey = target.join(",");
   const targetCamPosKey = targetCamPos ? targetCamPos.join(",") : "";
@@ -74,7 +72,6 @@ function CinematicCamera({ targetCamPos = null, activeSection = 0 }) {
   useEffect(() => {
     if (!targetCamPos) return;
     animateCamera(targetCamPos, target, 1.5, "power2.inOut", () => {
-      baseCam.current = [...targetCamPos];
     });
   }, [targetCamPosKey, camera, controls, targetKey]);
 
@@ -84,7 +81,6 @@ function CinematicCamera({ targetCamPos = null, activeSection = 0 }) {
   useEffect(() => {
     // Leva updates animate through GSAP instead of snapping.
     animateCamera(camPos, target, 0.8, "power2.out", () => {
-      baseCam.current = [...camPos];
     });
     camera.fov = fov;
     camera.updateProjectionMatrix();

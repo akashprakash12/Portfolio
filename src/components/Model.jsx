@@ -178,42 +178,6 @@ export default function Model(props) {
         }
       }
     });
-    try {
-      // Debug: print full seed model details for inspection
-      console.groupCollapsed(`Seed meshes (${seedMeshesRef.current.length})`);
-      seedMeshesRef.current.forEach((m, i) => {
-        try {
-          const worldPos = new THREE.Vector3();
-          m.getWorldPosition(worldPos);
-          const geom = m.geometry;
-          const materials = Array.isArray(m.material) ? m.material : [m.material];
-          console.log({
-            index: i,
-            name: m.name,
-            uuid: m.uuid,
-            position: m.position.clone(),
-            worldPosition: worldPos.clone(),
-            geometry: {
-              id: geom?.id ?? null,
-              vertexCount: geom?.attributes?.position?.count ?? null,
-            },
-            material: materials.map((mat) => ({
-              name: mat?.name ?? null,
-              color: mat?.color ? `#${mat.color.getHexString()}` : null,
-              emissive: mat?.emissive ? `#${mat.emissive.getHexString()}` : null,
-              emissiveIntensity: mat?.emissiveIntensity ?? null,
-              roughness: mat?.roughness ?? null,
-              metalness: mat?.metalness ?? null,
-            })),
-          });
-        } catch (e) {
-          console.log(`Seed dump error for index ${i}:`, e);
-        }
-      });
-      console.groupEnd();
-    } catch (e) {
-      // harmless in environments without console
-    }
   }, [scene]);
 
   useEffect(() => {

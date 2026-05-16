@@ -1,7 +1,7 @@
-import React, { useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import React, { useEffect, useRef } from "react";
 import { useHelper } from "@react-three/drei";
 import * as THREE from "three";
+import gsap from "gsap";
 
 export default function CinematicLighting({
   // Key light
@@ -16,18 +16,29 @@ export default function CinematicLighting({
 }) {
   const keyLightRef = useRef();
   const fillLightRef = useRef();
+  const fillPulseRef = useRef({ intensity: fillIntensity });
 
   useHelper(keyLightRef, THREE.DirectionalLightHelper, 1.5, "#8db3ff");
   useHelper(fillLightRef, THREE.PointLightHelper, 0.5, "#ffd3a1");
 
-  useFrame(({ clock }) => {
-    const elapsed = clock.elapsedTime;
+  useEffect(() => {
+    fillPulseRef.current.intensity = fillIntensity;
 
-    if (fillLightRef.current) {
-      fillLightRef.current.intensity =
-        fillIntensity + Math.sin(elapsed * 0.9) * 0.12;
-    }
-  });
+    const tween = gsap.to(fillPulseRef.current, {
+      intensity: fillIntensity + 0.12,
+      duration: 2.2,
+      ease: "sine.inOut",
+      repeat: -1,
+      yoyo: true,
+      onUpdate: () => {
+        if (fillLightRef.current) {
+          fillLightRef.current.intensity = fillPulseRef.current.intensity;
+        }
+      },
+    });
+
+    return () => tween.kill();
+  }, [fillIntensity]);
 
   return (
     <>
