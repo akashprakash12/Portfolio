@@ -1,91 +1,119 @@
 // CinematicCamera.jsx
-import { useThree, useFrame } from "@react-three/fiber";
-import { useControls } from "leva";
+import React from "react";
+import { useThree } from "@react-three/fiber";
+import { useControls, folder } from "leva";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
-export default function CinematicCamera() {
+function CinematicCamera({ targetCamPos = null, activeSection = 0 }) {
   const { camera, controls } = useThree();
 
-  const hasAnimated = useRef(false); // prevent running twice
+  const hasAnimated = useRef(false);
+  const isTransitioning = useRef(false);
+  const activeTween = useRef(null);
 
-  // Leva controls (sliders)
+  // ─── Default / Home camera ───────────────────────────────────────────────
   const { camPos, target, fov } = useControls("Camera Controls", {
     camPos: { value: [0, 0, 6], step: 0.1 },
     target: { value: [0, 1, 0], step: 0.1 },
-    fov: { value: 53, min: 10, max: 80, step: 1 }
+    fov:    { value: 53, min: 10, max: 80, step: 1 },
   });
 
-  // keep a base camera position for subtle idle motion
-  const baseCam = useRef([...camPos]);
+  // ─── About section camera ────────────────────────────────────────────────
+  // Tweak these values while you're on the About slide; they take effect live.
+  const { aboutCamPos, aboutTarget, aboutFov } = useControls("About Camera", {
+    aboutCamPos: { value: [-5.9, 0, 6], step: 0.1, label: "Position" },
+    aboutTarget: { value: [0, 1, 0],    step: 0.1, label: "Look At"  },
+    aboutFov:    { value: 53, min: 10, max: 80, step: 1, label: "FOV" },
+  });
 
-  /* ========================
-        🎬 GSAP CINEMATIC INTRO
-     ======================== */
-  useEffect(() => {
-    if (hasAnimated.current) return; 
-    hasAnimated.current = true;
+  // ─── Helpers ─────────────────────────────────────────────────────────────
+  const camPosKey      = camPos.join(",");
+  const targetKey      = target.join(",");
+  const aboutCamPosKey = aboutCamPos.join(",");
+  const aboutTargetKey = aboutTarget.join(",");
+  const targetCamPosKey = targetCamPos ? targetCamPos.join(",") : "";
 
-    // Disable Orbit while animating
+  const animateCamera = (nextPosition, nextTarget, duration, ease, onComplete) => {
+    if (!nextPosition) return;
+
+    if (activeTween.current) activeTween.current.kill();
+
+    isTransitioning.current = true;
     if (controls) controls.enabled = false;
 
-    // Initial camera placement
+    activeTween.current = gsap.to(camera.position, {
+      x: nextPosition[0],
+      y: nextPosition[1],
+      z: nextPosition[2],
+      duration,
+      ease,
+      onUpdate: () => {
+        camera.lookAt(...nextTarget);
+      },
+      onComplete: () => {
+        camera.position.set(...nextPosition);
+        camera.lookAt(...nextTarget);
+        camera.updateProjectionMatrix();
+        if (controls) controls.enabled = true;
+        isTransitioning.current = false;
+        activeTween.current = null;
+        if (onComplete) onComplete();
+      },
+    });
+  };
+
+  // ─── Cinematic intro ──────────────────────────────────────────────────────
+  useEffect(() => {
+    if (hasAnimated.current) return;
+    hasAnimated.current = true;
+
     camera.position.set(-8, 2, 9);
     camera.lookAt(0, 1, 0);
+    animateCamera(camPos, target, 3, "power3.out");
+  }, [camera, controls, camPosKey, targetKey]);
 
-    const tl = gsap.timeline({ ease: "power3.out" });
-
-    tl.to(camera.position, {
-      x: -8,
-      y: 2,
-      z: 15,
-      duration: 2
-    })
-      .to(
-        camera.position,
-        {
-          x: camPos[0],
-          y: camPos[1],
-          z: camPos[2],
-          duration: 2
-        },
-        "-=1"
-      )
-      .to(
-        {},
-        {
-          duration: 1,
-          onUpdate: () => {
-            camera.lookAt(...target);
-          }
-        },
-        "<"
-      )
-      .eventCallback("onComplete", () => {
-        if (controls) controls.enabled = true;
-      });
-  }, [camera, controls, camPos, target]);
-
-  /* ========================
-       🎚 LEVA LIVE CONTROLS
-     ======================== */
+  // ─── Section-based camera switch ─────────────────────────────────────────
   useEffect(() => {
-    camera.position.set(...camPos);
-    camera.fov = fov;
-    camera.lookAt(...target);
-    camera.updateProjectionMatrix();
-    baseCam.current = [...camPos];
-  }, [camPos, target, fov, camera]);
+    if (activeSection === 1) {
+      // Use the dedicated About camera position from Leva
+      animateCamera(aboutCamPos, aboutTarget, 1.5, "power2.inOut");
+      camera.fov = aboutFov;
+      camera.updateProjectionMatrix();
+    } else if (targetCamPos) {
+      // All other sections use the positions passed from Scene
+      animateCamera(targetCamPos, target, 1.5, "power2.inOut");
+      camera.fov = fov;
+      camera.updateProjectionMatrix();
+    }
+  }, [activeSection, targetCamPosKey, aboutCamPosKey, aboutTargetKey]);
 
-  // slow idle camera motion
-  useFrame((state) => {
-    const t = state.clock.elapsedTime;
-    const offset = Math.sin(t * 0.1) * 0.3;
-    camera.position.x = baseCam.current[0] + offset;
-    camera.position.y = baseCam.current[1];
-    camera.position.z = baseCam.current[2];
-    camera.lookAt(...target);
-  });
+  // ─── Live Leva updates (default camera) ──────────────────────────────────
+  useEffect(() => {
+    if (activeSection === 1) return; // don't override About camera with default
+
+    animateCamera(camPos, target, 0.8, "power2.out");
+    camera.fov = fov;
+    camera.updateProjectionMatrix();
+  }, [camPosKey, targetKey, fov, camera, activeSection]);
+
+  // ─── Live Leva updates (About camera) ────────────────────────────────────
+  useEffect(() => {
+    if (activeSection !== 1) return; // only apply when on About section
+
+    animateCamera(aboutCamPos, aboutTarget, 0.5, "power2.out");
+    camera.fov = aboutFov;
+    camera.updateProjectionMatrix();
+  }, [aboutCamPosKey, aboutTargetKey, aboutFov, camera, activeSection]);
+
+  // ─── Cleanup ──────────────────────────────────────────────────────────────
+  useEffect(() => {
+    return () => {
+      if (activeTween.current) activeTween.current.kill();
+    };
+  }, []);
 
   return null;
 }
+
+export default React.memo(CinematicCamera);

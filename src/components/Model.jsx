@@ -178,42 +178,6 @@ export default function Model(props) {
         }
       }
     });
-    try {
-      // Debug: print full seed model details for inspection
-      console.groupCollapsed(`Seed meshes (${seedMeshesRef.current.length})`);
-      seedMeshesRef.current.forEach((m, i) => {
-        try {
-          const worldPos = new THREE.Vector3();
-          m.getWorldPosition(worldPos);
-          const geom = m.geometry;
-          const materials = Array.isArray(m.material) ? m.material : [m.material];
-          console.log({
-            index: i,
-            name: m.name,
-            uuid: m.uuid,
-            position: m.position.clone(),
-            worldPosition: worldPos.clone(),
-            geometry: {
-              id: geom?.id ?? null,
-              vertexCount: geom?.attributes?.position?.count ?? null,
-            },
-            material: materials.map((mat) => ({
-              name: mat?.name ?? null,
-              color: mat?.color ? `#${mat.color.getHexString()}` : null,
-              emissive: mat?.emissive ? `#${mat.emissive.getHexString()}` : null,
-              emissiveIntensity: mat?.emissiveIntensity ?? null,
-              roughness: mat?.roughness ?? null,
-              metalness: mat?.metalness ?? null,
-            })),
-          });
-        } catch (e) {
-          console.log(`Seed dump error for index ${i}:`, e);
-        }
-      });
-      console.groupEnd();
-    } catch (e) {
-      // harmless in environments without console
-    }
   }, [scene]);
 
   useEffect(() => {
@@ -420,10 +384,15 @@ export default function Model(props) {
       }
 
       hoverTargetPositionRef.copy(basePosition);
-      hoverTargetPositionRef.y +=
+      // compute desired world-space vertical offset, then convert to local-space
+      const desiredWorldOffsetY =
         bloomProgress * (seedFloatHeight + seedFloatRise) +
         Math.sin(hoverElapsed * 4 + index * 0.35) * bloomProgress * seedFloatBob +
         hoverProgress * 0.06;
+      const worldScale = tmpCentroid; // reuse temp vector
+      mesh.getWorldScale(worldScale);
+      const localOffsetY = desiredWorldOffsetY / (worldScale.y || 1);
+      hoverTargetPositionRef.y += localOffsetY;
       mesh.position.lerp(hoverTargetPositionRef, isBloomActive ? 0.14 : 0.08);
       mesh.rotation.z = Math.sin(hoverElapsed * 2.8 + index * 0.25) * (bloomProgress + hoverProgress * 0.35) * seedFloatTilt;
       mesh.scale.setScalar(1 + bloomProgress * seedFloatScale + hoverProgress * 0.01);

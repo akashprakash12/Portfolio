@@ -44,11 +44,78 @@ export function useSceneControls() {
   // --- Window rays / bloom color ---
   const { windowColor, windowRayCount, windowRayOpacity, windowRayLength } =
     useControls("Window Rays", {
-      windowColor: { value: "#FFFF00" },
+      windowColor: { value: "#8fa380" },
       windowRayCount: { value: 3, min: 0, max: 8, step: 1 },
       windowRayOpacity: { value: 0.3, min: 0, max: 1, step: 0.01 },
       windowRayLength: { value: 6, min: 0.1, max: 20, step: 0.1 },
     });
+
+  // --- UI Labels ---
+  const { doorLabelOffset } = useControls("UI Labels", {
+    doorLabelOffset: { value: [-6.180000000000003, 11.279999999999987, 2.3000000000000007], step: 0.01 },
+  });
+
+// --- Mushroom Model ---
+const { mushroomPosition, mushroomScale } = useControls("Mushroom Model", {
+  mushroomPosition: {
+    value: [-4.9, -0.6, 2.2],
+    step: 0.1,
+  },
+  mushroomScale: {
+    value: 2,
+    min: 0.1,
+    max: 5,
+    step: 0.05,
+  },
+});
+
+  // --- Water ---
+  const { waterColor, waveSpeed, waveFreq, waveAmp, waterScale } = useControls(
+    "Water",
+    {
+      waterColor: { value: "#2b6ea3" },
+      waveSpeed: { value: 0.6, min: 0, max: 5, step: 0.01 },
+      waveFreq: { value: 1.5, min: 0.1, max: 10, step: 0.1 },
+      waveAmp: { value: 0.18, min: 0, max: 1, step: 0.01 },
+      waterScale: { value: 1, min: 0.1, max: 5, step: 0.01 },
+    }
+  );
+  const {
+    waterRoughness,
+    waterBlur,
+    reflectivity,
+    normalScale,
+    splashEnabled,
+    splashRate,
+  } = useControls("Water Extras", {
+    waterRoughness: { value: 0.12, min: 0, max: 1, step: 0.01 },
+    waterBlur: { value: [100, 200], min: 0, max: 1000, step: 1 },
+    reflectivity: { value: 0.6, min: 0, max: 1, step: 0.01 },
+    normalScale: { value: 1.2, min: 0, max: 5, step: 0.01 },
+    splashEnabled: { value: true },
+    splashRate: { value: 0.4, min: 0.01, max: 2, step: 0.01 },
+  });
+
+  // --- Chimney smoke ---
+  const {
+    smokeEnabled,
+    smokeCount,
+    smokeSpawnInterval,
+    smokeSize,
+    smokeLifetime,
+    smokeColor,
+    smokeBuoyancy,
+    smokeOpacity,
+  } = useControls("Chimney Smoke", {
+    smokeEnabled: { value: true },
+    smokeCount: { value: 26, min: 4, max: 200, step: 1 },
+    smokeSpawnInterval: { value: 0.23, min: 0.01, max: 1, step: 0.01 },
+    smokeSize: { value: [0.02, 0.39], min: 0.001, max: 1, step: 0.001 },
+    smokeLifetime: { value: [1, 6.7], min: 0.1, max: 10, step: 0.1 },
+    smokeColor: { value: "#897d72" },
+    smokeBuoyancy: { value: 1.4, min: 0, max: 2, step: 0.01 },
+    smokeOpacity: { value: 0.49, min: 0, max: 1, step: 0.01 },
+  });
 
   return {
     // Model
@@ -78,5 +145,31 @@ export function useSceneControls() {
     windowRayCount,
     windowRayOpacity,
     windowRayLength,
+    // Water
+    waterColor,
+    waveSpeed,
+    waveFreq,
+    waveAmp,
+    waterScale,
+    waterRoughness,
+    waterBlur,
+    reflectivity,
+    normalScale,
+    splashEnabled,
+    splashRate,
+    // UI labels
+    doorLabelOffset,
+    // smoke
+    smokeEnabled,
+    smokeCount,
+    smokeSpawnInterval,
+    smokeSize,
+    smokeLifetime,
+    smokeColor,
+    smokeBuoyancy,
+    smokeOpacity,
+    // Mushroom
+    mushroomPosition,
+    mushroomScale,
   };
 }
