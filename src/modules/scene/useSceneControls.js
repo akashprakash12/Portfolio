@@ -50,6 +50,27 @@ export function useSceneControls() {
       windowRayLength: { value: 6, min: 0.1, max: 20, step: 0.1 },
     });
 
+  // --- Chimney smoke ---
+  const {
+    smokeEnabled,
+    smokeCount,
+    smokeSpawnInterval,
+    smokeSize,
+    smokeLifetime,
+    smokeColor,
+    smokeBuoyancy,
+    smokeOpacity,
+  } = useControls("Chimney Smoke", {
+    smokeEnabled: { value: true },
+    smokeCount: { value: 26, min: 4, max: 200, step: 1 },
+    smokeSpawnInterval: { value: 0.23, min: 0.01, max: 1, step: 0.01 },
+    smokeSize: { value: [0.02, 0.39], min: 0.001, max: 1, step: 0.001 },
+    smokeLifetime: { value: [1, 6.7], min: 0.1, max: 10, step: 0.1 },
+    smokeColor: { value: "#897d72" },
+    smokeBuoyancy: { value: 1.4, min: 0, max: 2, step: 0.01 },
+    smokeOpacity: { value: 0.49, min: 0, max: 1, step: 0.01 },
+  });
+
   return {
     // Model
     position,
@@ -78,5 +99,14 @@ export function useSceneControls() {
     windowRayCount,
     windowRayOpacity,
     windowRayLength,
+    // smoke
+    smokeEnabled,
+    smokeCount,
+    smokeSpawnInterval,
+    smokeSize,
+    smokeLifetime,
+    smokeColor,
+    smokeBuoyancy,
+    smokeOpacity,
   };
 }

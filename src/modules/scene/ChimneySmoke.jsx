@@ -1,15 +1,29 @@
 import React, { useEffect, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import { useSceneControls } from "./useSceneControls";
 
-export default function ChimneySmoke({ count = 40 }) {
+export default function ChimneySmoke({ count: initialCount = 40 }) {
   const { scene } = useThree();
   const groupRef = useRef();
   const particlesRef = useRef([]);
   const spawnTimerRef = useRef(0);
+  const foundRef = useRef(false);
+  const helperRef = useRef();
+  const {
+    smokeEnabled,
+    smokeCount,
+    smokeSpawnInterval,
+    smokeSize,
+    smokeLifetime,
+    smokeColor,
+    smokeBuoyancy,
+    smokeOpacity,
+  } = useSceneControls();
 
-  // initialize particle placeholders
-  useEffect(() => {
+  // ensure particles array exists (ref callbacks will populate `mesh`)
+  const count = smokeCount || initialCount;
+  if (!particlesRef.current || particlesRef.current.length !== count) {
     particlesRef.current = new Array(count).fill(0).map(() => ({
       mesh: null,
       life: 0,
@@ -17,20 +31,33 @@ export default function ChimneySmoke({ count = 40 }) {
       vel: new THREE.Vector3(),
       pos: new THREE.Vector3(),
     }));
-  }, [count]);
+  }
 
   useFrame((state, delta) => {
     const chimney =
       scene.getObjectByName("chemine_Material007_0") || scene.getObjectByName("chemine");
-    if (!chimney) return;
+    if (chimney && !foundRef.current) {
+      // log once when chimney is first found
+      console.log("ChimneySmoke: found chimney ->", chimney.name);
+      foundRef.current = true;
+    }
+    if (!chimney && foundRef.current) {
+      console.warn("ChimneySmoke: chimney not found in scene");
+      foundRef.current = false;
+      return;
+    }
+
+    if (!groupRef.current) return;
 
     // world position of chimney mouth
     const mouthWorld = new THREE.Vector3();
     chimney.getWorldPosition(mouthWorld);
 
+    if (!smokeEnabled) return;
+
     // spawn rate
     spawnTimerRef.current += delta;
-    const spawnInterval = 0.08;
+    const spawnInterval = smokeSpawnInterval || 0.08;
     if (spawnTimerRef.current > spawnInterval) {
       spawnTimerRef.current = 0;
       // find dead particle
@@ -38,19 +65,43 @@ export default function ChimneySmoke({ count = 40 }) {
         const p = particlesRef.current[i];
         if (p.life <= 0 && p.mesh) {
           // initialize
-          p.lifespan = 1.6 + Math.random() * 1.2;
+          // lifespan from control range
+          const lifeMin = smokeLifetime[0] || 1.0;
+          const lifeMax = smokeLifetime[1] || 2.8;
+          p.lifespan = lifeMin + Math.random() * (lifeMax - lifeMin);
           p.life = p.lifespan;
-          // small upward velocity with jitter
-          p.vel.set((Math.random() - 0.5) * 0.06, 0.3 + Math.random() * 0.12, (Math.random() - 0.5) * 0.06);
+          // small upward velocity with jitter (buoyancy control)
+          p.vel.set((Math.random() - 0.5) * 0.06, 0.25 + Math.random() * 0.12, (Math.random() - 0.5) * 0.06);
           // start position just above chimney mouth
           const startWorld = mouthWorld.clone();
           startWorld.y += 0.1 + Math.random() * 0.05;
-          // convert to local of this group
-          const startLocal = groupRef.current.worldToLocal(startWorld);
-          p.pos.copy(startLocal);
+          // attach particle to scene so we can set world position directly
+          try {
+            scene.attach(p.mesh);
+          } catch (e) {}
+          p.pos.copy(startWorld);
           p.mesh.position.copy(p.pos);
+          p.mesh.renderOrder = 999;
+          if (p.mesh.material) {
+            p.mesh.material.depthTest = false;
+            p.mesh.material.depthWrite = false;
+          }
           p.mesh.visible = true;
-          p.mesh.scale.setScalar(0.01 + Math.random() * 0.02);
+          // larger for debug visibility
+          // scale using smokeSize control range
+          const sizeMin = smokeSize[0] || 0.02;
+          const sizeMax = smokeSize[1] || 0.12;
+          p.mesh.scale.setScalar(sizeMin + Math.random() * (sizeMax - sizeMin));
+          // ensure material is visible and emissive for quick debugging
+          if (p.mesh.material) {
+            p.mesh.material.color.set(smokeColor || "#ffff66");
+            p.mesh.material.emissive && p.mesh.material.emissive.set(smokeColor || "#ffff22");
+            p.mesh.material.emissiveIntensity = 0.8;
+            p.mesh.material.opacity = smokeOpacity != null ? smokeOpacity : 1;
+            p.mesh.material.transparent = true;
+            p.mesh.material.depthWrite = false;
+          }
+          console.log("ChimneySmoke: spawn particle", i, startWorld.toArray());
           break;
         }
       }
@@ -62,7 +113,7 @@ export default function ChimneySmoke({ count = 40 }) {
       if (!p.mesh || p.life <= 0) continue;
 
       // simple buoyancy + drag
-      const buoy = new THREE.Vector3(0, 0.28, 0);
+      const buoy = new THREE.Vector3(0, smokeBuoyancy || 0.28, 0);
       p.vel.addScaledVector(buoy, delta);
       p.vel.multiplyScalar(1 - Math.min(delta * 0.5, 0.12));
       p.pos.addScaledVector(p.vel, delta);
@@ -74,9 +125,11 @@ export default function ChimneySmoke({ count = 40 }) {
       p.mesh.position.copy(p.pos);
       // scale and fade
       const t = 1 - p.life / p.lifespan;
-      const scale = 0.02 + t * 0.05;
+      const sizeMin = smokeSize[0] || 0.02;
+      const sizeMax = smokeSize[1] || 0.12;
+      const scale = sizeMin + t * (sizeMax - sizeMin) * 1.5;
       p.mesh.scale.setScalar(scale);
-      if (p.mesh.material) p.mesh.material.opacity = Math.max(0, 0.9 * (1 - t));
+      if (p.mesh.material) p.mesh.material.opacity = Math.max(0, (smokeOpacity != null ? smokeOpacity : 1) * (1 - t));
 
       p.life -= delta;
       if (p.life <= 0) {
@@ -87,6 +140,11 @@ export default function ChimneySmoke({ count = 40 }) {
 
   return (
     <group ref={groupRef}>
+      {/* helper: shows chimney mouth world position for debugging */}
+      <mesh ref={helperRef} visible position={[0, 0, 0]}>
+        <sphereGeometry args={[1, 12, 12]} />
+        <meshBasicMaterial color="#ffea61" depthTest={false} />
+      </mesh>
       {Array.from({ length: count }).map((_, i) => (
         <mesh
           key={i}
@@ -97,7 +155,7 @@ export default function ChimneySmoke({ count = 40 }) {
           visible={false}
         >
           <sphereGeometry args={[1, 8, 8]} />
-          <meshStandardMaterial color="#bdbdbd" transparent opacity={0.9} depthWrite={false} roughness={0.9} metalness={0.0} />
+          <meshStandardMaterial color="#ffff66" transparent opacity={0.9} depthWrite={false} roughness={0.9} metalness={0.0} />
         </mesh>
       ))}
     </group>
