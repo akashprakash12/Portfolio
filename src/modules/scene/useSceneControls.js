@@ -50,6 +50,16 @@ export function useSceneControls() {
       windowRayLength: { value: 6, min: 0.1, max: 20, step: 0.1 },
     });
 
+  // --- Mushroom Model ---
+  const { mushroomPosition, mushroomRotation, mushroomScale } = useControls(
+    "Mushroom Model",
+    {
+      mushroomPosition: { value: [4.900000000000004, -0.5999999999999999, 2.1999999999999997], step: 0.1 },
+      mushroomRotation: { value: [-0.010000000000000004, 0, 0], step: 0.01 },
+      mushroomScale: { value: 2.3, min: 0.1, max: 10, step: 0.1 },
+    }
+  );
+
   // --- UI Labels ---
   const { doorLabelOffset } = useControls("UI Labels", {
     doorLabelOffset: { value: [-6.180000000000003, 11.279999999999987, 2.3000000000000007], step: 0.01 },
@@ -131,6 +141,10 @@ export function useSceneControls() {
     windowRayCount,
     windowRayOpacity,
     windowRayLength,
+    // Mushroom
+    mushroomPosition,
+    mushroomRotation,
+    mushroomScale,
     // Water
     waterColor,
     waveSpeed,
