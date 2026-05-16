@@ -1,13 +1,15 @@
 // CinematicCamera.jsx
+import React from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
-export default function CinematicCamera() {
+function CinematicCamera({ targetCamPos = null, activeSection = 0 }) {
   const { camera, controls } = useThree();
 
   const hasAnimated = useRef(false); // prevent running twice
+  const isTransitioning = useRef(false);
 
   // Leva controls (sliders)
   const { camPos, target, fov } = useControls("Camera Controls", {
@@ -63,13 +65,51 @@ export default function CinematicCamera() {
       )
       .eventCallback("onComplete", () => {
         if (controls) controls.enabled = true;
+        isTransitioning.current = false;
       });
   }, [camera, controls, camPos, target]);
+
+  /* ========================
+     SECTION-BASED CAMERA ANIMATION
+     ======================== */
+  useEffect(() => {
+    if (!targetCamPos) return;
+    
+    isTransitioning.current = true;
+    if (controls) controls.enabled = false;
+
+    const tl = gsap.timeline({ ease: "power2.inOut" });
+
+    tl.to(camera.position, {
+      x: targetCamPos[0],
+      y: targetCamPos[1],
+      z: targetCamPos[2],
+      duration: 1.5
+    })
+      .to(
+        {},
+        {
+          duration: 1,
+          onUpdate: () => {
+            camera.lookAt(...target);
+          }
+        },
+        "<"
+      )
+      .eventCallback("onComplete", () => {
+        if (controls) controls.enabled = true;
+        isTransitioning.current = false;
+        baseCam.current = [...targetCamPos];
+      });
+  }, [targetCamPos, camera, controls, target]);
 
   /* ========================
        🎚 LEVA LIVE CONTROLS
      ======================== */
   useEffect(() => {
+    // Only update from Leva when not transitioning to avoid conflicts with GSAP animations
+    if (isTransitioning.current) return;
+    
     camera.position.set(...camPos);
     camera.fov = fov;
     camera.lookAt(...target);
@@ -77,8 +117,10 @@ export default function CinematicCamera() {
     baseCam.current = [...camPos];
   }, [camPos, target, fov, camera]);
 
-  // slow idle camera motion
+  // slow idle camera motion (only when not transitioning)
   useFrame((state) => {
+    if (isTransitioning.current) return;
+    
     const t = state.clock.elapsedTime;
     const offset = Math.sin(t * 0.1) * 0.3;
     camera.position.x = baseCam.current[0] + offset;
@@ -89,3 +131,5 @@ export default function CinematicCamera() {
 
   return null;
 }
+
+export default React.memo(CinematicCamera);

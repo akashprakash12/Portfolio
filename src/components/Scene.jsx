@@ -1,5 +1,5 @@
-import React, { useRef, useState } from "react";
-import { Canvas } from "@react-three/fiber";
+import React, { useRef, useState, Suspense, useCallback, useMemo } from "react";
+import { Canvas, useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 import Plane from "./Plane";
 import CinematicCamera from "./CinematicCamera";
@@ -8,10 +8,22 @@ import { SceneShadows } from "../modules/scene/SceneShadows";
 import SceneModelRig from "../modules/scene/SceneModelRig";
 import SceneViewport from "../modules/scene/SceneViewport";
 import CinematicLighting from "../modules/scene/CinematicLighting";
+import Mushroom from "../modules/scene/Mushroom";
 
-const Scene = () => {
+const Scene = ({ activeSection = 0 }) => {
   const [shadowKey, setShadowKey] = useState(0);
   const cursorRef = useRef(new THREE.Vector3());
+
+  // Camera positions for each section (memoized)
+  const cameraPositions = useMemo(() => [
+    [0, 0, 6],                              // Home
+    [-5.900000000000002, 0, 6],             // About
+    [3, 1, 7],                              // Skills
+    [-2, 1, 8],                             // Projects
+    [4, 0.5, 6],                            // Contact
+  ], []);
+
+  const targetCamPos = cameraPositions[activeSection] || cameraPositions[0];
   const {
     position,
     rotation,
@@ -37,10 +49,10 @@ const Scene = () => {
     windowRayLength,
   } = useSceneControls();
 
-  // Trigger shadow refresh when dragging
-  const handleDrag = () => {
+  // Trigger shadow refresh when dragging (memoized)
+  const handleDrag = useCallback(() => {
     setShadowKey((prev) => prev + 1);
-  };
+  }, []);
 
   return (
     <Canvas
@@ -64,7 +76,7 @@ const Scene = () => {
         fillColor={fillColor}
         fillDistance={fillDistance}
       />
-      <CinematicCamera />
+      <CinematicCamera targetCamPos={targetCamPos} activeSection={activeSection} />
       <Plane />
 
       {/* Soft shadow layer, refreshed when the model is dragged. */}
@@ -86,6 +98,11 @@ const Scene = () => {
         windowRayLength={windowRayLength}
       />
 
+      {/* Mushroom model on the left side (always rendered, hidden when not needed) */}
+      <Suspense fallback={null}>
+        <Mushroom position={[-5.5, -1, 0]} scale={[1.5, 1.5, 1.5]} visible={activeSection >= 1} />
+      </Suspense>
+
       {/* Viewport polish: orbit limits, environment light, bloom, and axis helper. */}
       <SceneViewport
         bloomIntensity={bloomIntensity}
@@ -96,4 +113,6 @@ const Scene = () => {
   );
 };
 
-export default Scene;
+export default React.memo(Scene, (prevProps, nextProps) => {
+  return prevProps.activeSection === nextProps.activeSection;
+});

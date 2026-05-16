@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Scene from "./Scene";
 import {
   FiMenu,
@@ -30,7 +30,6 @@ const Home = () => {
   const [typingSpeed, setTypingSpeed] = useState(150);
   const [activeSection, setActiveSection] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
-  const [sceneKey, setSceneKey] = useState(0);
 
   const containerRef = useRef(null);
   const sectionsRef = useRef([]);
@@ -115,7 +114,7 @@ const Home = () => {
     if (index < 0 || index >= sectionsRef.current.length) return;
 
     setActiveSection(index);
-    setSceneKey(index);
+    // Don't remount the Scene - just update activeSection to trigger camera animation
 
     const section = sectionsRef.current[index];
     if (section) {
@@ -199,7 +198,7 @@ const Home = () => {
     },
   ];
 
-  const getSceneConfig = () => {
+  const sceneConfig = useMemo(() => {
     switch (activeSection) {
       case 0: // Home
         return {
@@ -244,14 +243,16 @@ const Home = () => {
           sceneType: "hero",
         };
     }
-  };
+  }, [activeSection]);
+
+  const getSceneConfig = () => sceneConfig;
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
       <style>{`.ui-wrapper{pointer-events:none} .ui-wrapper button, .ui-wrapper a, .ui-wrapper input, .ui-wrapper [role="button"]{pointer-events:auto}`}</style>
       {/* FULL SCREEN BACKGROUND SCENE */}
       <div className="canvas-container fixed inset-0 z-0">
-        <Scene key={sceneKey} {...getSceneConfig()} />
+        <Scene {...getSceneConfig()} activeSection={activeSection} />
       </div>
 
       <div className="absolute inset-0 z-10 bg-gradient-to-b from-transparent via-transparent to-black/25 pointer-events-none" />
