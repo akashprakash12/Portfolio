@@ -4,6 +4,7 @@ import Model from "../../components/Model";
 import CursorSphere from "./CursorSphere";
 import WindowLight from "./WindowLight";
 import DoorBloomToggle from "./DoorBloomToggle";
+import ChimneySmoke from "./ChimneySmoke";
 
 // Draggable model layer and the cursor sphere that drives triangle scattering.
 export default function SceneModelRig({
@@ -36,6 +37,7 @@ export default function SceneModelRig({
               scatterIntensity={scatterIntensity}
               seedBloomEnabled={seedBloomEnabled}
             />
+            <ChimneySmoke />
           </Suspense>
         </DragControls>
       </group>
