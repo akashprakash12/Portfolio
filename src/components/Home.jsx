@@ -244,15 +244,16 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
+      <style>{`.ui-wrapper{pointer-events:none} .ui-wrapper button, .ui-wrapper a, .ui-wrapper input, .ui-wrapper [role="button"]{pointer-events:auto}`}</style>
       {/* FULL SCREEN BACKGROUND SCENE */}
-      <div className="fixed inset-0 z-30">
+      <div className="fixed inset-0 z-0">
         <Scene key={sceneKey} {...getSceneConfig()} />
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-b from-[#050816] via-[#0a1124] to-black pointer-events-none" />
+      <div className="absolute inset-0 z-10 bg-gradient-to-b from-transparent via-transparent to-black/25 pointer-events-none" />
 
-      {/* Dark overlay for better text visibility */}
-      <div className="fixed inset-0 z-1 bg-gradient-to-r from-black/80 via-black/60 to-transparent pointer-events-none"></div>
+      {/* Dark overlay for better text visibility (subtle) */}
+      <div className="fixed inset-0 z-10 bg-black/20 pointer-events-none"></div>
 
       {/* Navigation Dots */}
       <div className="fixed right-8 top-1/2 transform -translate-y-1/2 z-50 flex flex-col space-y-4">
@@ -330,12 +331,13 @@ const Home = () => {
         </div>
       </header>
 
-      {/* Main Horizontal Container */}
-      <div
-        ref={containerRef}
-        className="flex overflow-x-auto snap-x snap-mandatory h-screen scrollbar-hide relative z-10"
-        style={{ scrollBehavior: "smooth" }}
-      >
+      {/* Main Horizontal Container (UI wrapper applies blend) */}
+      <div style={{ mixBlendMode: 'normal' }} className="ui-wrapper relative z-20">
+        <div
+          ref={containerRef}
+          className="flex overflow-x-auto snap-x snap-mandatory h-screen scrollbar-hide relative z-10"
+          style={{ scrollBehavior: "smooth" }}
+        >
         {/* Section 1: Hero */}
         <section
           ref={(el) => (sectionsRef.current[0] = el)}
@@ -942,6 +944,7 @@ const Home = () => {
             </div>
           </div>
         </section>
+        </div>
       </div>
 
       {/* Custom Styles */}
