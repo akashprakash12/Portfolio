@@ -47,9 +47,6 @@ const Scene = ({ activeSection = 0 }) => {
     windowRayCount,
     windowRayOpacity,
     windowRayLength,
-    mushroomPosition,
-    mushroomRotation,
-    mushroomScale,
   } = useSceneControls();
 
   // Trigger shadow refresh when dragging (memoized)
@@ -103,12 +100,7 @@ const Scene = ({ activeSection = 0 }) => {
 
       {/* Mushroom model on the left side (always rendered, hidden when not needed) */}
       <Suspense fallback={null}>
-        <Mushroom
-          position={mushroomPosition}
-          rotation={mushroomRotation}
-          scale={mushroomScale}
-          visible={activeSection >= 1}
-        />
+        <Mushroom position={[-5.5, -1, 0]} scale={[1.5, 1.5, 1.5]} visible={activeSection >= 1} />
       </Suspense>
 
       {/* Viewport polish: orbit limits, environment light, bloom, and axis helper. */}

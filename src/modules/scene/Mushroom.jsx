@@ -1,41 +1,30 @@
-import React, { memo, useEffect, useRef } from "react";
-import { useGLTF, useAnimations } from "@react-three/drei";
+import React, { useEffect, useRef, useMemo } from "react";
+import { useLoader } from "@react-three/fiber";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
-function Mushroom({
-  position = [-4.900000000000004, -0.5999999999999999, 2.1999999999999997],
-  rotation = [-0.010000000000000004, 0, 0],
-  scale = 2.3,
-  visible = true,
-  ...props
-}) {
-  const group = useRef();
-  const { scene, animations } = useGLTF("/models/mushroom.glb");
-  const { actions } = useAnimations(animations, group);
-  const wrapperRef = useRef();
+export default React.memo(function Mushroom({ position = [-5, 0, 0], scale = [2, 2, 2], visible = true }) {
+  const gltf = useLoader(GLTFLoader, "/models/mushroom.glb");
+  const groupRef = useRef();
+  const loadedRef = useRef(false);
+
+  // Only clone once
+  const clonedScene = useMemo(() => {
+    if (gltf.scene && !loadedRef.current) {
+      loadedRef.current = true;
+      return gltf.scene.clone();
+    }
+    return null;
+  }, [gltf]);
 
   useEffect(() => {
-    if (!actions || !Object.keys(actions).length) return undefined;
-
-    const startedActions = Object.values(actions)
-      .filter(Boolean)
-      .map((action) => {
-        action.reset().fadeIn(0.2).play();
-        action.paused = false;
-        return action;
-      });
-
-    return () => {
-      startedActions.forEach((action) => action.fadeOut(0.2));
-    };
-  }, [actions]);
+    if (groupRef.current && clonedScene && !groupRef.current.children.length) {
+      groupRef.current.add(clonedScene);
+    }
+  }, [clonedScene]);
 
   return (
-    <group ref={group} position={position} rotation={rotation} scale={scale} visible={visible} {...props}>
-      <primitive object={scene} />
+    <group ref={groupRef} position={position} scale={scale} visible={visible}>
+      {/* Mushroom will be loaded into this group */}
     </group>
   );
-}
-
-useGLTF.preload("/models/mushroom.glb");
-
-export default memo(Mushroom);
+});
