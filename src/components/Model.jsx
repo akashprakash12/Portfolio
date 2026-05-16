@@ -115,15 +115,17 @@ export default function Model(props) {
         child.receiveShadow = true;
         meshesRef.current.push(child);
 
-        // Robust seed detection: check mesh name and ancestor names for 'seed'
-        let o = child;
+        // Seed detection by material: treat meshes using 'Material.003' as seeds
+        const childMaterials = Array.isArray(child.material) ? child.material : [child.material];
         let isSeed = false;
-        while (o) {
-          if (o.name && o.name.toLowerCase().includes("seed")) {
+        for (let mi = 0; mi < childMaterials.length; mi++) {
+          const mat = childMaterials[mi];
+          if (!mat) continue;
+          const matName = (mat.name || "").toLowerCase();
+          if (matName.includes("material.003") || matName.includes("material 003")) {
             isSeed = true;
             break;
           }
-          o = o.parent;
         }
 
         if (isSeed) {
@@ -179,6 +181,42 @@ export default function Model(props) {
         }
       }
     });
+    try {
+      // Debug: print full seed model details for inspection
+      console.groupCollapsed(`Seed meshes (${seedMeshesRef.current.length})`);
+      seedMeshesRef.current.forEach((m, i) => {
+        try {
+          const worldPos = new THREE.Vector3();
+          m.getWorldPosition(worldPos);
+          const geom = m.geometry;
+          const materials = Array.isArray(m.material) ? m.material : [m.material];
+          console.log({
+            index: i,
+            name: m.name,
+            uuid: m.uuid,
+            position: m.position.clone(),
+            worldPosition: worldPos.clone(),
+            geometry: {
+              id: geom?.id ?? null,
+              vertexCount: geom?.attributes?.position?.count ?? null,
+            },
+            material: materials.map((mat) => ({
+              name: mat?.name ?? null,
+              color: mat?.color ? `#${mat.color.getHexString()}` : null,
+              emissive: mat?.emissive ? `#${mat.emissive.getHexString()}` : null,
+              emissiveIntensity: mat?.emissiveIntensity ?? null,
+              roughness: mat?.roughness ?? null,
+              metalness: mat?.metalness ?? null,
+            })),
+          });
+        } catch (e) {
+          console.log(`Seed dump error for index ${i}:`, e);
+        }
+      });
+      console.groupEnd();
+    } catch (e) {
+      // harmless in environments without console
+    }
   }, [scene]);
 
   useEffect(() => {
@@ -197,13 +235,55 @@ export default function Model(props) {
       for (let i = 0; i < hits.length; i++) {
         let o = hits[i].object;
         while (o) {
-          if (o.name && o.name.toLowerCase().includes("seed")) {
-            found = o;
-            break;
+          if (o.isMesh && o.material) {
+            const mats = Array.isArray(o.material) ? o.material : [o.material];
+            for (let mi = 0; mi < mats.length; mi++) {
+              const mn = (mats[mi]?.name || "").toLowerCase();
+              if (mn.includes("material.003") || mn.includes("material 003")) {
+                found = o;
+                break;
+              }
+            }
+            if (found) break;
           }
           o = o.parent;
         }
         if (found) break;
+      }
+      const previous = hoveredSeedRef.current;
+      if (found !== previous) {
+        try {
+          if (found) {
+            const worldPos = new THREE.Vector3();
+            found.getWorldPosition(worldPos);
+            const geom = found.geometry;
+            const materials = Array.isArray(found.material) ? found.material : [found.material];
+            console.groupCollapsed(`Hovered seed: ${found.name || found.uuid}`);
+            console.log({
+              name: found.name,
+              uuid: found.uuid,
+              position: found.position.clone(),
+              worldPosition: worldPos.clone(),
+              geometry: {
+                id: geom?.id ?? null,
+                vertexCount: geom?.attributes?.position?.count ?? null,
+              },
+              material: materials.map((mat) => ({
+                name: mat?.name ?? null,
+                color: mat?.color ? `#${mat.color.getHexString()}` : null,
+                emissive: mat?.emissive ? `#${mat.emissive.getHexString()}` : null,
+                emissiveIntensity: mat?.emissiveIntensity ?? null,
+                roughness: mat?.roughness ?? null,
+                metalness: mat?.metalness ?? null,
+              })),
+            });
+            console.groupEnd();
+          } else if (previous) {
+            console.log(`Seed hover cleared: ${previous.name || previous.uuid}`);
+          }
+        } catch (e) {
+          console.log('Hover dump error:', e);
+        }
       }
       hoveredSeedRef.current = found;
     };
@@ -354,6 +434,7 @@ export default function Model(props) {
     const glossRoughness = 0.12;
     const glossMetalness = 0.5;
     const seedFloatHeight = 0.18;
+    const seedFloatRise = 0.22;
     const seedFloatSpeed = 8;
     const seedFloatBob = 0.03;
     const seedFloatScale = 0.025;
@@ -380,7 +461,9 @@ export default function Model(props) {
       }
 
       hoverTargetPositionRef.copy(basePosition);
-      hoverTargetPositionRef.y += progress * seedFloatHeight + Math.sin(hoverElapsed * 4 + index * 0.35) * progress * seedFloatBob;
+      hoverTargetPositionRef.y +=
+        progress * (seedFloatHeight + seedFloatRise) +
+        Math.sin(hoverElapsed * 4 + index * 0.35) * progress * seedFloatBob;
       mesh.position.lerp(hoverTargetPositionRef, isHovered ? 0.14 : 0.08);
       mesh.rotation.z = Math.sin(hoverElapsed * 2.8 + index * 0.25) * progress * seedFloatTilt;
       mesh.scale.setScalar(1 + progress * seedFloatScale);

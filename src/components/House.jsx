@@ -22,20 +22,20 @@ export function Model(props) {
                 rotation={[-1.588, -0.098, 0.015]}
                 scale={1277.152}>
                 <mesh
-                  name="chapeau_Material002_0"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.chapeau_Material002_0.geometry}
-                  material={materials['Material.003']}
-                  position={[-0.007, -0.011, -0.137]}
-                />
-                <mesh
                   name="mushroom_4"
                   castShadow
                   receiveShadow
                   geometry={nodes.mushroom_4.geometry}
                   material={materials['Material.002']}
                   position={[-0.026, -0.009, 0.029]}
+                />
+                <mesh
+                  name="mushroom_bottam"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.mushroom_bottam.geometry}
+                  material={materials['Material.008']}
+                  position={[-0.007, -0.011, -0.137]}
                 />
               </group>
               <group
@@ -44,20 +44,20 @@ export function Model(props) {
                 rotation={[-1.397, -0.217, 0.038]}
                 scale={1277.152}>
                 <mesh
-                  name="chapeau001_Material002_0"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.chapeau001_Material002_0.geometry}
-                  material={materials['Material.003']}
-                  position={[-0.005, -0.009, -0.131]}
-                />
-                <mesh
                   name="mushroom_3"
                   castShadow
                   receiveShadow
                   geometry={nodes.mushroom_3.geometry}
                   material={materials['Material.002']}
                   position={[-0.012, -0.009, 0.126]}
+                />
+                <mesh
+                  name="mushroom_bottam001"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.mushroom_bottam001.geometry}
+                  material={materials['Material.008']}
+                  position={[-0.005, -0.009, -0.131]}
                 />
               </group>
               <group
@@ -70,14 +70,14 @@ export function Model(props) {
                   castShadow
                   receiveShadow
                   geometry={nodes.chapeau004_Material002_0.geometry}
-                  material={materials['Material.003']}
+                  material={materials['Material.008']}
                   position={[0.011, -0.014, -0.139]}
                 />
                 <mesh
-                  name="mushroom_1"
+                  name="mushroom_bottam003"
                   castShadow
                   receiveShadow
-                  geometry={nodes.mushroom_1.geometry}
+                  geometry={nodes.mushroom_bottam003.geometry}
                   material={materials['Material.002']}
                   position={[-0.037, -0.087, 0.077]}
                 />
@@ -88,20 +88,20 @@ export function Model(props) {
                 rotation={[-1.637, -0.235, 2.888]}
                 scale={1191.418}>
                 <mesh
-                  name="chapeau005_Material002_0"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.chapeau005_Material002_0.geometry}
-                  material={materials['Material.003']}
-                  position={[0.057, -0.045, -0.115]}
-                />
-                <mesh
                   name="mushroom_2"
                   castShadow
                   receiveShadow
                   geometry={nodes.mushroom_2.geometry}
                   material={materials['Material.002']}
                   position={[-0.042, -0.079, 0.086]}
+                />
+                <mesh
+                  name="mushroom_bottam002"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.mushroom_bottam002.geometry}
+                  material={materials['Material.008']}
+                  position={[0.057, -0.045, -0.115]}
                 />
               </group>
               <group
@@ -134,7 +134,7 @@ export function Model(props) {
               </group>
               <group
                 name="Cube"
-                position={[837.24, 3450.714, 997.787]}
+                position={[837.24, 3450.715, 997.787]}
                 rotation={[-Math.PI / 2, 0, 0]}
                 scale={52.654}>
                 <mesh
@@ -162,7 +162,7 @@ export function Model(props) {
               </group>
               <group
                 name="Cube002"
-                position={[824.771, 3590.5, 946.757]}
+                position={[824.772, 3590.5, 946.757]}
                 rotation={[-Math.PI / 2, 0, 0]}
                 scale={84.206}>
                 <mesh
@@ -204,7 +204,7 @@ export function Model(props) {
               </group>
               <group
                 name="Cube005"
-                position={[1670.808, 3884.431, 570.697]}
+                position={[1670.808, 3884.432, 570.697]}
                 rotation={[-Math.PI / 2, 0, 0]}
                 scale={114.817}>
                 <mesh
@@ -218,7 +218,7 @@ export function Model(props) {
               </group>
               <group
                 name="Cube006"
-                position={[1562.087, 3916.703, 585.573]}
+                position={[1562.087, 3916.704, 585.573]}
                 rotation={[-Math.PI / 2, 0, 0]}
                 scale={59.725}>
                 <mesh
@@ -302,7 +302,7 @@ export function Model(props) {
               </group>
               <group
                 name="Cube012"
-                position={[-226.228, 2687.801, -64.902]}
+                position={[-226.228, 2687.802, -64.902]}
                 rotation={[-2.363, -0.034, -2.576]}
                 scale={231.321}>
                 <mesh
@@ -484,7 +484,7 @@ export function Model(props) {
               </group>
               <group
                 name="Cube025"
-                position={[1898.512, 2527.215, -736.891]}
+                position={[1898.513, 2527.215, -736.891]}
                 rotation={[-1.409, 0.406, -0.354]}
                 scale={175.48}>
                 <mesh
@@ -596,7 +596,7 @@ export function Model(props) {
               </group>
               <group
                 name="Cube033"
-                position={[1381.258, 2371.419, -167.401]}
+                position={[1381.259, 2371.419, -167.401]}
                 rotation={[-0.922, 0.011, -0.006]}
                 scale={70.45}>
                 <mesh
@@ -834,7 +834,7 @@ export function Model(props) {
               </group>
               <group
                 name="Cube050"
-                position={[-1475.814, 2010.112, -1008.516]}
+                position={[-1475.814, 2010.112, -1008.517]}
                 rotation={[-1.096, -0.605, -0.062]}
                 scale={113.956}>
                 <mesh
@@ -1324,7 +1324,7 @@ export function Model(props) {
               </group>
               <group
                 name="Cube085"
-                position={[2092.527, 1222.816, -948.486]}
+                position={[2092.528, 1222.816, -948.486]}
                 rotation={[-Math.PI / 2, 0, 0]}
                 scale={130.346}>
                 <mesh
@@ -1360,13 +1360,13 @@ export function Model(props) {
                   castShadow
                   receiveShadow
                   geometry={nodes.stem_2.geometry}
-                  material={materials['Material.001']}
+                  material={materials['Material.014']}
                   position={[-0.062, -0.127, 6.215]}
                 />
               </group>
               <group
                 name="pied001"
-                position={[-91.195, 914.41, 818.479]}
+                position={[-91.195, 914.41, 818.48]}
                 rotation={[-Math.PI / 2, 0, 0]}
                 scale={100}>
                 <mesh
