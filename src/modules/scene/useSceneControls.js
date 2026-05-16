@@ -55,6 +55,33 @@ export function useSceneControls() {
     doorLabelOffset: { value: [-6.180000000000003, 11.279999999999987, 2.3000000000000007], step: 0.01 },
   });
 
+  // --- Water ---
+  const { waterColor, waveSpeed, waveFreq, waveAmp, waterScale } = useControls(
+    "Water",
+    {
+      waterColor: { value: "#2b6ea3" },
+      waveSpeed: { value: 0.6, min: 0, max: 5, step: 0.01 },
+      waveFreq: { value: 1.5, min: 0.1, max: 10, step: 0.1 },
+      waveAmp: { value: 0.18, min: 0, max: 1, step: 0.01 },
+      waterScale: { value: 1, min: 0.1, max: 5, step: 0.01 },
+    }
+  );
+  const {
+    waterRoughness,
+    waterBlur,
+    reflectivity,
+    normalScale,
+    splashEnabled,
+    splashRate,
+  } = useControls("Water Extras", {
+    waterRoughness: { value: 0.12, min: 0, max: 1, step: 0.01 },
+    waterBlur: { value: [100, 200], min: 0, max: 1000, step: 1 },
+    reflectivity: { value: 0.6, min: 0, max: 1, step: 0.01 },
+    normalScale: { value: 1.2, min: 0, max: 5, step: 0.01 },
+    splashEnabled: { value: true },
+    splashRate: { value: 0.4, min: 0.01, max: 2, step: 0.01 },
+  });
+
   // --- Chimney smoke ---
   const {
     smokeEnabled,
@@ -104,6 +131,18 @@ export function useSceneControls() {
     windowRayCount,
     windowRayOpacity,
     windowRayLength,
+    // Water
+    waterColor,
+    waveSpeed,
+    waveFreq,
+    waveAmp,
+    waterScale,
+    waterRoughness,
+    waterBlur,
+    reflectivity,
+    normalScale,
+    splashEnabled,
+    splashRate,
     // UI labels
     doorLabelOffset,
     // smoke
