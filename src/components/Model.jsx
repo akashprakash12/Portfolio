@@ -420,10 +420,15 @@ export default function Model(props) {
       }
 
       hoverTargetPositionRef.copy(basePosition);
-      hoverTargetPositionRef.y +=
+      // compute desired world-space vertical offset, then convert to local-space
+      const desiredWorldOffsetY =
         bloomProgress * (seedFloatHeight + seedFloatRise) +
         Math.sin(hoverElapsed * 4 + index * 0.35) * bloomProgress * seedFloatBob +
         hoverProgress * 0.06;
+      const worldScale = tmpCentroid; // reuse temp vector
+      mesh.getWorldScale(worldScale);
+      const localOffsetY = desiredWorldOffsetY / (worldScale.y || 1);
+      hoverTargetPositionRef.y += localOffsetY;
       mesh.position.lerp(hoverTargetPositionRef, isBloomActive ? 0.14 : 0.08);
       mesh.rotation.z = Math.sin(hoverElapsed * 2.8 + index * 0.25) * (bloomProgress + hoverProgress * 0.35) * seedFloatTilt;
       mesh.scale.setScalar(1 + bloomProgress * seedFloatScale + hoverProgress * 0.01);
