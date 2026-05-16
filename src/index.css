@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+/* Global high-contrast defaults for all pages */
+html, body, #root {
+  color: #ffffff;
+  background-color: #000000;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Strengthen default text legibility site-wide */
+body, p, h1, h2, h3, h4, h5, h6, a, li, span {
+  color: #ffffff !important;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+
 /* Text visibility and contrast fixes */
 .text-shadow {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);

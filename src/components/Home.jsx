@@ -72,6 +72,8 @@ const Home = () => {
     if (!container) return;
 
     const handleWheel = (e) => {
+      // prevent the default vertical page scroll so horizontal snap works
+      e.preventDefault();
       if (isScrolling) return;
 
       setIsScrolling(true);
@@ -81,7 +83,7 @@ const Home = () => {
         scrollToSection(activeSection - 1);
       }
 
-      setTimeout(() => setIsScrolling(false), 1000);
+      setTimeout(() => setIsScrolling(false), 800);
     };
 
     const handleKeyDown = (e) => {
@@ -98,11 +100,13 @@ const Home = () => {
       }
     };
 
-    container.addEventListener("wheel", handleWheel);
+    // Use non-passive listener so we can call preventDefault()
+    const wheelOpts = { passive: false };
+    container.addEventListener("wheel", handleWheel, wheelOpts);
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      container.removeEventListener("wheel", handleWheel);
+      container.removeEventListener("wheel", handleWheel, wheelOpts);
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [activeSection, isScrolling]);
@@ -244,7 +248,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
-      <style>{`.ui-wrapper{pointer-events:none} .ui-wrapper button, .ui-wrapper a, .ui-wrapper input, .ui-wrapper [role="button"]{pointer-events:auto}`}</style>
+      <style>{`.ui-wrapper{pointer-events:none} .ui-wrapper button, .ui-wrapper a, .ui-wrapper input, .ui-wrapper [role="button"]{pointer-events:auto} .ui-wrapper .ui-scroll-container{pointer-events:auto}`}</style>
       {/* FULL SCREEN BACKGROUND SCENE */}
       <div className="fixed inset-0 z-0">
         <Scene key={sceneKey} {...getSceneConfig()} />
@@ -335,7 +339,7 @@ const Home = () => {
       <div style={{ mixBlendMode: 'normal' }} className="ui-wrapper relative z-20">
         <div
           ref={containerRef}
-          className="flex overflow-x-auto snap-x snap-mandatory h-screen scrollbar-hide relative z-10"
+          className="ui-scroll-container flex overflow-x-auto snap-x snap-mandatory h-screen scrollbar-hide relative z-10"
           style={{ scrollBehavior: "smooth" }}
         >
         {/* Section 1: Hero */}
