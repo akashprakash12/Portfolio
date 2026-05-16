@@ -248,9 +248,9 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
-      <style>{`.ui-wrapper{pointer-events:none} .ui-wrapper button, .ui-wrapper a, .ui-wrapper input, .ui-wrapper [role="button"]{pointer-events:auto} .ui-wrapper .ui-scroll-container{pointer-events:auto}`}</style>
+      <style>{`.ui-wrapper{pointer-events:none} .ui-wrapper button, .ui-wrapper a, .ui-wrapper input, .ui-wrapper [role="button"]{pointer-events:auto}`}</style>
       {/* FULL SCREEN BACKGROUND SCENE */}
-      <div className="fixed inset-0 z-0">
+      <div className="canvas-container fixed inset-0 z-0">
         <Scene key={sceneKey} {...getSceneConfig()} />
       </div>
 
@@ -339,7 +339,7 @@ const Home = () => {
       <div style={{ mixBlendMode: 'normal' }} className="ui-wrapper relative z-20">
         <div
           ref={containerRef}
-          className="ui-scroll-container flex overflow-x-auto snap-x snap-mandatory h-screen scrollbar-hide relative z-10"
+          className="flex overflow-x-auto snap-x snap-mandatory h-screen scrollbar-hide relative z-10 pointer-events-none"
           style={{ scrollBehavior: "smooth" }}
         >
         {/* Section 1: Hero */}
