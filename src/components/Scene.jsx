@@ -142,7 +142,9 @@ const Scene = ({ activeSection = 0, onLoadProgress, onLoaded }) => {
       <CameraParallax
         basePosition={targetCamPos}
         baseLookAt={targetCamLookAt}
-        enabled={interactionReady}
+        // Disable parallax for Contact and Skills so Leva / CinematicCamera
+        // can fully control those section-specific camera positions.
+        enabled={interactionReady && activeSection !== 4 && activeSection !== 2}
         intensity={0.16}
         verticalIntensity={0.11}
         damping={4.2}
@@ -150,7 +152,7 @@ const Scene = ({ activeSection = 0, onLoadProgress, onLoaded }) => {
       <Plane />
 
       {/* Soft shadow layer, refreshed when the model is dragged. */}
-      <SceneShadows shadowKey={shadowKey} />
+      {/* <SceneShadows shadowKey={shadowKey} /> */}
 
       {/* Draggable model and the visible cursor sphere. */}
       <Suspense fallback={null}>
