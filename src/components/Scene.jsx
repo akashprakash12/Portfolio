@@ -6,13 +6,14 @@ import CinematicCamera from "./CinematicCamera";
 import { useSceneControls } from "../modules/scene/useSceneControls";
 import { SceneShadows } from "../modules/scene/SceneShadows";
 import SceneModelRig from "../modules/scene/SceneModelRig";
+import LoadingMonitor from "../modules/scene/LoadingMonitor";
 import SceneViewport from "../modules/scene/SceneViewport";
 import CinematicLighting from "../modules/scene/CinematicLighting";
 import Mushroom from "../modules/scene/Mushroom";
 import Banana from "../modules/scene/Banana";
 import ContactModels from "../modules/scene/ContactModels";
 
-const Scene = ({ activeSection = 0 }) => {
+const Scene = ({ activeSection = 0, onLoadProgress, onLoaded }) => {
   const [shadowKey, setShadowKey] = useState(0);
   const cursorRef = useRef(new THREE.Vector3());
 
@@ -86,6 +87,8 @@ const Scene = ({ activeSection = 0 }) => {
     setShadowKey((prev) => prev + 1);
   }, []);
 
+  const [modelsReady, setModelsReady] = useState(false);
+
   return (
     <Canvas
       shadows
@@ -120,6 +123,17 @@ const Scene = ({ activeSection = 0 }) => {
       <SceneShadows shadowKey={shadowKey} />
 
       {/* Draggable model and the visible cursor sphere. */}
+      <Suspense fallback={null}>
+        <LoadingMonitor
+          onProgress={(p) => {
+            if (typeof onLoadProgress === "function") onLoadProgress(p);
+          }}
+          onLoaded={() => {
+            setModelsReady(true);
+            if (typeof onLoaded === "function") onLoaded();
+          }}
+        />
+      </Suspense>
       <SceneModelRig
         position={position}
         rotation={rotation}
@@ -133,6 +147,7 @@ const Scene = ({ activeSection = 0 }) => {
         windowRayCount={windowRayCount}
         windowRayOpacity={windowRayOpacity}
         windowRayLength={windowRayLength}
+        modelsReady={modelsReady}
       />
 
       {/* Mushroom model on the left side (always rendered, hidden when not needed) */}

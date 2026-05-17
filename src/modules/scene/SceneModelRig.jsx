@@ -21,12 +21,16 @@ export default function SceneModelRig({
   windowRayCount,
   windowRayOpacity,
   windowRayLength,
+  modelsReady = true,
 }) {
   const [seedBloomEnabled, setSeedBloomEnabled] = useState(false);
+  // modelsReady is received as a prop (defaults to true in signature)
 
   return (
     <>
-      <DoorBloomToggle onToggle={() => setSeedBloomEnabled((current) => !current)} />
+      {modelsReady && (
+        <DoorBloomToggle onToggle={() => setSeedBloomEnabled((current) => !current)} />
+      )}
 
       <group position={position} rotation={rotation} scale={scale}>
         <DragControls onDrag={onDrag}>
