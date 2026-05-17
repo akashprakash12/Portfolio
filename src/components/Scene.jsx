@@ -9,6 +9,7 @@ import SceneModelRig from "../modules/scene/SceneModelRig";
 import SceneViewport from "../modules/scene/SceneViewport";
 import CinematicLighting from "../modules/scene/CinematicLighting";
 import Mushroom from "../modules/scene/Mushroom";
+import Banana from "../modules/scene/Banana";
 
 const Scene = ({ activeSection = 0 }) => {
   const [shadowKey, setShadowKey] = useState(0);
@@ -66,6 +67,10 @@ const Scene = ({ activeSection = 0 }) => {
     // Mushroom
     mushroomPosition,
     mushroomScale,
+    // Banana
+    bananaPosition,
+    bananaRotation,
+    bananaScale,
   } = useSceneControls();
 
   // Trigger shadow refresh when dragging (memoized)
@@ -127,6 +132,16 @@ const Scene = ({ activeSection = 0 }) => {
           position={mushroomPosition}
           scale={mushroomScale}
           visible={activeSection >= 1}
+        />
+      </Suspense>
+
+      {/* Banana model for the Skills section */}
+      <Suspense fallback={null}>
+        <Banana
+          position={bananaPosition}
+          rotation={bananaRotation}
+          scale={bananaScale}
+          visible={activeSection === 2}
         />
       </Suspense>
 

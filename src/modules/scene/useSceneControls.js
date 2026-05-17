@@ -69,6 +69,24 @@ const { mushroomPosition, mushroomScale } = useControls("Mushroom Model", {
   },
 });
 
+// --- Banana Model (was Mountains) ---
+const { bananaPosition, bananaRotation, bananaScale } = useControls("Banana Model", {
+  bananaPosition: {
+    value: [-4.2, -0.7, -6],
+    step: 0.1,
+  },
+  bananaRotation: {
+    value: [0.01, 0, 0],
+    step: 0.01,
+  },
+  bananaScale: {
+    value: 0.005,
+    min: 0.00001,
+    max: 100,
+    step: 0.0001,
+  },
+});
+
   // --- Water ---
   const { waterColor, waveSpeed, waveFreq, waveAmp, waterScale } = useControls(
     "Water",
@@ -171,5 +189,9 @@ const { mushroomPosition, mushroomScale } = useControls("Mushroom Model", {
     // Mushroom
     mushroomPosition,
     mushroomScale,
+    // Banana
+    bananaPosition,
+    bananaRotation,
+    bananaScale,
   };
 }

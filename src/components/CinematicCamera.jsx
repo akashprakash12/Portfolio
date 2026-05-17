@@ -27,11 +27,21 @@ function CinematicCamera({ targetCamPos = null, targetCamLookAt = null, activeSe
     aboutFov:    { value: 53, min: 10, max: 80, step: 1, label: "FOV" },
   });
 
+  // ─── Skills section camera ───────────────────────────────────────────────
+  // Add Leva controls for the Skills slide so you can tweak position/target/FOV
+  const { skillsCamPos, skillsTarget, skillsFov } = useControls("Skills Camera", {
+    skillsCamPos: { value: [-6.3, 0.3, -6.9], step: 0.1, label: "Position" },
+    skillsTarget: { value: [0, 0, 0],        step: 0.1, label: "Look At"  },
+    skillsFov:    { value: 80, min: 10, max: 80, step: 1, label: "FOV" },
+  });
+
   // ─── Helpers ─────────────────────────────────────────────────────────────
   const camPosKey      = camPos.join(",");
   const targetKey      = target.join(",");
   const aboutCamPosKey = aboutCamPos.join(",");
   const aboutTargetKey = aboutTarget.join(",");
+  const skillsCamPosKey = skillsCamPos.join(",");
+  const skillsTargetKey = skillsTarget.join(",");
   const targetCamPosKey = targetCamPos ? targetCamPos.join(",") : "";
   const targetCamLookAtKey = targetCamLookAt ? targetCamLookAt.join(",") : "";
 
@@ -81,13 +91,18 @@ function CinematicCamera({ targetCamPos = null, targetCamLookAt = null, activeSe
       animateCamera(aboutCamPos, aboutTarget, 1.5, "power2.inOut");
       camera.fov = aboutFov;
       camera.updateProjectionMatrix();
+    } else if (activeSection === 2) {
+      // Use Skills-specific Leva camera when on Skills section
+      animateCamera(skillsCamPos, skillsTarget, 2.2, "power3.out");
+      camera.fov = skillsFov;
+      camera.updateProjectionMatrix();
     } else if (targetCamPos) {
       // All other sections use the positions passed from Scene
       animateCamera(targetCamPos, targetCamLookAt || target, 1.5, "power2.inOut");
       camera.fov = fov;
       camera.updateProjectionMatrix();
     }
-  }, [activeSection, targetCamPosKey, targetCamLookAtKey, aboutCamPosKey, aboutTargetKey, camera, controls, targetKey, fov, aboutFov]);
+  }, [activeSection, targetCamPosKey, targetCamLookAtKey, aboutCamPosKey, aboutTargetKey, skillsCamPosKey, skillsTargetKey, camera, controls, targetKey, fov, aboutFov, skillsFov]);
 
   // ─── Live Leva updates (default camera) ──────────────────────────────────
   useEffect(() => {
@@ -109,6 +124,15 @@ function CinematicCamera({ targetCamPos = null, targetCamLookAt = null, activeSe
     camera.fov = aboutFov;
     camera.updateProjectionMatrix();
   }, [aboutCamPosKey, aboutTargetKey, aboutFov, camera, controls, activeSection]);
+
+  // ─── Live Leva updates (Skills camera) ───────────────────────────────────
+  useEffect(() => {
+    if (activeSection !== 2) return; // only apply when on Skills section
+
+    animateCamera(skillsCamPos, skillsTarget, 0.9, "power3.out");
+    camera.fov = skillsFov;
+    camera.updateProjectionMatrix();
+  }, [skillsCamPosKey, skillsTargetKey, skillsFov, camera, controls, activeSection]);
 
   // ─── Cleanup ──────────────────────────────────────────────────────────────
   useEffect(() => {
