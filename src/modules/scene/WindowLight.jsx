@@ -13,10 +13,11 @@ export default function WindowLight({
   rayCount = 1,
   rayOpacity = 0.3,
   rayLength = 6,
+  enabled = true,
 }) {
   const { scene } = useThree()
   useEffect(() => {
-    if (!scene) return
+    if (!scene || !enabled) return
 
     const windowsGroups = WINDOW_GROUP_NAMES
       .map((name) => scene.getObjectByName(name))
@@ -100,11 +101,13 @@ export default function WindowLight({
         }
       })
     }
-  }, [scene, color, intensity, distance, rayCount, rayOpacity, rayLength])
+  }, [scene, enabled, color, intensity, distance, rayCount, rayOpacity, rayLength])
 
   // animate ray meshes
   useFrame(({ clock }) => {
     const t = clock.elapsedTime
+    if (!enabled) return
+
     const windowGroups = WINDOW_GROUP_NAMES.map((name) => scene.getObjectByName(name)).filter(Boolean)
     windowGroups.forEach((wg, gi) => {
       const rays = wg.userData._windowRays || []
@@ -115,7 +118,7 @@ export default function WindowLight({
         ray.material.opacity = Math.max(0.05, rayOpacity * (0.7 + Math.cos(t * 1.8 + i * 0.5) * 0.3))
       })
     })
-  })
+  }, [enabled, scene, rayOpacity])
 
   return null
 }

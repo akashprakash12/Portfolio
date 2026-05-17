@@ -24,6 +24,8 @@ import { motion } from "framer-motion";
 
 const Home = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [modelsLoadingProgress, setModelsLoadingProgress] = useState(0);
+  const [modelsLoaded, setModelsLoaded] = useState(false);
   const [text, setText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [loopNum, setLoopNum] = useState(0);
@@ -321,8 +323,29 @@ const Home = () => {
 
       {/* FULL SCREEN BACKGROUND SCENE */}
       <div className="canvas-container fixed inset-0 z-0">
-        <Scene {...getSceneConfig()} activeSection={activeSection} />
+        <Scene
+          {...getSceneConfig()}
+          activeSection={activeSection}
+          onLoadProgress={(p) => setModelsLoadingProgress(p)}
+          onLoaded={() => setModelsLoaded(true)}
+        />
       </div>
+
+      {/* Loading overlay while GLTF models and assets initialize */}
+      {!modelsLoaded && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 text-white">
+          <div className="text-center">
+            <div className="mb-4">Loading 3D assets...</div>
+            <div className="w-64 h-2 bg-white/10 rounded overflow-hidden mx-auto">
+              <div
+                className="h-full bg-amber-400"
+                style={{ width: `${modelsLoadingProgress}%`, transition: "width 200ms" }}
+              />
+            </div>
+            <div className="mt-3 text-sm opacity-80">{modelsLoadingProgress}%</div>
+          </div>
+        </div>
+      )}
 
       <div className="absolute inset-0 z-10 bg-gradient-to-b from-transparent via-transparent to-black/25 pointer-events-none" />
 
@@ -359,7 +382,7 @@ const Home = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-amber-500/50 shadow-lg">
-                <img src="/akash.png" alt="Akash" className="w-full h-full object-cover object-top" />
+                <img src="/profile.jpeg" alt="Akash" className="w-full h-full object-cover object-top" />
               </div>
               <span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-amber-600">
                 AKASH
@@ -453,7 +476,7 @@ const Home = () => {
                       {/* Image — exactly 50×50 */}
                       <div className="relative w-52 h-52 rounded-full overflow-hidden border-2 border-amber-500/60 shadow-lg shadow-amber-500/20">
                         <img
-                          src="/akash.png"
+                          src="/profile.jpeg"
                           alt="Akash"
                           className="w-full h-full object-cover object-top"
                         />
