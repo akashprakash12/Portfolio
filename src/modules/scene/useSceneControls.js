@@ -87,6 +87,24 @@ const { bananaPosition, bananaRotation, bananaScale } = useControls("Banana Mode
   },
 });
 
+// --- Contact Models ---
+const { contactModelsPosition, contactModelsRotation, contactModelsScale } = useControls("Contact Models", {
+  contactModelsPosition: {
+    value: [-5, -1.15, -1.65],
+    step: 0.1,
+  },
+  contactModelsRotation: {
+    value: [0.04, -0.34, 0],
+    step: 0.01,
+  },
+  contactModelsScale: {
+    value: 0.01,
+    min: 0.01,
+    max: 10,
+    step: 0.01,
+  },
+});
+
   // --- Water ---
   const { waterColor, waveSpeed, waveFreq, waveAmp, waterScale } = useControls(
     "Water",
@@ -193,5 +211,9 @@ const { bananaPosition, bananaRotation, bananaScale } = useControls("Banana Mode
     bananaPosition,
     bananaRotation,
     bananaScale,
+    // Contact models
+    contactModelsPosition,
+    contactModelsRotation,
+    contactModelsScale,
   };
 }

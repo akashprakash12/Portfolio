@@ -10,6 +10,7 @@ import SceneViewport from "../modules/scene/SceneViewport";
 import CinematicLighting from "../modules/scene/CinematicLighting";
 import Mushroom from "../modules/scene/Mushroom";
 import Banana from "../modules/scene/Banana";
+import ContactModels from "../modules/scene/ContactModels";
 
 const Scene = ({ activeSection = 0 }) => {
   const [shadowKey, setShadowKey] = useState(0);
@@ -71,6 +72,10 @@ const Scene = ({ activeSection = 0 }) => {
     bananaPosition,
     bananaRotation,
     bananaScale,
+    // Contact models
+    contactModelsPosition,
+    contactModelsRotation,
+    contactModelsScale,
   } = useSceneControls();
 
   // Trigger shadow refresh when dragging (memoized)
@@ -142,6 +147,16 @@ const Scene = ({ activeSection = 0 }) => {
           rotation={bananaRotation}
           scale={bananaScale}
           visible={activeSection === 2}
+        />
+      </Suspense>
+
+      {/* Contact models for the Contact section */}
+      <Suspense fallback={null}>
+        <ContactModels
+          position={contactModelsPosition}
+          rotation={contactModelsRotation}
+          scale={contactModelsScale}
+          visible={activeSection === 4}
         />
       </Suspense>
 

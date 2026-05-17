@@ -35,6 +35,13 @@ function CinematicCamera({ targetCamPos = null, targetCamLookAt = null, activeSe
     skillsFov:    { value: 80, min: 10, max: 80, step: 1, label: "FOV" },
   });
 
+  // ─── Contact section camera ──────────────────────────────────────────────
+  const { contactCamPos, contactTarget, contactFov } = useControls("Contact Camera", {
+    contactCamPos: { value: [-10.9, 3.9, -1.6], step: 0.1, label: "Position" },
+    contactTarget: { value: [0, -0.2, 0],        step: 0.1, label: "Look At"  },
+    contactFov:    { value: 80, min: 10, max: 80, step: 1, label: "FOV" },
+  });
+
   // ─── Helpers ─────────────────────────────────────────────────────────────
   const camPosKey      = camPos.join(",");
   const targetKey      = target.join(",");
@@ -42,6 +49,8 @@ function CinematicCamera({ targetCamPos = null, targetCamLookAt = null, activeSe
   const aboutTargetKey = aboutTarget.join(",");
   const skillsCamPosKey = skillsCamPos.join(",");
   const skillsTargetKey = skillsTarget.join(",");
+  const contactCamPosKey = contactCamPos.join(",");
+  const contactTargetKey = contactTarget.join(",");
   const targetCamPosKey = targetCamPos ? targetCamPos.join(",") : "";
   const targetCamLookAtKey = targetCamLookAt ? targetCamLookAt.join(",") : "";
 
@@ -96,13 +105,18 @@ function CinematicCamera({ targetCamPos = null, targetCamLookAt = null, activeSe
       animateCamera(skillsCamPos, skillsTarget, 2.2, "power3.out");
       camera.fov = skillsFov;
       camera.updateProjectionMatrix();
+    } else if (activeSection === 4) {
+      // Use Contact-specific Leva camera when on Contact section
+      animateCamera(contactCamPos, contactTarget, 2.2, "power3.out");
+      camera.fov = contactFov;
+      camera.updateProjectionMatrix();
     } else if (targetCamPos) {
       // All other sections use the positions passed from Scene
       animateCamera(targetCamPos, targetCamLookAt || target, 1.5, "power2.inOut");
       camera.fov = fov;
       camera.updateProjectionMatrix();
     }
-  }, [activeSection, targetCamPosKey, targetCamLookAtKey, aboutCamPosKey, aboutTargetKey, skillsCamPosKey, skillsTargetKey, camera, controls, targetKey, fov, aboutFov, skillsFov]);
+  }, [activeSection, targetCamPosKey, targetCamLookAtKey, aboutCamPosKey, aboutTargetKey, skillsCamPosKey, skillsTargetKey, contactCamPosKey, contactTargetKey, camera, controls, targetKey, fov, aboutFov, skillsFov, contactFov]);
 
   // ─── Live Leva updates (default camera) ──────────────────────────────────
   useEffect(() => {
@@ -133,6 +147,15 @@ function CinematicCamera({ targetCamPos = null, targetCamLookAt = null, activeSe
     camera.fov = skillsFov;
     camera.updateProjectionMatrix();
   }, [skillsCamPosKey, skillsTargetKey, skillsFov, camera, controls, activeSection]);
+
+  // ─── Live Leva updates (Contact camera) ─────────────────────────────────
+  useEffect(() => {
+    if (activeSection !== 4) return; // only apply when on Contact section
+
+    animateCamera(contactCamPos, contactTarget, 0.9, "power3.out");
+    camera.fov = contactFov;
+    camera.updateProjectionMatrix();
+  }, [contactCamPosKey, contactTargetKey, contactFov, camera, controls, activeSection]);
 
   // ─── Cleanup ──────────────────────────────────────────────────────────────
   useEffect(() => {
