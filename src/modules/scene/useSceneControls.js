@@ -50,6 +50,11 @@ export function useSceneControls() {
       windowRayLength: { value: 6, min: 0.1, max: 20, step: 0.1 },
     });
 
+  // --- Helpers (debug toggle) ---
+  const { showLightHelpers } = useControls("Helpers", {
+    showLightHelpers: { value: false },
+  });
+
   // --- UI Labels ---
   const { doorLabelOffset } = useControls("UI Labels", {
     doorLabelOffset: { value: [-6.180000000000003, 11.279999999999987, 2.3000000000000007], step: 0.01 },
@@ -66,6 +71,48 @@ const { mushroomPosition, mushroomScale } = useControls("Mushroom Model", {
     min: 0.1,
     max: 5,
     step: 0.05,
+  },
+});
+
+// --- Banana Model (was Mountains) ---
+const { bananaPosition, bananaRotation, bananaScale } = useControls("Banana Model", {
+  bananaPosition: {
+    value: [-4.2, -0.7, -6],
+    step: 0.1,
+  },
+  bananaRotation: {
+    value: [0.01, 0, 0],
+    step: 0.01,
+  },
+  bananaScale: {
+    value: 0.03,
+    min: 0.03,
+    max: 100,
+    step: 0.0001,
+  },
+});
+
+// --- Contact Models ---
+const { contactTreePosition, contactTreeScale, contactBoyPosition, contactBoyScale } = useControls("Contact Models", {
+  contactTreePosition: {
+    value: [-5, -1.65, -1.55],
+    step: 0.1,
+  },
+  contactTreeScale: {
+    value: 0.01,
+    min: 0.001,
+    max: 10,
+    step: 0.001,
+  },
+  contactBoyPosition: {
+    value: [-9.4, 2.65, -2.15],
+    step: 0.1,
+  },
+  contactBoyScale: {
+    value: 0.08,
+    min: 0.001,
+    max: 10,
+    step: 0.001,
   },
 });
 
@@ -145,6 +192,8 @@ const { mushroomPosition, mushroomScale } = useControls("Mushroom Model", {
     windowRayCount,
     windowRayOpacity,
     windowRayLength,
+    // Helpers
+    showLightHelpers,
     // Water
     waterColor,
     waveSpeed,
@@ -171,5 +220,14 @@ const { mushroomPosition, mushroomScale } = useControls("Mushroom Model", {
     // Mushroom
     mushroomPosition,
     mushroomScale,
+    // Banana
+    bananaPosition,
+    bananaRotation,
+    bananaScale,
+    // Contact models
+    contactTreePosition,
+    contactTreeScale,
+    contactBoyPosition,
+    contactBoyScale,
   };
 }

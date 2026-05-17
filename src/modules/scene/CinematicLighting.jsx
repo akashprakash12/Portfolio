@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { useHelper } from "@react-three/drei";
+import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import gsap from "gsap";
 
@@ -13,13 +13,49 @@ export default function CinematicLighting({
   fillIntensity = 5,
   fillColor = "#ffd3a1",
   fillDistance = 28,
+  showLightHelpers = false,
 }) {
   const keyLightRef = useRef();
   const fillLightRef = useRef();
   const fillPulseRef = useRef({ intensity: fillIntensity });
 
-  useHelper(keyLightRef, THREE.DirectionalLightHelper, 1.5, "#8db3ff");
-  useHelper(fillLightRef, THREE.PointLightHelper, 0.5, "#ffd3a1");
+  const { scene } = useThree();
+  const dirHelperRef = useRef();
+  const pointHelperRef = useRef();
+
+  useEffect(() => {
+    // cleanup existing helpers first
+    if (dirHelperRef.current) {
+      scene.remove(dirHelperRef.current);
+      dirHelperRef.current = null;
+    }
+    if (pointHelperRef.current) {
+      scene.remove(pointHelperRef.current);
+      pointHelperRef.current = null;
+    }
+
+    if (showLightHelpers) {
+      if (keyLightRef.current) {
+        dirHelperRef.current = new THREE.DirectionalLightHelper(keyLightRef.current, 1.5, "#8db3ff");
+        scene.add(dirHelperRef.current);
+      }
+      if (fillLightRef.current) {
+        pointHelperRef.current = new THREE.PointLightHelper(fillLightRef.current, 0.5, "#ffd3a1");
+        scene.add(pointHelperRef.current);
+      }
+    }
+
+    return () => {
+      if (dirHelperRef.current) {
+        scene.remove(dirHelperRef.current);
+        dirHelperRef.current = null;
+      }
+      if (pointHelperRef.current) {
+        scene.remove(pointHelperRef.current);
+        pointHelperRef.current = null;
+      }
+    };
+  }, [showLightHelpers, keyColor, fillColor, scene]);
 
   useEffect(() => {
     fillPulseRef.current.intensity = fillIntensity;

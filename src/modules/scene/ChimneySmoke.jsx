@@ -38,7 +38,6 @@ export default function ChimneySmoke({ count: initialCount = 40 }) {
       scene.getObjectByName("chemine_Material007_0") || scene.getObjectByName("chemine");
     if (chimney && !foundRef.current) {
       // log once when chimney is first found
-      console.log("ChimneySmoke: found chimney ->", chimney.name);
       foundRef.current = true;
     }
     if (!chimney && foundRef.current) {
@@ -101,7 +100,6 @@ export default function ChimneySmoke({ count: initialCount = 40 }) {
             p.mesh.material.transparent = true;
             p.mesh.material.depthWrite = false;
           }
-          console.log("ChimneySmoke: spawn particle", i, startWorld.toArray());
           break;
         }
       }

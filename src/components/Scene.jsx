@@ -9,6 +9,8 @@ import SceneModelRig from "../modules/scene/SceneModelRig";
 import SceneViewport from "../modules/scene/SceneViewport";
 import CinematicLighting from "../modules/scene/CinematicLighting";
 import Mushroom from "../modules/scene/Mushroom";
+import Banana from "../modules/scene/Banana";
+import ContactModels from "../modules/scene/ContactModels";
 
 const Scene = ({ activeSection = 0 }) => {
   const [shadowKey, setShadowKey] = useState(0);
@@ -19,14 +21,27 @@ const Scene = ({ activeSection = 0 }) => {
     () => [
       [0, 0, 6], // Home
       [-5.900000000000002, 0, 6], // About
-      [-5.9, 0, -6.1000000000000005], // Skills
+      [-5.9, -0.20000000000000015, -7.0000000000000036], // Skills
       [-2, 1, 8], // Projects
       [4, 0.5, 6], // Contact
     ],
     [],
   );
 
+  // Optional look-at targets per section (so Skills can focus correctly)
+  const cameraTargets = useMemo(
+    () => [
+      [0, 1, 0], // Home
+      [0, 1, 0], // About
+      [0, 0, 0], // Skills (look at model center)
+      [0, 1, 0], // Projects
+      [0, 1, 0], // Contact
+    ],
+    [],
+  );
+
   const targetCamPos = cameraPositions[activeSection] || cameraPositions[0];
+  const targetCamLookAt = cameraTargets[activeSection] || cameraTargets[0];
   const {
     position,
     rotation,
@@ -41,6 +56,8 @@ const Scene = ({ activeSection = 0 }) => {
     fillIntensity,
     fillColor,
     fillDistance,
+    // Helpers
+    showLightHelpers,
     // Bloom
     bloomIntensity,
     luminanceThreshold,
@@ -53,6 +70,15 @@ const Scene = ({ activeSection = 0 }) => {
     // Mushroom
     mushroomPosition,
     mushroomScale,
+    // Banana
+    bananaPosition,
+    bananaRotation,
+    bananaScale,
+    // Contact models
+    contactTreePosition,
+    contactTreeScale,
+    contactBoyPosition,
+    contactBoyScale,
   } = useSceneControls();
 
   // Trigger shadow refresh when dragging (memoized)
@@ -74,6 +100,7 @@ const Scene = ({ activeSection = 0 }) => {
       <fog attach="fog" args={["#050816", 2, 10]} />
 
       <CinematicLighting
+        showLightHelpers={showLightHelpers}
         keyPosition={keyPosition}
         keyIntensity={keyIntensity}
         keyColor={keyColor}
@@ -84,6 +111,7 @@ const Scene = ({ activeSection = 0 }) => {
       />
       <CinematicCamera
         targetCamPos={targetCamPos}
+        targetCamLookAt={targetCamLookAt}
         activeSection={activeSection}
       />
       <Plane />
@@ -113,6 +141,27 @@ const Scene = ({ activeSection = 0 }) => {
           position={mushroomPosition}
           scale={mushroomScale}
           visible={activeSection >= 1}
+        />
+      </Suspense>
+
+      {/* Banana model for the Skills section */}
+      <Suspense fallback={null}>
+        <Banana
+          position={bananaPosition}
+          rotation={bananaRotation}
+          scale={bananaScale}
+          visible={activeSection === 2}
+        />
+      </Suspense>
+
+      {/* Contact models for the Contact section */}
+      <Suspense fallback={null}>
+        <ContactModels
+          treePosition={contactTreePosition}
+          treeScale={contactTreeScale}
+          boyPosition={contactBoyPosition}
+          boyScale={contactBoyScale}
+          visible={activeSection === 4}
         />
       </Suspense>
 

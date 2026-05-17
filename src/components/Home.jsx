@@ -31,14 +31,20 @@ const Home = () => {
   const [activeSection, setActiveSection] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
 
+  // Contact form state (name, email, message)
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactMessage, setContactMessage] = useState("");
+  const [contactSubmitted, setContactSubmitted] = useState(false);
+
   const containerRef = useRef(null);
   const sectionsRef = useRef([]);
 
   const roles = [
     "Full-Stack Developer",
-    "UI/UX Designer",
-    "Problem Solver",
-    "Tech Innovator",
+    "React & React Native Dev",
+    "3D Web Developer",
+    "Mobile App Developer",
   ];
 
   // Typing animation effect
@@ -135,63 +141,63 @@ const Home = () => {
     {
       icon: FiCode,
       name: "Frontend",
-      tech: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Redux"],
-      level: 95,
+      tech: ["React", "React Native", "React Three Fiber", "JavaScript", "Expo"],
+      level: 90,
       color: "from-blue-500/20 to-blue-500/5",
     },
     {
       icon: FiServer,
       name: "Backend",
-      tech: ["Node.js", "Express", "Python", "FastAPI", "REST"],
-      level: 90,
+      tech: ["Node.js", "Django", "Flask", "Python", "REST APIs"],
+      level: 80,
       color: "from-green-500/20 to-green-500/5",
     },
     {
       icon: FiDatabase,
       name: "Database",
-      tech: ["MongoDB", "PostgreSQL", "Redis", "Firebase"],
-      level: 85,
+      tech: ["MongoDB", "MySQL"],
+      level: 78,
       color: "from-purple-500/20 to-purple-500/5",
     },
     {
       icon: FiFigma,
-      name: "Design",
-      tech: ["Figma", "Adobe XD", "UI/UX", "Prototyping"],
-      level: 80,
+      name: "Tools",
+      tech: ["Git", "Postman", "VS Code", "Figma", "Three.js"],
+      level: 85,
       color: "from-pink-500/20 to-pink-500/5",
     },
   ];
 
   const projects = [
     {
-      title: "E-Commerce Platform",
+      title: "Swaram – Multimodal Communication App",
       description:
-        "A modern full-stack e-commerce solution with real-time inventory, payment processing, and admin dashboard. Built with microservices architecture.",
-      tags: ["React", "Node.js", "MongoDB", "Stripe", "Redis"],
-      type: "web",
-      status: "Live",
-      liveLink: "#",
-      githubLink: "#",
-    },
-    {
-      title: "Task Management App",
-      description:
-        "Collaborative project management tool with real-time updates, AI task suggestions, and advanced reporting features.",
-      tags: ["Next.js", "TypeScript", "Socket.io", "OpenAI", "Prisma"],
-      type: "web",
+        "React Native app enabling communication through lip reading, sign recognition, and speech synthesis using CNN–LSTM and NLP fusion for people with speech/hearing disabilities.",
+      tags: ["React Native", "Expo", "TensorFlow", "Flask", "Python", "MongoDB"],
+      type: "ai",
       status: "In Development",
       liveLink: "#",
-      githubLink: "#",
+      githubLink: "https://github.com/akashprakash12/swaramweb",
     },
     {
-      title: "AI Content Generator",
+      title: "IVJourney – IV Management App",
       description:
-        "Platform for AI-powered content creation with multiple templates, tone customization, and SEO optimization features.",
-      tags: ["Python", "FastAPI", "React", "OpenAI", "PostgreSQL"],
-      type: "ai",
+        "Mobile app for managing college industrial visits — handles scheduling, student registrations, faculty approvals, and visit tracking in one place.",
+      tags: ["React Native", "MongoDB", "Expo", "Node.js"],
+      type: "mobile",
       status: "Live",
       liveLink: "#",
-      githubLink: "#",
+      githubLink: "https://github.com/akashprakash12/IVJourney",
+    },
+    {
+      title: "Grievance Management System",
+      description:
+        "Web application for registering, tracking, and resolving public complaints with an admin dashboard for authorities to manage and respond to grievances. Internship project developed for the Idukki Collectorate under the guidance of District Collector V. Vigneshwari, IAS.",
+      tags: ["Django", "MySQL", "Python", "HTML/CSS"],
+      type: "web",
+      status: "Live",
+      liveLink: "#",
+      githubLink: "https://github.com/akashprakash12/Grivevance_MA",
     },
   ];
 
@@ -244,9 +250,74 @@ const Home = () => {
 
   const getSceneConfig = () => sceneConfig;
 
+  // Contact form submit handler — POSTs to backend and falls back to mailto
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const payload = {
+      name: contactName,
+      email: contactEmail,
+      message: contactMessage,
+    };
+
+    const makeMailto = (to, subjectText, bodyText) => {
+      const subject = encodeURIComponent(subjectText);
+      const body = encodeURIComponent(bodyText);
+      window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+    };
+
+    try {
+      // try relative endpoint first (same origin / proxy), then localhost fallback
+      let res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        res = await fetch("http://localhost:4000/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.sent) {
+          setContactSubmitted(true);
+          setContactName("");
+          setContactEmail("");
+          setContactMessage("");
+        } else if (data.subject && data.text) {
+          // backend returned prepared mail content (no SMTP configured)
+          makeMailto(data.to || "akashprakash7032@gmail.com", data.subject, data.text);
+          setContactSubmitted(true);
+        } else {
+          // unexpected response — fallback to mailto
+          const subjectText = `${contactName || "Anonymous"} — Contact Request`;
+          const bodyText = `Contact request from ${contactName} <${contactEmail}>.\n\n${contactMessage || ""}`;
+          makeMailto("akashprakash7032@gmail.com", subjectText, bodyText);
+          setContactSubmitted(true);
+        }
+      } else {
+        // network failure — fallback to mailto
+        const subjectText = `${contactName || "Anonymous"} — ${contactProjectType || "Project Inquiry"}`;
+        const bodyText = `${contactMessage}\n\n---\nFrom: ${contactName} <${contactEmail}>\nProject type: ${contactProjectType}`;
+        makeMailto("akashprakash7032@gmail.com", subjectText, bodyText);
+        setContactSubmitted(true);
+      }
+    } catch (err) {
+      // error — fallback to mailto
+      const subjectText = `${contactName || "Anonymous"} — Contact Request`;
+      const bodyText = `Contact request from ${contactName} <${contactEmail}>.\n\n${contactMessage || ""}`;
+      makeMailto("akashprakash7032@gmail.com", subjectText, bodyText);
+      setContactSubmitted(true);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
-      <style>{`.ui-wrapper{pointer-events:none} .ui-wrapper button, .ui-wrapper a, .ui-wrapper input, .ui-wrapper [role="button"]{pointer-events:auto}`}</style>
+      <style>{`.ui-wrapper{pointer-events:none} .ui-wrapper button, .ui-wrapper a, .ui-wrapper input, .ui-wrapper textarea, .ui-wrapper select, .ui-wrapper [role="button"]{pointer-events:auto}`}</style>
 
       {/* FULL SCREEN BACKGROUND SCENE */}
       <div className="canvas-container fixed inset-0 z-0">
@@ -287,8 +358,8 @@ const Home = () => {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg">
-                <span className="font-bold text-lg">A</span>
+              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-amber-500/50 shadow-lg">
+                <img src="/akash.png" alt="Akash" className="w-full h-full object-cover object-top" />
               </div>
               <span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-amber-600">
                 AKASH
@@ -351,37 +422,60 @@ const Home = () => {
           >
             <div className="container mx-auto max-w-7xl relative z-30">
               <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+
                 {/* Left Content */}
                 <motion.div
                   initial={{ opacity: 0, x: -50 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.8 }}
-                  className="space-y-8 relative z-40"
+                  className="space-y-4 relative z-40"
                 >
-                  {/* Welcome Badge */}
+                  {/* Profile Picture — 50×50 */}
                   <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 to-transparent border border-amber-500/30 backdrop-blur-sm"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
+                    className="flex items-center gap-3"
                   >
-                    <div className="w-2 h-2 rounded-full bg-amber-500 mr-2 animate-pulse"></div>
-                    <span className="text-sm font-medium text-gray-200">
-                      Welcome to my digital space
-                    </span>
+                    <div className="relative">
+                      {/* Spinning amber ring */}
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                        className="absolute -inset-[2px] rounded-full"
+                        style={{
+                          background: "conic-gradient(from 0deg, #f59e0b, #d97706, transparent, #f59e0b)",
+                          borderRadius: "9999px",
+                        }}
+                      />
+                      {/* Glow */}
+                      <div className="absolute -inset-2 rounded-full bg-amber-500/15 blur-md" />
+                      {/* Image — exactly 50×50 */}
+                      <div className="relative w-52 h-52 rounded-full overflow-hidden border-2 border-amber-500/60 shadow-lg shadow-amber-500/20">
+                        <img
+                          src="/akash.png"
+                          alt="Akash"
+                          className="w-full h-full object-cover object-top"
+                        />
+                      </div>
+                      {/* Online dot */}
+                      <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-400 border-2 border-black animate-pulse" />
+                    </div>
+                    {/* Available badge */}
+                
                   </motion.div>
+
+                
 
                   {/* Main Greeting */}
                   <motion.h1
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold leading-tight text-shadow-xl"
+                    className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-shadow-xl"
                   >
                     Hello, I'm <br />
-                    <span className="bg-clip-text text-amber-400 font-bold">
-                      AKASH
-                    </span>
+                    <span className="text-amber-400 font-bold">AKASH</span>
                   </motion.h1>
 
                   {/* Animated Typing Text */}
@@ -389,12 +483,12 @@ const Home = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
-                    className="h-20"
+                    className="h-10"
                   >
-                    <div className="text-2xl md:text-3xl lg:text-4xl font-semibold text-shadow">
+                    <div className="text-base md:text-lg font-semibold text-shadow">
                       <span className="text-gray-200">I'm a </span>
                       <span className="text-amber-400 font-bold">{text}</span>
-                      <span className="inline-block w-[4px] h-12 bg-amber-500 ml-1 animate-blink"></span>
+                      <span className="inline-block w-[3px] h-5 bg-amber-500 ml-1 animate-blink"></span>
                     </div>
                   </motion.div>
 
@@ -403,12 +497,11 @@ const Home = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.7 }}
-                    className="text-lg md:text-xl text-gray-300 max-w-xl leading-relaxed text-shadow"
+                    className="text-sm md:text-base text-gray-300 max-w-sm leading-relaxed text-shadow"
                   >
                     I craft immersive digital experiences by blending cutting-edge
                     technology with elegant design. Passionate about solving
-                    complex problems and building scalable solutions that make a
-                    real impact.
+                    complex problems and building scalable solutions.
                   </motion.p>
 
                   {/* CTA Buttons */}
@@ -416,20 +509,21 @@ const Home = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.9 }}
-                    className="flex flex-wrap gap-4 pt-6"
+                    className="flex flex-wrap gap-3 pt-2"
                   >
                     <button
                       onClick={() => scrollToSection(4)}
-                      className="px-8 py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold rounded-xl hover:from-amber-400 hover:to-amber-500 transition-all duration-300 transform hover:scale-105 flex items-center shadow-lg shadow-amber-500/25"
+                      className="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold rounded-xl hover:from-amber-400 hover:to-amber-500 transition-all duration-300 transform hover:scale-105 flex items-center text-sm shadow-lg shadow-amber-500/25"
                     >
-                      <FiMail className="mr-2" size={20} />
+                      <FiMail className="mr-2" size={16} />
                       Start a Conversation
                     </button>
                     <a
-                      href="#"
-                      className="px-8 py-3.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:border-amber-500 hover:text-amber-400 transition-all duration-300 transform hover:scale-105 flex items-center"
+                      href="/AkashPrakash_CV.pdf"
+                      download="AkashPrakash_CV.pdf"
+                      className="px-5 py-2.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:border-amber-500 hover:text-amber-400 transition-all duration-300 transform hover:scale-105 flex items-center text-sm"
                     >
-                      <FiDownload className="mr-2" size={20} />
+                      <FiDownload className="mr-2" size={16} />
                       Download Resume
                     </a>
                   </motion.div>
@@ -439,25 +533,25 @@ const Home = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1.1 }}
-                    className="flex space-x-4 pt-8"
+                    className="flex space-x-3 pt-2"
                   >
                     <a
-                      href="https://github.com"
+                      href="https://github.com/akashprakash12"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-3.5 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 transform hover:scale-110 hover:rotate-12 group"
+                      className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 transform hover:scale-110 hover:rotate-12 group"
                       aria-label="GitHub"
                     >
-                      <FiGithub size={22} className="group-hover:text-amber-400" />
+                      <FiGithub size={18} className="group-hover:text-amber-400" />
                     </a>
                     <a
-                      href="https://linkedin.com"
+                      href="https://www.linkedin.com/in/akash-prakash-/?skipRedirect=true"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-3.5 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 transform hover:scale-110 hover:rotate-12 group"
+                      className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 transform hover:scale-110 hover:rotate-12 group"
                       aria-label="LinkedIn"
                     >
-                      <FiLinkedin size={22} className="group-hover:text-amber-400" />
+                      <FiLinkedin size={18} className="group-hover:text-amber-400" />
                     </a>
                   </motion.div>
                 </motion.div>
@@ -500,11 +594,11 @@ const Home = () => {
                   </div>
 
                   <p className="text-lg md:text-xl text-gray-300 leading-relaxed text-shadow">
-                    With over 3 years of experience in full-stack development,
-                    I've had the privilege of working on diverse projects ranging
-                    from enterprise-scale applications to innovative startup
-                    products. My approach combines technical excellence with
-                    user-centered design.
+                    I'm a passionate Computer Science student and full-stack developer
+                    specialising in React, React Native, and 3D web experiences with
+                    Three.js. I love building immersive, scalable applications that
+                    solve real problems — from AI-powered communication tools to
+                    mobile-first platforms.
                   </p>
 
                   <div className="space-y-6 pt-4">
@@ -514,10 +608,8 @@ const Home = () => {
                       </div>
                       <div>
                         <h4 className="font-bold text-lg mb-1 text-white">Based in</h4>
-                        <p className="text-gray-300">San Francisco Bay Area, CA</p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Working remotely with global teams
-                        </p>
+                        <p className="text-gray-300">Idukki, Kerala, India</p>
+                        <p className="text-sm text-gray-400 mt-1">Open to remote opportunities</p>
                       </div>
                     </div>
 
@@ -526,11 +618,9 @@ const Home = () => {
                         <FiCalendar className="text-green-400" size={24} />
                       </div>
                       <div>
-                        <h4 className="font-bold text-lg mb-1 text-white">Experience</h4>
-                        <p className="text-gray-300">3+ years in web development</p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          15+ successful projects delivered
-                        </p>
+                        <h4 className="font-bold text-lg mb-1 text-white">Education</h4>
+                        <p className="text-gray-300">B.Tech Computer Science – APJ Abdul Kalam TU</p>
+                        <p className="text-sm text-gray-400 mt-1">2023–2026 · CGPA: 6.4 / 10</p>
                       </div>
                     </div>
 
@@ -539,11 +629,9 @@ const Home = () => {
                         <FiAward className="text-amber-400" size={24} />
                       </div>
                       <div>
-                        <h4 className="font-bold text-lg mb-1 text-white">Specialization</h4>
-                        <p className="text-gray-300">Full-Stack Development & UI/UX Design</p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Focus on React ecosystem & modern design systems
-                        </p>
+                        <h4 className="font-bold text-lg mb-1 text-white">Specialisation</h4>
+                        <p className="text-gray-300">React · React Native · Three.js · Full-Stack</p>
+                        <p className="text-sm text-gray-400 mt-1">MERN Stack · 3D Web · Mobile Dev</p>
                       </div>
                     </div>
                   </div>
@@ -818,10 +906,8 @@ const Home = () => {
                       </div>
                       <div>
                         <h4 className="font-bold text-lg text-white">Email</h4>
-                        <p className="text-gray-300">hello@akash.dev</p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Typically replies within 24 hours
-                        </p>
+                        <p className="text-gray-300">akashprakash7032@gmail.com</p>
+                        <p className="text-sm text-gray-400 mt-1">Typically replies within 24 hours</p>
                       </div>
                     </motion.div>
 
@@ -834,10 +920,8 @@ const Home = () => {
                       </div>
                       <div>
                         <h4 className="font-bold text-lg text-white">GitHub</h4>
-                        <p className="text-gray-300">github.com/akash</p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Check out my open-source work
-                        </p>
+                        <p className="text-gray-300">github.com/akashprakash12</p>
+                        <p className="text-sm text-gray-400 mt-1">Check out my open-source work</p>
                       </div>
                     </motion.div>
 
@@ -850,10 +934,8 @@ const Home = () => {
                       </div>
                       <div>
                         <h4 className="font-bold text-lg text-white">LinkedIn</h4>
-                        <p className="text-gray-300">linkedin.com/in/akash</p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Let's connect professionally
-                        </p>
+                        <p className="text-gray-300">https://www.linkedin.com/in/akash-prakash-/?skipRedirect=true</p>
+                        <p className="text-sm text-gray-400 mt-1">Let's connect professionally</p>
                       </div>
                     </motion.div>
                   </div>
@@ -866,7 +948,7 @@ const Home = () => {
                   viewport={{ once: true, margin: "-100px" }}
                   className="p-8 rounded-2xl bg-gradient-to-br from-white/10 to-transparent backdrop-blur-xl border border-white/20 shadow-2xl relative z-40"
                 >
-                  <form className="space-y-6">
+                  <form className="space-y-6" onSubmit={handleSubmit}>
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">
                         Your Name *
@@ -874,6 +956,8 @@ const Home = () => {
                       <input
                         type="text"
                         required
+                        value={contactName}
+                        onChange={(e) => setContactName(e.target.value)}
                         className="w-full px-4 py-3.5 rounded-xl bg-white/10 border border-white/20 focus:border-pink-500 focus:bg-white/20 focus:outline-none transition-all duration-300 placeholder-gray-500 text-gray-200"
                         placeholder="Enter your name"
                       />
@@ -885,46 +969,25 @@ const Home = () => {
                       <input
                         type="email"
                         required
+                        value={contactEmail}
+                        onChange={(e) => setContactEmail(e.target.value)}
                         className="w-full px-4 py-3.5 rounded-xl bg-white/10 border border-white/20 focus:border-pink-500 focus:bg-white/20 focus:outline-none transition-all duration-300 placeholder-gray-500 text-gray-200"
                         placeholder="you@example.com"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Project Type
-                      </label>
-                      <select className="w-full px-4 py-3.5 rounded-xl bg-white/10 border border-white/20 focus:border-pink-500 focus:bg-white/20 focus:outline-none transition-all duration-300 text-gray-200">
-                        <option value="" className="bg-gray-900">
-                          Select a project type
-                        </option>
-                        <option value="web" className="bg-gray-900">
-                          Web Development
-                        </option>
-                        <option value="mobile" className="bg-gray-900">
-                          Mobile App
-                        </option>
-                        <option value="design" className="bg-gray-900">
-                          UI/UX Design
-                        </option>
-                        <option value="consulting" className="bg-gray-900">
-                          Technical Consulting
-                        </option>
-                        <option value="other" className="bg-gray-900">
-                          Other
-                        </option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Your Message *
+                        Your Message
                       </label>
                       <textarea
                         rows={5}
-                        required
+                        value={contactMessage}
+                        onChange={(e) => setContactMessage(e.target.value)}
                         className="w-full px-4 py-3.5 rounded-xl bg-white/10 border border-white/20 focus:border-pink-500 focus:bg-white/20 focus:outline-none transition-all duration-300 resize-none placeholder-gray-500 text-gray-200"
-                        placeholder="Tell me about your project, timeline, and budget..."
+                        placeholder="Write a quick message or details..."
                       />
                     </div>
+                    {/* Simplified form: only name and email required. Message and project type removed. */}
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -934,6 +997,11 @@ const Home = () => {
                       <FiMail className="inline mr-2" />
                       Send Message
                     </motion.button>
+                    {contactSubmitted && (
+                      <p className="text-center text-sm text-green-400 pt-4">
+                        Thanks — I'll get back to you within 24 hours.
+                      </p>
+                    )}
                     <p className="text-center text-sm text-gray-400 pt-4">
                       I'll get back to you within 24 hours
                     </p>

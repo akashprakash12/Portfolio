@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start:server": "node server/contact.js",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -22,6 +23,12 @@
     "react-error-boundary": "^6.0.0",
     "react-icons": "^5.5.0",
     "three": "^0.181.2"
+  },
+  "optionalDependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.2",
+    "nodemailer": "^6.10.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
