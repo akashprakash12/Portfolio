@@ -36,9 +36,9 @@ const Home = () => {
 
   const roles = [
     "Full-Stack Developer",
-    "UI/UX Designer",
-    "Problem Solver",
-    "Tech Innovator",
+    "React & React Native Dev",
+    "3D Web Developer",
+    "Mobile App Developer",
   ];
 
   // Typing animation effect
@@ -135,63 +135,63 @@ const Home = () => {
     {
       icon: FiCode,
       name: "Frontend",
-      tech: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Redux"],
-      level: 95,
+      tech: ["React", "React Native", "React Three Fiber", "JavaScript", "Expo"],
+      level: 90,
       color: "from-blue-500/20 to-blue-500/5",
     },
     {
       icon: FiServer,
       name: "Backend",
-      tech: ["Node.js", "Express", "Python", "FastAPI", "REST"],
-      level: 90,
+      tech: ["Node.js", "Django", "Flask", "Python", "REST APIs"],
+      level: 80,
       color: "from-green-500/20 to-green-500/5",
     },
     {
       icon: FiDatabase,
       name: "Database",
-      tech: ["MongoDB", "PostgreSQL", "Redis", "Firebase"],
-      level: 85,
+      tech: ["MongoDB", "MySQL"],
+      level: 78,
       color: "from-purple-500/20 to-purple-500/5",
     },
     {
       icon: FiFigma,
-      name: "Design",
-      tech: ["Figma", "Adobe XD", "UI/UX", "Prototyping"],
-      level: 80,
+      name: "Tools",
+      tech: ["Git", "Postman", "VS Code", "Figma", "Three.js"],
+      level: 85,
       color: "from-pink-500/20 to-pink-500/5",
     },
   ];
 
   const projects = [
     {
-      title: "E-Commerce Platform",
+      title: "Swaram – Multimodal Communication App",
       description:
-        "A modern full-stack e-commerce solution with real-time inventory, payment processing, and admin dashboard. Built with microservices architecture.",
-      tags: ["React", "Node.js", "MongoDB", "Stripe", "Redis"],
-      type: "web",
-      status: "Live",
-      liveLink: "#",
-      githubLink: "#",
-    },
-    {
-      title: "Task Management App",
-      description:
-        "Collaborative project management tool with real-time updates, AI task suggestions, and advanced reporting features.",
-      tags: ["Next.js", "TypeScript", "Socket.io", "OpenAI", "Prisma"],
-      type: "web",
+        "React Native app enabling communication through lip reading, sign recognition, and speech synthesis using CNN–LSTM and NLP fusion for people with speech/hearing disabilities.",
+      tags: ["React Native", "Expo", "TensorFlow", "Flask", "Python", "MongoDB"],
+      type: "ai",
       status: "In Development",
       liveLink: "#",
-      githubLink: "#",
+      githubLink: "https://github.com/akashprakash12",
     },
     {
-      title: "AI Content Generator",
+      title: "IVJourney – IV Management App",
       description:
-        "Platform for AI-powered content creation with multiple templates, tone customization, and SEO optimization features.",
-      tags: ["Python", "FastAPI", "React", "OpenAI", "PostgreSQL"],
-      type: "ai",
+        "Mobile app for managing college industrial visits — handles scheduling, student registrations, faculty approvals, and visit tracking in one place.",
+      tags: ["React Native", "MongoDB", "Expo", "Node.js"],
+      type: "mobile",
       status: "Live",
       liveLink: "#",
-      githubLink: "#",
+      githubLink: "https://github.com/akashprakash12",
+    },
+    {
+      title: "Grievance Management System",
+      description:
+        "Web application for registering, tracking, and resolving public complaints with an admin dashboard for authorities to manage and respond to grievances.",
+      tags: ["Django", "MySQL", "Python", "HTML/CSS"],
+      type: "web",
+      status: "Live",
+      liveLink: "#",
+      githubLink: "https://github.com/akashprakash12",
     },
   ];
 
@@ -380,7 +380,7 @@ const Home = () => {
                       {/* Glow */}
                       <div className="absolute -inset-2 rounded-full bg-amber-500/15 blur-md" />
                       {/* Image — exactly 50×50 */}
-                      <div className="relative w-52 h-52 rounded-full overflow-hidden border-2 border-amber-500/60 shadow-lg shadow-amber-500/20">
+                      <div className="relative w-[50px] h-[50px] rounded-full overflow-hidden border-2 border-amber-500/60 shadow-lg shadow-amber-500/20">
                         <img
                           src="/profile.jpeg"
                           alt="Akash"
@@ -391,7 +391,7 @@ const Home = () => {
                       <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-400 border-2 border-black animate-pulse" />
                     </div>
                     {/* Available badge */}
-                    {/* <motion.div
+                    <motion.div
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.5 }}
@@ -399,7 +399,7 @@ const Home = () => {
                     >
                       <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
                       <span className="text-xs font-medium text-gray-200">Available for work</span>
-                    </motion.div> */}
+                    </motion.div>
                   </motion.div>
 
                   {/* Welcome Badge */}
@@ -467,7 +467,8 @@ const Home = () => {
                       Start a Conversation
                     </button>
                     <a
-                      href="#"
+                      href="/AkashPrakash_CV.pdf"
+                      download="AkashPrakash_CV.pdf"
                       className="px-5 py-2.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:border-amber-500 hover:text-amber-400 transition-all duration-300 transform hover:scale-105 flex items-center text-sm"
                     >
                       <FiDownload className="mr-2" size={16} />
@@ -483,7 +484,7 @@ const Home = () => {
                     className="flex space-x-3 pt-2"
                   >
                     <a
-                      href="https://github.com"
+                      href="https://github.com/akashprakash12"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 transform hover:scale-110 hover:rotate-12 group"
@@ -492,7 +493,7 @@ const Home = () => {
                       <FiGithub size={18} className="group-hover:text-amber-400" />
                     </a>
                     <a
-                      href="https://linkedin.com"
+                      href="https://linkedin.com/in/akash-prakash"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 transform hover:scale-110 hover:rotate-12 group"
@@ -541,11 +542,11 @@ const Home = () => {
                   </div>
 
                   <p className="text-lg md:text-xl text-gray-300 leading-relaxed text-shadow">
-                    With over 3 years of experience in full-stack development,
-                    I've had the privilege of working on diverse projects ranging
-                    from enterprise-scale applications to innovative startup
-                    products. My approach combines technical excellence with
-                    user-centered design.
+                    I'm a passionate Computer Science student and full-stack developer
+                    specialising in React, React Native, and 3D web experiences with
+                    Three.js. I love building immersive, scalable applications that
+                    solve real problems — from AI-powered communication tools to
+                    mobile-first platforms.
                   </p>
 
                   <div className="space-y-6 pt-4">
@@ -555,10 +556,8 @@ const Home = () => {
                       </div>
                       <div>
                         <h4 className="font-bold text-lg mb-1 text-white">Based in</h4>
-                        <p className="text-gray-300">San Francisco Bay Area, CA</p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Working remotely with global teams
-                        </p>
+                        <p className="text-gray-300">Idukki, Kerala, India</p>
+                        <p className="text-sm text-gray-400 mt-1">Open to remote opportunities</p>
                       </div>
                     </div>
 
@@ -567,11 +566,9 @@ const Home = () => {
                         <FiCalendar className="text-green-400" size={24} />
                       </div>
                       <div>
-                        <h4 className="font-bold text-lg mb-1 text-white">Experience</h4>
-                        <p className="text-gray-300">3+ years in web development</p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          15+ successful projects delivered
-                        </p>
+                        <h4 className="font-bold text-lg mb-1 text-white">Education</h4>
+                        <p className="text-gray-300">B.Tech Computer Science – APJ Abdul Kalam TU</p>
+                        <p className="text-sm text-gray-400 mt-1">2023–2026 · CGPA: 6.4 / 10</p>
                       </div>
                     </div>
 
@@ -580,11 +577,9 @@ const Home = () => {
                         <FiAward className="text-amber-400" size={24} />
                       </div>
                       <div>
-                        <h4 className="font-bold text-lg mb-1 text-white">Specialization</h4>
-                        <p className="text-gray-300">Full-Stack Development & UI/UX Design</p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Focus on React ecosystem & modern design systems
-                        </p>
+                        <h4 className="font-bold text-lg mb-1 text-white">Specialisation</h4>
+                        <p className="text-gray-300">React · React Native · Three.js · Full-Stack</p>
+                        <p className="text-sm text-gray-400 mt-1">MERN Stack · 3D Web · Mobile Dev</p>
                       </div>
                     </div>
                   </div>
@@ -859,10 +854,8 @@ const Home = () => {
                       </div>
                       <div>
                         <h4 className="font-bold text-lg text-white">Email</h4>
-                        <p className="text-gray-300">hello@akash.dev</p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Typically replies within 24 hours
-                        </p>
+                        <p className="text-gray-300">akashprakash7032@gmail.com</p>
+                        <p className="text-sm text-gray-400 mt-1">Typically replies within 24 hours</p>
                       </div>
                     </motion.div>
 
@@ -875,10 +868,8 @@ const Home = () => {
                       </div>
                       <div>
                         <h4 className="font-bold text-lg text-white">GitHub</h4>
-                        <p className="text-gray-300">github.com/akash</p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Check out my open-source work
-                        </p>
+                        <p className="text-gray-300">github.com/akashprakash12</p>
+                        <p className="text-sm text-gray-400 mt-1">Check out my open-source work</p>
                       </div>
                     </motion.div>
 
@@ -891,10 +882,8 @@ const Home = () => {
                       </div>
                       <div>
                         <h4 className="font-bold text-lg text-white">LinkedIn</h4>
-                        <p className="text-gray-300">linkedin.com/in/akash</p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Let's connect professionally
-                        </p>
+                        <p className="text-gray-300">linkedin.com/in/akash-prakash</p>
+                        <p className="text-sm text-gray-400 mt-1">Let's connect professionally</p>
                       </div>
                     </motion.div>
                   </div>

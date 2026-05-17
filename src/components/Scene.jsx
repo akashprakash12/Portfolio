@@ -19,14 +19,27 @@ const Scene = ({ activeSection = 0 }) => {
     () => [
       [0, 0, 6], // Home
       [-5.900000000000002, 0, 6], // About
-      [-5.9, 0, -6.1000000000000005], // Skills
+      [-5.9, -0.20000000000000015, -7.0000000000000036], // Skills
       [-2, 1, 8], // Projects
       [4, 0.5, 6], // Contact
     ],
     [],
   );
 
+  // Optional look-at targets per section (so Skills can focus correctly)
+  const cameraTargets = useMemo(
+    () => [
+      [0, 1, 0], // Home
+      [0, 1, 0], // About
+      [0, 0, 0], // Skills (look at model center)
+      [0, 1, 0], // Projects
+      [0, 1, 0], // Contact
+    ],
+    [],
+  );
+
   const targetCamPos = cameraPositions[activeSection] || cameraPositions[0];
+  const targetCamLookAt = cameraTargets[activeSection] || cameraTargets[0];
   const {
     position,
     rotation,
@@ -84,6 +97,7 @@ const Scene = ({ activeSection = 0 }) => {
       />
       <CinematicCamera
         targetCamPos={targetCamPos}
+        targetCamLookAt={targetCamLookAt}
         activeSection={activeSection}
       />
       <Plane />

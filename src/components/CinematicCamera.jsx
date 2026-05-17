@@ -5,7 +5,7 @@ import { useControls, folder } from "leva";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
-function CinematicCamera({ targetCamPos = null, activeSection = 0 }) {
+function CinematicCamera({ targetCamPos = null, targetCamLookAt = null, activeSection = 0 }) {
   const { camera, controls } = useThree();
 
   const hasAnimated = useRef(false);
@@ -33,6 +33,7 @@ function CinematicCamera({ targetCamPos = null, activeSection = 0 }) {
   const aboutCamPosKey = aboutCamPos.join(",");
   const aboutTargetKey = aboutTarget.join(",");
   const targetCamPosKey = targetCamPos ? targetCamPos.join(",") : "";
+  const targetCamLookAtKey = targetCamLookAt ? targetCamLookAt.join(",") : "";
 
   const animateCamera = (nextPosition, nextTarget, duration, ease, onComplete) => {
     if (!nextPosition) return;
@@ -82,20 +83,23 @@ function CinematicCamera({ targetCamPos = null, activeSection = 0 }) {
       camera.updateProjectionMatrix();
     } else if (targetCamPos) {
       // All other sections use the positions passed from Scene
-      animateCamera(targetCamPos, target, 1.5, "power2.inOut");
+      animateCamera(targetCamPos, targetCamLookAt || target, 1.5, "power2.inOut");
       camera.fov = fov;
       camera.updateProjectionMatrix();
     }
-  }, [activeSection, targetCamPosKey, aboutCamPosKey, aboutTargetKey]);
+  }, [activeSection, targetCamPosKey, targetCamLookAtKey, aboutCamPosKey, aboutTargetKey, camera, controls, targetKey, fov, aboutFov]);
 
   // ─── Live Leva updates (default camera) ──────────────────────────────────
   useEffect(() => {
-    if (activeSection === 1) return; // don't override About camera with default
+    // Only apply live default-camera (Leva) updates when on the Home section.
+    // This prevents the default Leva animation from overriding explicit
+    // section-based transitions (e.g., Skills, Projects, Contact).
+    if (activeSection !== 0) return;
 
     animateCamera(camPos, target, 0.8, "power2.out");
     camera.fov = fov;
     camera.updateProjectionMatrix();
-  }, [camPosKey, targetKey, fov, camera, activeSection]);
+  }, [camPosKey, targetKey, fov, camera, controls, activeSection]);
 
   // ─── Live Leva updates (About camera) ────────────────────────────────────
   useEffect(() => {
@@ -104,7 +108,7 @@ function CinematicCamera({ targetCamPos = null, activeSection = 0 }) {
     animateCamera(aboutCamPos, aboutTarget, 0.5, "power2.out");
     camera.fov = aboutFov;
     camera.updateProjectionMatrix();
-  }, [aboutCamPosKey, aboutTargetKey, aboutFov, camera, activeSection]);
+  }, [aboutCamPosKey, aboutTargetKey, aboutFov, camera, controls, activeSection]);
 
   // ─── Cleanup ──────────────────────────────────────────────────────────────
   useEffect(() => {
