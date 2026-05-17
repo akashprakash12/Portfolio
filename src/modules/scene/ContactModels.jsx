@@ -2,9 +2,10 @@ import React, { memo, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 
 function ContactModels({
-  position = [-5, -1.15, -1.65],
-  rotation = [0.04, -0.34, 0],
-  scale = 0.01,
+  treePosition = [-5, -1.65, -1.55],
+  treeScale = 0.01,
+  boyPosition = [-9.4, 2.65, -2.15],
+  boyScale = 0.08,
   visible = true,
   ...props
 }) {
@@ -12,21 +13,19 @@ function ContactModels({
   const { scene: treeScene } = useGLTF("/models/mushroom_tree.glb");
   const { scene: boyScene } = useGLTF("/models/muhsroom boy.glb");
 
-  const s = typeof scale === "number" ? [scale, scale, scale] : scale;
+  const treeScaleVector = typeof treeScale === "number" ? [treeScale, treeScale, treeScale] : treeScale;
+  const boyScaleVector = typeof boyScale === "number" ? [boyScale, boyScale, boyScale] : boyScale;
 
   return (
     <group
       ref={groupRef}
-      position={position}
-      rotation={rotation}
-      scale={s}
       visible={visible}
       {...props}
     >
-      <group position={[-1.2, 0, 0]}>
+      <group position={treePosition} scale={treeScaleVector}>
         <primitive object={treeScene} />
       </group>
-      <group position={[1.2, 0, 0]}>
+      <group position={boyPosition} scale={boyScaleVector}>
         <primitive object={boyScene} />
       </group>
     </group>

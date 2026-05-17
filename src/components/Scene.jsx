@@ -73,9 +73,10 @@ const Scene = ({ activeSection = 0 }) => {
     bananaRotation,
     bananaScale,
     // Contact models
-    contactModelsPosition,
-    contactModelsRotation,
-    contactModelsScale,
+    contactTreePosition,
+    contactTreeScale,
+    contactBoyPosition,
+    contactBoyScale,
   } = useSceneControls();
 
   // Trigger shadow refresh when dragging (memoized)
@@ -153,9 +154,10 @@ const Scene = ({ activeSection = 0 }) => {
       {/* Contact models for the Contact section */}
       <Suspense fallback={null}>
         <ContactModels
-          position={contactModelsPosition}
-          rotation={contactModelsRotation}
-          scale={contactModelsScale}
+          treePosition={contactTreePosition}
+          treeScale={contactTreeScale}
+          boyPosition={contactBoyPosition}
+          boyScale={contactBoyScale}
           visible={activeSection === 4}
         />
       </Suspense>

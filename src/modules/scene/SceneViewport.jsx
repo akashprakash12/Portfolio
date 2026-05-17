@@ -7,7 +7,7 @@ export default function SceneViewport() {
   return (
     <>
       <OrbitControls enablePan={false} enableZoom={false} />
-      {/* <Environment preset="night" /> */}
+      <Environment preset="night" />
 
       <EffectComposer>
         <Bloom intensity={2.6} luminanceThreshold={0.0} luminanceSmoothing={0.18} />

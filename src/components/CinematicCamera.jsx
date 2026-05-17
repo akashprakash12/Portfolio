@@ -37,7 +37,7 @@ function CinematicCamera({ targetCamPos = null, targetCamLookAt = null, activeSe
 
   // ─── Contact section camera ──────────────────────────────────────────────
   const { contactCamPos, contactTarget, contactFov } = useControls("Contact Camera", {
-    contactCamPos: { value: [-10.9, 3.9, -1.6], step: 0.1, label: "Position" },
+    contactCamPos: { value: [-10.7, 3.5, -1.6], step: 0.1, label: "Position" },
     contactTarget: { value: [0, -0.2, 0],        step: 0.1, label: "Look At"  },
     contactFov:    { value: 80, min: 10, max: 80, step: 1, label: "FOV" },
   });
