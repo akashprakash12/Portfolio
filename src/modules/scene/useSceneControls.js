@@ -50,6 +50,11 @@ export function useSceneControls() {
       windowRayLength: { value: 6, min: 0.1, max: 20, step: 0.1 },
     });
 
+  // --- Helpers (debug toggle) ---
+  const { showLightHelpers } = useControls("Helpers", {
+    showLightHelpers: { value: false },
+  });
+
   // --- UI Labels ---
   const { doorLabelOffset } = useControls("UI Labels", {
     doorLabelOffset: { value: [-6.180000000000003, 11.279999999999987, 2.3000000000000007], step: 0.01 },
@@ -80,8 +85,8 @@ const { bananaPosition, bananaRotation, bananaScale } = useControls("Banana Mode
     step: 0.01,
   },
   bananaScale: {
-    value: 0.005,
-    min: 0.00001,
+    value: 0.03,
+    min: 0.03,
     max: 100,
     step: 0.0001,
   },
@@ -187,6 +192,8 @@ const { contactTreePosition, contactTreeScale, contactBoyPosition, contactBoySca
     windowRayCount,
     windowRayOpacity,
     windowRayLength,
+    // Helpers
+    showLightHelpers,
     // Water
     waterColor,
     waveSpeed,

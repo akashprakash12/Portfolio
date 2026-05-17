@@ -56,6 +56,8 @@ const Scene = ({ activeSection = 0 }) => {
     fillIntensity,
     fillColor,
     fillDistance,
+    // Helpers
+    showLightHelpers,
     // Bloom
     bloomIntensity,
     luminanceThreshold,
@@ -98,6 +100,7 @@ const Scene = ({ activeSection = 0 }) => {
       <fog attach="fog" args={["#050816", 2, 10]} />
 
       <CinematicLighting
+        showLightHelpers={showLightHelpers}
         keyPosition={keyPosition}
         keyIntensity={keyIntensity}
         keyColor={keyColor}

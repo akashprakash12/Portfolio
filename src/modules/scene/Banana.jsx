@@ -4,7 +4,7 @@ import { useGLTF } from "@react-three/drei";
 function Banana({
   position = [-4.2, -0.7, -6],
   rotation = [0, 0, 0],
-  scale = 0.005,
+  scale = 0.03,
   visible = true,
   ...props
 }) {

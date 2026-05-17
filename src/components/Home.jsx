@@ -380,7 +380,7 @@ const Home = () => {
                       {/* Glow */}
                       <div className="absolute -inset-2 rounded-full bg-amber-500/15 blur-md" />
                       {/* Image — exactly 50×50 */}
-                      <div className="relative w-[50px] h-[50px] rounded-full overflow-hidden border-2 border-amber-500/60 shadow-lg shadow-amber-500/20">
+                      <div className="relative w-52 h-52 rounded-full overflow-hidden border-2 border-amber-500/60 shadow-lg shadow-amber-500/20">
                         <img
                           src="/profile.jpeg"
                           alt="Akash"
