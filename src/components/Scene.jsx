@@ -118,6 +118,26 @@ const Scene = ({ activeSection = 0, onLoadProgress, onLoaded }) => {
         // enable softer PCF shadows to reduce banding/zebra artifacts
         gl.shadowMap.enabled = true;
         gl.shadowMap.type = THREE.PCFSoftShadowMap;
+        // Ensure the canvas handles touch/pointer input directly on mobile so
+        // interactions (orbit/drag) don't get intercepted by the overlay UI.
+        // Also disable browser touch-action so three's controls receive events.
+        try {
+          gl.domElement.style.touchAction = "none";
+          gl.domElement.style.pointerEvents = "auto";
+
+          const stop = (e) => {
+            e.stopPropagation();
+          };
+
+          gl.domElement.addEventListener("pointerdown", stop, { passive: false });
+          gl.domElement.addEventListener("pointermove", stop, { passive: false });
+          gl.domElement.addEventListener("pointerup", stop, { passive: false });
+          gl.domElement.addEventListener("touchstart", stop, { passive: false });
+          gl.domElement.addEventListener("touchmove", stop, { passive: false });
+          gl.domElement.addEventListener("touchend", stop, { passive: false });
+        } catch (err) {
+          // ignore if DOM not available or styles can't be applied
+        }
       }}
     >
       <AdaptiveDpr pixelated={false} />

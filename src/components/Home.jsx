@@ -92,6 +92,30 @@ const Home = () => {
       setTimeout(() => setIsScrolling(false), 800);
     };
 
+    // Touch handling for mobile swipe
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const handleTouchStart = (e) => {
+      touchStartX = e.touches[0].clientX;
+    };
+    const handleTouchMove = (e) => {
+      touchEndX = e.touches[0].clientX;
+    };
+    const handleTouchEnd = () => {
+      if (isScrolling) return;
+      const dx = touchStartX - touchEndX;
+      // threshold
+      if (Math.abs(dx) > 50) {
+        setIsScrolling(true);
+        if (dx > 0) {
+          scrollToSection(activeSection + 1);
+        } else {
+          scrollToSection(activeSection - 1);
+        }
+        setTimeout(() => setIsScrolling(false), 800);
+      }
+    };
+
     const handleKeyDown = (e) => {
       if (isScrolling) return;
 
@@ -108,10 +132,17 @@ const Home = () => {
 
     const wheelOpts = { passive: false };
     container.addEventListener("wheel", handleWheel, wheelOpts);
+    // touch listeners: allow native pan but also detect swipe end
+    container.addEventListener("touchstart", handleTouchStart, { passive: true });
+    container.addEventListener("touchmove", handleTouchMove, { passive: true });
+    container.addEventListener("touchend", handleTouchEnd, { passive: true });
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
       container.removeEventListener("wheel", handleWheel, wheelOpts);
+      container.removeEventListener("touchstart", handleTouchStart);
+      container.removeEventListener("touchmove", handleTouchMove);
+      container.removeEventListener("touchend", handleTouchEnd);
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [activeSection, isScrolling]);
@@ -318,7 +349,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden relative">
+    <div className="min-h-screen bg-black text-white overflow-x-hidden md:overflow-hidden relative">
       <style>{`.ui-wrapper{pointer-events:none} .ui-wrapper button, .ui-wrapper a, .ui-wrapper input, .ui-wrapper textarea, .ui-wrapper select, .ui-wrapper [role="button"]{pointer-events:auto}`}</style>
 
       {/* FULL SCREEN BACKGROUND SCENE */}
@@ -353,7 +384,7 @@ const Home = () => {
       <div className="fixed inset-0 z-10 bg-black/20 pointer-events-none"></div>
 
       {/* Navigation Dots */}
-      <div className="fixed right-8 top-1/2 transform -translate-y-1/2 z-50 flex flex-col space-y-4">
+      <div className="hidden md:flex fixed right-8 top-1/2 transform -translate-y-1/2 z-50 flex-col space-y-4">
         {navItems.map((item, index) => (
           <button
             key={item.name}
@@ -432,7 +463,7 @@ const Home = () => {
       <div style={{ mixBlendMode: "normal" }} className="ui-wrapper relative z-20">
         <div
           ref={containerRef}
-          className="flex overflow-x-auto snap-x snap-mandatory h-screen scrollbar-hide relative z-10 pointer-events-none"
+          className="flex flex-col md:flex-row overflow-visible md:overflow-y-hidden md:overflow-x-auto md:snap-x md:snap-mandatory h-auto md:h-[100svh] scrollbar-hide relative z-10 pointer-events-auto md:pointer-events-none"
           style={{ scrollBehavior: "smooth" }}
         >
 
@@ -441,24 +472,24 @@ const Home = () => {
           ─────────────────────────────────────────── */}
           <section
             ref={(el) => (sectionsRef.current[0] = el)}
-            className="min-w-full h-screen flex items-center justify-center px-6 md:px-8 snap-center relative z-20"
+            className="w-full md:min-w-full h-auto md:min-h-[100svh] flex items-start md:items-center justify-center px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-0 snap-none md:snap-center relative z-20"
           >
             <div className="container mx-auto max-w-7xl relative z-30">
-              <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+              <div className="grid lg:grid-cols-2 gap-8 lg:gap-20 items-center">
 
                 {/* Left Content */}
                 <motion.div
                   initial={{ opacity: 0, x: -50 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.8 }}
-                  className="space-y-4 relative z-40"
+                  className="space-y-6 md:space-y-8 relative z-40"
                 >
                   {/* Profile Picture — 50×50 */}
                   <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
-                    className="flex items-center gap-3"
+                    className="flex items-center gap-3 mt-5 md:mt-0"
                   >
                     <div className="relative">
                       {/* Spinning amber ring */}
@@ -474,7 +505,7 @@ const Home = () => {
                       {/* Glow */}
                       <div className="absolute -inset-2 rounded-full bg-amber-500/15 blur-md" />
                       {/* Image — exactly 50×50 */}
-                      <div className="relative w-52 h-52 rounded-full overflow-hidden border-2 border-amber-500/60 shadow-lg shadow-amber-500/20">
+                      <div className="relative w-36 h-36 sm:w-52 sm:h-52 rounded-full overflow-hidden border-2 border-amber-500/60 shadow-lg shadow-amber-500/20">
                         <img
                           src="/profile.jpeg"
                           alt="Akash"
@@ -495,7 +526,7 @@ const Home = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-shadow-xl"
+                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-shadow-xl"
                   >
                     Hello, I'm <br />
                     <span className="text-amber-400 font-bold">AKASH</span>
@@ -506,9 +537,9 @@ const Home = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
-                    className="h-10"
+                    className="h-8 sm:h-10"
                   >
-                    <div className="text-base md:text-lg font-semibold text-shadow">
+                    <div className="text-sm sm:text-base md:text-lg font-semibold text-shadow">
                       <span className="text-gray-200">I'm a </span>
                       <span className="text-amber-400 font-bold">{text}</span>
                       <span className="inline-block w-[3px] h-5 bg-amber-500 ml-1 animate-blink"></span>
@@ -536,7 +567,7 @@ const Home = () => {
                   >
                     <button
                       onClick={() => scrollToSection(4)}
-                      className="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold rounded-xl hover:from-amber-400 hover:to-amber-500 transition-all duration-300 transform hover:scale-105 flex items-center text-sm shadow-lg shadow-amber-500/25"
+                      className="px-4 py-2 sm:px-5 sm:py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold rounded-xl hover:from-amber-400 hover:to-amber-500 transition-all duration-300 transform hover:scale-105 flex items-center text-xs sm:text-sm shadow-lg shadow-amber-500/25"
                     >
                       <FiMail className="mr-2" size={16} />
                       Start a Conversation
@@ -544,7 +575,7 @@ const Home = () => {
                     <a
                       href="/AkashPrakash_CV.pdf"
                       download="AkashPrakash_CV.pdf"
-                      className="px-5 py-2.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:border-amber-500 hover:text-amber-400 transition-all duration-300 transform hover:scale-105 flex items-center text-sm"
+                      className="px-4 py-2 sm:px-5 sm:py-2.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:border-amber-500 hover:text-amber-400 transition-all duration-300 transform hover:scale-105 flex items-center text-xs sm:text-sm"
                     >
                       <FiDownload className="mr-2" size={16} />
                       Download Resume
@@ -590,10 +621,10 @@ const Home = () => {
           ─────────────────────────────────────────── */}
           <section
             ref={(el) => (sectionsRef.current[1] = el)}
-            className="min-w-full h-screen flex items-center justify-center px-6 md:px-8 snap-center relative z-20"
+            className="w-full md:min-w-full h-auto md:min-h-[100svh] flex items-start md:items-center justify-center px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-0 snap-none md:snap-center relative z-20"
           >
             <div className="container mx-auto max-w-7xl relative z-30">
-              <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+              <div className="grid lg:grid-cols-2 gap-8 lg:gap-20 items-center">
 
                 {/* Left side — empty so mushroom (in background left) has space */}
                 <div className="hidden lg:block"></div>
@@ -603,7 +634,7 @@ const Home = () => {
                   initial={{ opacity: 0, x: 50 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: "-100px" }}
-                  className="space-y-8 relative z-40"
+                    className="space-y-6 md:space-y-8 relative z-40 min-w-0"
                 >
                   <div>
                     <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/20 to-transparent border border-blue-500/30 backdrop-blur-sm mb-6">
@@ -611,12 +642,12 @@ const Home = () => {
                         About Me
                       </span>
                     </div>
-                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-shadow-xl">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-shadow-xl leading-tight">
                       My <span className="text-blue-400">Journey</span>
                     </h2>
                   </div>
 
-                  <p className="text-lg md:text-xl text-gray-300 leading-relaxed text-shadow">
+                  <p className="text-base sm:text-lg md:text-xl text-gray-300 leading-relaxed text-shadow break-words">
                     I'm a passionate Computer Science student and full-stack developer
                     specialising in React, React Native, and 3D web experiences with
                     Three.js. I love building immersive, scalable applications that
@@ -625,35 +656,35 @@ const Home = () => {
                   </p>
 
                   <div className="space-y-6 pt-4">
-                    <div className="flex items-start space-x-4 p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:border-blue-500/50 transition-all duration-300">
-                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500/20 to-transparent flex items-center justify-center flex-shrink-0">
+                    <div className="flex flex-col sm:flex-row sm:items-start space-y-3 sm:space-y-0 sm:space-x-4 p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:border-blue-500/50 transition-all duration-300">
+                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500/20 to-transparent flex items-center justify-center shrink-0">
                         <FiMapPin className="text-blue-400" size={24} />
                       </div>
                       <div>
                         <h4 className="font-bold text-lg mb-1 text-white">Based in</h4>
-                        <p className="text-gray-300">Idukki, Kerala, India</p>
+                        <p className="text-gray-300 break-words">Idukki, Kerala, India</p>
                         <p className="text-sm text-gray-400 mt-1">Open to remote opportunities</p>
                       </div>
                     </div>
 
-                    <div className="flex items-start space-x-4 p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:border-green-500/50 transition-all duration-300">
-                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500/20 to-transparent flex items-center justify-center flex-shrink-0">
+                    <div className="flex flex-col sm:flex-row sm:items-start space-y-3 sm:space-y-0 sm:space-x-4 p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:border-green-500/50 transition-all duration-300">
+                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500/20 to-transparent flex items-center justify-center shrink-0">
                         <FiCalendar className="text-green-400" size={24} />
                       </div>
                       <div>
                         <h4 className="font-bold text-lg mb-1 text-white">Education</h4>
-                        <p className="text-gray-300">B.Tech Computer Science – APJ Abdul Kalam TU</p>
+                        <p className="text-gray-300 break-words">B.Tech Computer Science – APJ Abdul Kalam TU</p>
                         <p className="text-sm text-gray-400 mt-1">2023–2026 · CGPA: 6.4 / 10</p>
                       </div>
                     </div>
 
-                    <div className="flex items-start space-x-4 p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:border-amber-500/50 transition-all duration-300">
-                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500/20 to-transparent flex items-center justify-center flex-shrink-0">
+                    <div className="flex flex-col sm:flex-row sm:items-start space-y-3 sm:space-y-0 sm:space-x-4 p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:border-amber-500/50 transition-all duration-300">
+                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500/20 to-transparent flex items-center justify-center shrink-0">
                         <FiAward className="text-amber-400" size={24} />
                       </div>
                       <div>
                         <h4 className="font-bold text-lg mb-1 text-white">Specialisation</h4>
-                        <p className="text-gray-300">React · React Native · Three.js · Full-Stack</p>
+                        <p className="text-gray-300 break-words">React · React Native · Three.js · Full-Stack</p>
                         <p className="text-sm text-gray-400 mt-1">MERN Stack · 3D Web · Mobile Dev</p>
                       </div>
                     </div>
@@ -669,7 +700,7 @@ const Home = () => {
           ─────────────────────────────────────────── */}
           <section
             ref={(el) => (sectionsRef.current[2] = el)}
-            className="min-w-full h-screen flex items-center justify-center px-6 md:px-8 snap-center relative z-20"
+            className="w-full md:min-w-full h-auto md:min-h-[100svh] flex items-start md:items-center justify-center px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-0 snap-none md:snap-center relative z-20"
           >
             <div className="container mx-auto max-w-7xl relative z-30">
               <div className="text-center mb-16">
@@ -688,7 +719,7 @@ const Home = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.1 }}
-                  className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-shadow-xl"
+                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-shadow-xl leading-tight"
                 >
                   My <span className="text-purple-400">Skills</span>
                 </motion.h2>
@@ -697,14 +728,14 @@ const Home = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.2 }}
-                  className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto text-shadow"
+                  className="text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto text-shadow"
                 >
                   A comprehensive toolkit for building modern, scalable, and
                   performant web applications
                 </motion.p>
               </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-40">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6 relative z-40">
                 {skills.map((skill, index) => (
                   <motion.div
                     key={index}
@@ -712,12 +743,12 @@ const Home = () => {
                     whileInView={{ opacity: 1, y: 0, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1, type: "spring" }}
-                    className={`p-6 rounded-2xl bg-gradient-to-br ${skill.color} backdrop-blur-sm border border-white/20 hover:border-white/40 transition-all duration-300 hover:scale-105 group`}
+                    className={`p-5 sm:p-6 rounded-2xl bg-gradient-to-br ${skill.color} backdrop-blur-sm border border-white/20 hover:border-white/40 transition-all duration-300 hover:scale-105 group`}
                   >
                     <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-white/10 to-transparent flex items-center justify-center mb-6 group-hover:rotate-12 transition-transform duration-300">
-                      <skill.icon className="text-white" size={32} />
+                      <skill.icon className="text-white" size={28} />
                     </div>
-                    <h3 className="text-xl font-bold mb-4 group-hover:text-white transition-colors text-white">
+                    <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 group-hover:text-white transition-colors text-white">
                       {skill.name}
                     </h3>
 
@@ -750,7 +781,7 @@ const Home = () => {
                           whileInView={{ opacity: 1, scale: 1 }}
                           viewport={{ once: true }}
                           transition={{ delay: techIndex * 0.05 + index * 0.1 }}
-                          className="px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-sm hover:bg-white/20 transition-colors cursor-default text-gray-200"
+                          className="px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs sm:text-sm hover:bg-white/20 transition-colors cursor-default text-gray-200"
                         >
                           {tech}
                         </motion.span>
@@ -767,7 +798,7 @@ const Home = () => {
           ─────────────────────────────────────────── */}
           <section
             ref={(el) => (sectionsRef.current[3] = el)}
-            className="min-w-full h-screen flex items-center justify-center px-6 md:px-8 snap-center relative z-20"
+            className="w-full md:min-w-full h-auto md:min-h-[100svh] flex items-start md:items-center justify-center px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-0 snap-none md:snap-center relative z-20"
           >
             <div className="container mx-auto max-w-7xl relative z-30">
               <div className="text-center mb-16">
@@ -786,7 +817,7 @@ const Home = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.1 }}
-                  className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-shadow-xl"
+                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-shadow-xl leading-tight"
                 >
                   Featured <span className="text-green-400">Projects</span>
                 </motion.h2>
@@ -795,14 +826,14 @@ const Home = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.2 }}
-                  className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto text-shadow"
+                  className="text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto text-shadow"
                 >
                   A selection of projects that demonstrate my technical
                   capabilities and creative approach
                 </motion.p>
               </div>
 
-              <div className="grid lg:grid-cols-3 gap-8 relative z-40">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 relative z-40">
                 {projects.map((project, index) => (
                   <motion.div
                     key={index}
@@ -810,7 +841,7 @@ const Home = () => {
                     whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.2, type: "spring" }}
-                    className="group relative"
+                    className="group relative min-w-0"
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <div className="relative p-6 rounded-2xl bg-gradient-to-br from-white/10 to-transparent backdrop-blur-sm border border-white/20 group-hover:border-green-500/50 transition-all duration-300 h-full">
@@ -843,10 +874,10 @@ const Home = () => {
                         </div>
                       </div>
 
-                      <h3 className="text-2xl font-bold mb-3 group-hover:text-green-400 transition-colors text-white">
+                      <h3 className="text-xl sm:text-2xl font-bold mb-3 group-hover:text-green-400 transition-colors text-white leading-tight">
                         {project.title}
                       </h3>
-                      <p className="text-gray-300 mb-6 leading-relaxed">
+                      <p className="text-gray-300 mb-6 leading-relaxed break-words">
                         {project.description}
                       </p>
 
@@ -855,7 +886,7 @@ const Home = () => {
                         {project.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs hover:bg-white/20 transition-colors cursor-default text-gray-200"
+                            className="px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-[11px] sm:text-xs hover:bg-white/20 transition-colors cursor-default text-gray-200"
                           >
                             {tag}
                           </span>
@@ -863,7 +894,7 @@ const Home = () => {
                       </div>
 
                       {/* Action Buttons */}
-                      <div className="flex space-x-3 pt-4 border-t border-white/20">
+                      <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-white/20">
                         <a
                           href={project.liveLink}
                           className="flex-1 px-4 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-black font-semibold rounded-lg hover:from-green-400 hover:to-green-500 transition-all duration-300 text-center flex items-center justify-center"
@@ -891,16 +922,16 @@ const Home = () => {
           ─────────────────────────────────────────── */}
           <section
             ref={(el) => (sectionsRef.current[4] = el)}
-            className="min-w-full h-screen flex items-center justify-center px-6 md:px-8 snap-center relative z-20"
+            className="w-full md:min-w-full h-auto md:min-h-[100svh] flex items-start md:items-center justify-center px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-0 snap-none md:snap-center relative z-20"
           >
             <div className="container mx-auto max-w-7xl relative z-30">
-              <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+              <div className="grid lg:grid-cols-2 gap-8 lg:gap-20 items-center">
                 {/* Left Content */}
                 <motion.div
                   initial={{ opacity: 0, x: -50 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: "-100px" }}
-                  className="space-y-8 relative z-40"
+                  className="space-y-6 md:space-y-8 relative z-40 min-w-0"
                 >
                   <div>
                     <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-pink-500/20 to-transparent border border-pink-500/30 backdrop-blur-sm mb-6">
@@ -908,12 +939,12 @@ const Home = () => {
                         Let's Connect
                       </span>
                     </div>
-                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-shadow-xl">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-shadow-xl leading-tight">
                       Get In <span className="text-pink-400">Touch</span>
                     </h2>
                   </div>
 
-                  <p className="text-lg md:text-xl text-gray-300 leading-relaxed text-shadow">
+                  <p className="text-base sm:text-lg md:text-xl text-gray-300 leading-relaxed text-shadow break-words">
                     I'm currently available for freelance work and interesting
                     opportunities. Whether you have a project in mind or just want
                     to say hello, I'd love to hear from you.
@@ -922,42 +953,42 @@ const Home = () => {
                   <div className="space-y-6 pt-4">
                     <motion.div
                       whileHover={{ x: 10 }}
-                      className="flex items-center space-x-4 p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:border-pink-500/50 transition-all duration-300"
+                      className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:border-pink-500/50 transition-all duration-300 min-w-0"
                     >
-                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-pink-500/20 to-transparent flex items-center justify-center flex-shrink-0">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-pink-500/20 to-transparent flex items-center justify-center shrink-0">
                         <FiMail className="text-pink-400" size={24} />
                       </div>
                       <div>
                         <h4 className="font-bold text-lg text-white">Email</h4>
-                        <p className="text-gray-300">akashprakash7032@gmail.com</p>
+                        <p className="text-gray-300 break-all">akashprakash7032@gmail.com</p>
                         <p className="text-sm text-gray-400 mt-1">Typically replies within 24 hours</p>
                       </div>
                     </motion.div>
 
                     <motion.div
                       whileHover={{ x: 10 }}
-                      className="flex items-center space-x-4 p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:border-blue-500/50 transition-all duration-300"
+                      className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:border-blue-500/50 transition-all duration-300 min-w-0"
                     >
-                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500/20 to-transparent flex items-center justify-center flex-shrink-0">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-blue-500/20 to-transparent flex items-center justify-center shrink-0">
                         <FiGithub className="text-blue-400" size={24} />
                       </div>
                       <div>
                         <h4 className="font-bold text-lg text-white">GitHub</h4>
-                        <p className="text-gray-300">github.com/akashprakash12</p>
+                        <p className="text-gray-300 break-all">github.com/akashprakash12</p>
                         <p className="text-sm text-gray-400 mt-1">Check out my open-source work</p>
                       </div>
                     </motion.div>
 
                     <motion.div
                       whileHover={{ x: 10 }}
-                      className="flex items-center space-x-4 p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:border-green-500/50 transition-all duration-300"
+                      className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:border-green-500/50 transition-all duration-300 min-w-0"
                     >
-                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500/20 to-transparent flex items-center justify-center flex-shrink-0">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-green-500/20 to-transparent flex items-center justify-center shrink-0">
                         <FiLinkedin className="text-green-400" size={24} />
                       </div>
                       <div>
                         <h4 className="font-bold text-lg text-white">LinkedIn</h4>
-                        <p className="text-gray-300">https://www.linkedin.com/in/akash-prakash-/?skipRedirect=true</p>
+                        <p className="text-gray-300 break-all">https://www.linkedin.com/in/akash-prakash-/?skipRedirect=true</p>
                         <p className="text-sm text-gray-400 mt-1">Let's connect professionally</p>
                       </div>
                     </motion.div>
@@ -969,7 +1000,7 @@ const Home = () => {
                   initial={{ opacity: 0, x: 50 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: "-100px" }}
-                  className="p-8 rounded-2xl bg-gradient-to-br from-white/10 to-transparent backdrop-blur-xl border border-white/20 shadow-2xl relative z-40"
+                  className="p-5 sm:p-8 rounded-2xl bg-gradient-to-br from-white/10 to-transparent backdrop-blur-xl border border-white/20 shadow-2xl relative z-40"
                 >
                   <form className="space-y-6" onSubmit={handleSubmit}>
                     <div>

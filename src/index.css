@@ -6,12 +6,18 @@ html, body, #root {
   background-color: #000000;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 /* Strengthen default text legibility site-wide */
 body, p, h1, h2, h3, h4, h5, h6, a, li, span {
   color: #ffffff !important;
   text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+
+body, p, h1, h2, h3, h4, h5, h6, a, li, span, button, input, textarea {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* Text visibility and contrast fixes */
