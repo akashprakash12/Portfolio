@@ -359,7 +359,7 @@ const Home = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-amber-500/50 shadow-lg">
-                <img src="/akash.png" alt="Akash" className="w-full h-full object-cover object-top" />
+                <img src="/profile.jpeg" alt="Akash" className="w-full h-full object-cover object-top" />
               </div>
               <span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-amber-600">
                 AKASH
@@ -453,7 +453,7 @@ const Home = () => {
                       {/* Image — exactly 50×50 */}
                       <div className="relative w-52 h-52 rounded-full overflow-hidden border-2 border-amber-500/60 shadow-lg shadow-amber-500/20">
                         <img
-                          src="/akash.png"
+                          src="/profile.jpeg"
                           alt="Akash"
                           className="w-full h-full object-cover object-top"
                         />
