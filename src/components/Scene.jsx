@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, Suspense, useCallback, useMemo } from "react";
 import { Canvas, useLoader } from "@react-three/fiber";
+import { AdaptiveDpr, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
 import Plane from "./Plane";
 import CinematicCamera from "./CinematicCamera";
@@ -7,6 +8,7 @@ import { useSceneControls } from "../modules/scene/useSceneControls";
 import { SceneShadows } from "../modules/scene/SceneShadows";
 import SceneModelRig from "../modules/scene/SceneModelRig";
 import LoadingMonitor from "../modules/scene/LoadingMonitor";
+import CameraParallax from "../modules/scene/CameraParallax";
 import SceneViewport from "../modules/scene/SceneViewport";
 import CinematicLighting from "../modules/scene/CinematicLighting";
 import Mushroom from "../modules/scene/Mushroom";
@@ -118,6 +120,7 @@ const Scene = ({ activeSection = 0, onLoadProgress, onLoaded }) => {
         gl.shadowMap.type = THREE.PCFSoftShadowMap;
       }}
     >
+      <AdaptiveDpr pixelated={false} />
       <color attach="background" args={["#050816"]} />
       <fog attach="fog" args={["#050816", 2, 10]} />
 
@@ -135,6 +138,14 @@ const Scene = ({ activeSection = 0, onLoadProgress, onLoaded }) => {
         targetCamPos={targetCamPos}
         targetCamLookAt={targetCamLookAt}
         activeSection={activeSection}
+      />
+      <CameraParallax
+        basePosition={targetCamPos}
+        baseLookAt={targetCamLookAt}
+        enabled={interactionReady}
+        intensity={0.16}
+        verticalIntensity={0.11}
+        damping={4.2}
       />
       <Plane />
 
@@ -166,6 +177,16 @@ const Scene = ({ activeSection = 0, onLoadProgress, onLoaded }) => {
         windowRayOpacity={windowRayOpacity}
         windowRayLength={windowRayLength}
         interactionReady={interactionReady}
+      />
+
+      <ContactShadows
+        position={[0, -1.75, 0]}
+        opacity={0.38}
+        scale={14}
+        blur={2.8}
+        far={4.5}
+        resolution={1024}
+        color="#000000"
       />
 
       {/* Mushroom model on the left side (always rendered, hidden when not needed) */}

@@ -6,6 +6,7 @@ import WindowLight from "./WindowLight";
 import DoorBloomToggle from "./DoorBloomToggle";
 import ChimneySmoke from "./ChimneySmoke";
 import DoorLabel from "./DoorLabel";
+import FloatingModel from "./FloatingModel";
 
 // Draggable model layer and the cursor sphere that drives triangle scattering.
 export default function SceneModelRig({
@@ -32,21 +33,32 @@ export default function SceneModelRig({
         <DoorBloomToggle onToggle={() => setSeedBloomEnabled((current) => !current)} />
       )}
 
-      <group position={position} rotation={rotation} scale={scale}>
-        <DragControls onDrag={onDrag}>
-          <Suspense fallback={null}>
-            <Model
-              triangleGap={triangleGap}
-              cursorPosition={cursorRef}
-              touchRadius={touchRadius}
-              scatterIntensity={scatterIntensity}
-              seedBloomEnabled={seedBloomEnabled}
-            />
-            <DoorLabel />
-            <ChimneySmoke />
-          </Suspense>
-        </DragControls>
-      </group>
+      <FloatingModel
+        position={position}
+        rotation={rotation}
+        scale={scale}
+        enabled={interactionReady}
+        floatAmount={0.06}
+        floatSpeed={0.65}
+        rotationAmount={0.022}
+        driftAmount={0.03}
+      >
+        <group>
+          <DragControls onDrag={onDrag}>
+            <Suspense fallback={null}>
+              <Model
+                triangleGap={triangleGap}
+                cursorPosition={cursorRef}
+                touchRadius={touchRadius}
+                scatterIntensity={scatterIntensity}
+                seedBloomEnabled={seedBloomEnabled}
+              />
+              <DoorLabel />
+              <ChimneySmoke />
+            </Suspense>
+          </DragControls>
+        </group>
+      </FloatingModel>
 
       {/* <CursorSphere cursorRef={cursorRef} modelZ={position[2]} /> */}
 
