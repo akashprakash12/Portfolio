@@ -31,6 +31,12 @@ const Home = () => {
   const [activeSection, setActiveSection] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
 
+  // Contact form state (name, email, message)
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactMessage, setContactMessage] = useState("");
+  const [contactSubmitted, setContactSubmitted] = useState(false);
+
   const containerRef = useRef(null);
   const sectionsRef = useRef([]);
 
@@ -171,7 +177,7 @@ const Home = () => {
       type: "ai",
       status: "In Development",
       liveLink: "#",
-      githubLink: "https://github.com/akashprakash12",
+      githubLink: "https://github.com/akashprakash12/swaramweb",
     },
     {
       title: "IVJourney – IV Management App",
@@ -181,17 +187,17 @@ const Home = () => {
       type: "mobile",
       status: "Live",
       liveLink: "#",
-      githubLink: "https://github.com/akashprakash12",
+      githubLink: "https://github.com/akashprakash12/IVJourney",
     },
     {
       title: "Grievance Management System",
       description:
-        "Web application for registering, tracking, and resolving public complaints with an admin dashboard for authorities to manage and respond to grievances.",
+        "Web application for registering, tracking, and resolving public complaints with an admin dashboard for authorities to manage and respond to grievances. Internship project developed for the Idukki Collectorate under the guidance of District Collector V. Vigneshwari, IAS.",
       tags: ["Django", "MySQL", "Python", "HTML/CSS"],
       type: "web",
       status: "Live",
       liveLink: "#",
-      githubLink: "https://github.com/akashprakash12",
+      githubLink: "https://github.com/akashprakash12/Grivevance_MA",
     },
   ];
 
@@ -244,9 +250,74 @@ const Home = () => {
 
   const getSceneConfig = () => sceneConfig;
 
+  // Contact form submit handler — POSTs to backend and falls back to mailto
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const payload = {
+      name: contactName,
+      email: contactEmail,
+      message: contactMessage,
+    };
+
+    const makeMailto = (to, subjectText, bodyText) => {
+      const subject = encodeURIComponent(subjectText);
+      const body = encodeURIComponent(bodyText);
+      window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+    };
+
+    try {
+      // try relative endpoint first (same origin / proxy), then localhost fallback
+      let res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        res = await fetch("http://localhost:4000/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.sent) {
+          setContactSubmitted(true);
+          setContactName("");
+          setContactEmail("");
+          setContactMessage("");
+        } else if (data.subject && data.text) {
+          // backend returned prepared mail content (no SMTP configured)
+          makeMailto(data.to || "akashprakash7032@gmail.com", data.subject, data.text);
+          setContactSubmitted(true);
+        } else {
+          // unexpected response — fallback to mailto
+          const subjectText = `${contactName || "Anonymous"} — Contact Request`;
+          const bodyText = `Contact request from ${contactName} <${contactEmail}>.\n\n${contactMessage || ""}`;
+          makeMailto("akashprakash7032@gmail.com", subjectText, bodyText);
+          setContactSubmitted(true);
+        }
+      } else {
+        // network failure — fallback to mailto
+        const subjectText = `${contactName || "Anonymous"} — ${contactProjectType || "Project Inquiry"}`;
+        const bodyText = `${contactMessage}\n\n---\nFrom: ${contactName} <${contactEmail}>\nProject type: ${contactProjectType}`;
+        makeMailto("akashprakash7032@gmail.com", subjectText, bodyText);
+        setContactSubmitted(true);
+      }
+    } catch (err) {
+      // error — fallback to mailto
+      const subjectText = `${contactName || "Anonymous"} — Contact Request`;
+      const bodyText = `Contact request from ${contactName} <${contactEmail}>.\n\n${contactMessage || ""}`;
+      makeMailto("akashprakash7032@gmail.com", subjectText, bodyText);
+      setContactSubmitted(true);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
-      <style>{`.ui-wrapper{pointer-events:none} .ui-wrapper button, .ui-wrapper a, .ui-wrapper input, .ui-wrapper [role="button"]{pointer-events:auto}`}</style>
+      <style>{`.ui-wrapper{pointer-events:none} .ui-wrapper button, .ui-wrapper a, .ui-wrapper input, .ui-wrapper textarea, .ui-wrapper select, .ui-wrapper [role="button"]{pointer-events:auto}`}</style>
 
       {/* FULL SCREEN BACKGROUND SCENE */}
       <div className="canvas-container fixed inset-0 z-0">
@@ -391,29 +462,10 @@ const Home = () => {
                       <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-400 border-2 border-black animate-pulse" />
                     </div>
                     {/* Available badge */}
-                    <motion.div
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.5 }}
-                      className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-2.5 py-1"
-                    >
-                      <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                      <span className="text-xs font-medium text-gray-200">Available for work</span>
-                    </motion.div>
+                
                   </motion.div>
 
-                  {/* Welcome Badge */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 to-transparent border border-amber-500/30 backdrop-blur-sm"
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-2 animate-pulse"></div>
-                    <span className="text-xs font-medium text-gray-200">
-                      Welcome to my digital space
-                    </span>
-                  </motion.div>
+                
 
                   {/* Main Greeting */}
                   <motion.h1
@@ -493,7 +545,7 @@ const Home = () => {
                       <FiGithub size={18} className="group-hover:text-amber-400" />
                     </a>
                     <a
-                      href="https://linkedin.com/in/akash-prakash"
+                      href="https://www.linkedin.com/in/akash-prakash-/?skipRedirect=true"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 transform hover:scale-110 hover:rotate-12 group"
@@ -882,7 +934,7 @@ const Home = () => {
                       </div>
                       <div>
                         <h4 className="font-bold text-lg text-white">LinkedIn</h4>
-                        <p className="text-gray-300">linkedin.com/in/akash-prakash</p>
+                        <p className="text-gray-300">https://www.linkedin.com/in/akash-prakash-/?skipRedirect=true</p>
                         <p className="text-sm text-gray-400 mt-1">Let's connect professionally</p>
                       </div>
                     </motion.div>
@@ -896,7 +948,7 @@ const Home = () => {
                   viewport={{ once: true, margin: "-100px" }}
                   className="p-8 rounded-2xl bg-gradient-to-br from-white/10 to-transparent backdrop-blur-xl border border-white/20 shadow-2xl relative z-40"
                 >
-                  <form className="space-y-6">
+                  <form className="space-y-6" onSubmit={handleSubmit}>
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">
                         Your Name *
@@ -904,6 +956,8 @@ const Home = () => {
                       <input
                         type="text"
                         required
+                        value={contactName}
+                        onChange={(e) => setContactName(e.target.value)}
                         className="w-full px-4 py-3.5 rounded-xl bg-white/10 border border-white/20 focus:border-pink-500 focus:bg-white/20 focus:outline-none transition-all duration-300 placeholder-gray-500 text-gray-200"
                         placeholder="Enter your name"
                       />
@@ -915,46 +969,25 @@ const Home = () => {
                       <input
                         type="email"
                         required
+                        value={contactEmail}
+                        onChange={(e) => setContactEmail(e.target.value)}
                         className="w-full px-4 py-3.5 rounded-xl bg-white/10 border border-white/20 focus:border-pink-500 focus:bg-white/20 focus:outline-none transition-all duration-300 placeholder-gray-500 text-gray-200"
                         placeholder="you@example.com"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Project Type
-                      </label>
-                      <select className="w-full px-4 py-3.5 rounded-xl bg-white/10 border border-white/20 focus:border-pink-500 focus:bg-white/20 focus:outline-none transition-all duration-300 text-gray-200">
-                        <option value="" className="bg-gray-900">
-                          Select a project type
-                        </option>
-                        <option value="web" className="bg-gray-900">
-                          Web Development
-                        </option>
-                        <option value="mobile" className="bg-gray-900">
-                          Mobile App
-                        </option>
-                        <option value="design" className="bg-gray-900">
-                          UI/UX Design
-                        </option>
-                        <option value="consulting" className="bg-gray-900">
-                          Technical Consulting
-                        </option>
-                        <option value="other" className="bg-gray-900">
-                          Other
-                        </option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Your Message *
+                        Your Message
                       </label>
                       <textarea
                         rows={5}
-                        required
+                        value={contactMessage}
+                        onChange={(e) => setContactMessage(e.target.value)}
                         className="w-full px-4 py-3.5 rounded-xl bg-white/10 border border-white/20 focus:border-pink-500 focus:bg-white/20 focus:outline-none transition-all duration-300 resize-none placeholder-gray-500 text-gray-200"
-                        placeholder="Tell me about your project, timeline, and budget..."
+                        placeholder="Write a quick message or details..."
                       />
                     </div>
+                    {/* Simplified form: only name and email required. Message and project type removed. */}
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -964,6 +997,11 @@ const Home = () => {
                       <FiMail className="inline mr-2" />
                       Send Message
                     </motion.button>
+                    {contactSubmitted && (
+                      <p className="text-center text-sm text-green-400 pt-4">
+                        Thanks — I'll get back to you within 24 hours.
+                      </p>
+                    )}
                     <p className="text-center text-sm text-gray-400 pt-4">
                       I'll get back to you within 24 hours
                     </p>
