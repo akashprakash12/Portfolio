@@ -1,4 +1,4 @@
-import React, { useRef, useState, Suspense, useCallback, useMemo } from "react";
+import React, { useEffect, useRef, useState, Suspense, useCallback, useMemo } from "react";
 import { Canvas, useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 import Plane from "./Plane";
@@ -15,7 +15,10 @@ import ContactModels from "../modules/scene/ContactModels";
 
 const Scene = ({ activeSection = 0, onLoadProgress, onLoaded }) => {
   const [shadowKey, setShadowKey] = useState(0);
+  const [assetsLoaded, setAssetsLoaded] = useState(false);
+  const [interactionReady, setInteractionReady] = useState(false);
   const cursorRef = useRef(new THREE.Vector3());
+  const interactionTimerRef = useRef(null);
 
   // Camera positions for each section (memoized)
   const cameraPositions = useMemo(
@@ -87,7 +90,23 @@ const Scene = ({ activeSection = 0, onLoadProgress, onLoaded }) => {
     setShadowKey((prev) => prev + 1);
   }, []);
 
-  const [modelsReady, setModelsReady] = useState(false);
+  useEffect(() => {
+    if (!assetsLoaded) {
+      setInteractionReady(false);
+      return undefined;
+    }
+
+    interactionTimerRef.current = window.setTimeout(() => {
+      setInteractionReady(true);
+      if (typeof onLoaded === "function") onLoaded();
+    }, 650);
+
+    return () => {
+      if (interactionTimerRef.current) {
+        window.clearTimeout(interactionTimerRef.current);
+      }
+    };
+  }, [assetsLoaded]);
 
   return (
     <Canvas
@@ -129,8 +148,7 @@ const Scene = ({ activeSection = 0, onLoadProgress, onLoaded }) => {
             if (typeof onLoadProgress === "function") onLoadProgress(p);
           }}
           onLoaded={() => {
-            setModelsReady(true);
-            if (typeof onLoaded === "function") onLoaded();
+            setAssetsLoaded(true);
           }}
         />
       </Suspense>
@@ -147,7 +165,7 @@ const Scene = ({ activeSection = 0, onLoadProgress, onLoaded }) => {
         windowRayCount={windowRayCount}
         windowRayOpacity={windowRayOpacity}
         windowRayLength={windowRayLength}
-        modelsReady={modelsReady}
+        interactionReady={interactionReady}
       />
 
       {/* Mushroom model on the left side (always rendered, hidden when not needed) */}

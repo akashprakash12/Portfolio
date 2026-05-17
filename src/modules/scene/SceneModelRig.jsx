@@ -21,14 +21,14 @@ export default function SceneModelRig({
   windowRayCount,
   windowRayOpacity,
   windowRayLength,
-  modelsReady = true,
+  interactionReady = true,
 }) {
   const [seedBloomEnabled, setSeedBloomEnabled] = useState(false);
-  // modelsReady is received as a prop (defaults to true in signature)
+  // interactionReady is received as a prop (defaults to true in signature)
 
   return (
     <>
-      {modelsReady && (
+      {interactionReady && (
         <DoorBloomToggle onToggle={() => setSeedBloomEnabled((current) => !current)} />
       )}
 
@@ -58,6 +58,7 @@ export default function SceneModelRig({
         rayCount={windowRayCount}
         rayOpacity={windowRayOpacity}
         rayLength={windowRayLength}
+        enabled={interactionReady}
       />
     </>
   );
