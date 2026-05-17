@@ -1,24 +1,39 @@
 import { useControls } from "leva";
 
+const isDev = import.meta.env.DEV;
+
+const readControls = (groupName, schema) => {
+  if (!isDev) {
+    return Object.fromEntries(
+      Object.entries(schema).map(([key, config]) => [
+        key,
+        Array.isArray(config?.value) ? [...config.value] : config?.value,
+      ]),
+    );
+  }
+
+  return useControls(groupName, schema);
+};
+
 // Centralized scene controls so the model, cursor, and hover tuning stay in one place.
 export function useSceneControls() {
-  const { position, rotation, scale } = useControls("Model", {
+  const { position, rotation, scale } = readControls("Model", {
     position: { value: [1.9, -1, 1.3], step: 0.1 },
     rotation: { value: [0.05, -0.78, 0], step: 0.01 },
     scale: { value: 0.1, min: 0.1, max: 5 },
   });
 
-  const { triangleGap, scatterIntensity } = useControls("Hover Effects", {
+  const { triangleGap, scatterIntensity } = readControls("Hover Effects", {
     triangleGap: { value: 0.08, min: 0, max: 0.5, step: 0.02 },
     scatterIntensity: { value: 0.35, min: 0, max: 1, step: 0.05 },
   });
 
-  const { touchRadius } = useControls("Cursor Settings", {
+  const { touchRadius } = readControls("Cursor Settings", {
     touchRadius: { value: 0.4, min: 0.1, max: 2, step: 0.05 },
   });
 
   // --- Key Light ---
-  const { keyIntensity, keyColor, keyPosition } = useControls("Key Light", {
+  const { keyIntensity, keyColor, keyPosition } = readControls("Key Light", {
     keyPosition: { value: [6, 12, 6], step: 0.5 },
     keyIntensity: { value: 1.7, min: 0, max: 5, step: 0.05 },
     keyColor: { value: "#c8d9ff" },
@@ -26,7 +41,7 @@ export function useSceneControls() {
 
   // --- Fill Light ---
   const { fillIntensity, fillColor, fillPosition, fillDistance } =
-    useControls("Fill Light", {
+    readControls("Fill Light", {
       fillPosition: { value: [-1, 3.5, -2], step: 0.5 },
       fillIntensity: { value: 13.5, min: 0, max: 20, step: 0.5 },
       fillColor: { value: "#ffd3a1" },
@@ -35,7 +50,7 @@ export function useSceneControls() {
 
   // --- Postprocessing / Bloom ---
   const { bloomIntensity, luminanceThreshold, luminanceSmoothing } =
-    useControls("Postprocessing", {
+    readControls("Postprocessing", {
       bloomIntensity: { value: 2.2, min: 0, max: 10, step: 0.1 },
       luminanceThreshold: { value: 0.05, min: 0, max: 1, step: 0.01 },
       luminanceSmoothing: { value: 0.12, min: 0, max: 1, step: 0.01 },
@@ -43,7 +58,7 @@ export function useSceneControls() {
 
   // --- Window rays / bloom color ---
   const { windowColor, windowRayCount, windowRayOpacity, windowRayLength } =
-    useControls("Window Rays", {
+    readControls("Window Rays", {
       windowColor: { value: "#8fa380" },
       windowRayCount: { value: 3, min: 0, max: 8, step: 1 },
       windowRayOpacity: { value: 0.3, min: 0, max: 1, step: 0.01 },
@@ -51,17 +66,17 @@ export function useSceneControls() {
     });
 
   // --- Helpers (debug toggle) ---
-  const { showLightHelpers } = useControls("Helpers", {
+  const { showLightHelpers } = readControls("Helpers", {
     showLightHelpers: { value: false },
   });
 
   // --- UI Labels ---
-  const { doorLabelOffset } = useControls("UI Labels", {
+  const { doorLabelOffset } = readControls("UI Labels", {
     doorLabelOffset: { value: [-6.180000000000003, 11.279999999999987, 2.3000000000000007], step: 0.01 },
   });
 
 // --- Mushroom Model ---
-const { mushroomPosition, mushroomScale } = useControls("Mushroom Model", {
+const { mushroomPosition, mushroomScale } = readControls("Mushroom Model", {
   mushroomPosition: {
     value: [-4.9, -0.6, 2.2],
     step: 0.1,
@@ -75,7 +90,7 @@ const { mushroomPosition, mushroomScale } = useControls("Mushroom Model", {
 });
 
 // --- Banana Model (was Mountains) ---
-const { bananaPosition, bananaRotation, bananaScale } = useControls("Banana Model", {
+const { bananaPosition, bananaRotation, bananaScale } = readControls("Banana Model", {
   bananaPosition: {
     value: [-4.2, -0.7, -6],
     step: 0.1,
@@ -93,7 +108,7 @@ const { bananaPosition, bananaRotation, bananaScale } = useControls("Banana Mode
 });
 
 // --- Contact Models ---
-const { contactTreePosition, contactTreeScale, contactBoyPosition, contactBoyScale } = useControls("Contact Models", {
+const { contactTreePosition, contactTreeScale, contactBoyPosition, contactBoyScale } = readControls("Contact Models", {
   contactTreePosition: {
     value: [-5, -1.65, -1.55],
     step: 0.1,
@@ -117,7 +132,7 @@ const { contactTreePosition, contactTreeScale, contactBoyPosition, contactBoySca
 });
 
   // --- Water ---
-  const { waterColor, waveSpeed, waveFreq, waveAmp, waterScale } = useControls(
+  const { waterColor, waveSpeed, waveFreq, waveAmp, waterScale } = readControls(
     "Water",
     {
       waterColor: { value: "#2b6ea3" },
@@ -134,7 +149,7 @@ const { contactTreePosition, contactTreeScale, contactBoyPosition, contactBoySca
     normalScale,
     splashEnabled,
     splashRate,
-  } = useControls("Water Extras", {
+  } = readControls("Water Extras", {
     waterRoughness: { value: 0.12, min: 0, max: 1, step: 0.01 },
     waterBlur: { value: [100, 200], min: 0, max: 1000, step: 1 },
     reflectivity: { value: 0.6, min: 0, max: 1, step: 0.01 },
@@ -153,7 +168,7 @@ const { contactTreePosition, contactTreeScale, contactBoyPosition, contactBoySca
     smokeColor,
     smokeBuoyancy,
     smokeOpacity,
-  } = useControls("Chimney Smoke", {
+  } = readControls("Chimney Smoke", {
     smokeEnabled: { value: true },
     smokeCount: { value: 26, min: 4, max: 200, step: 1 },
     smokeSpawnInterval: { value: 0.23, min: 0.01, max: 1, step: 0.01 },

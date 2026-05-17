@@ -5,6 +5,21 @@ import { useControls, folder } from "leva";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
+const isDev = import.meta.env.DEV;
+
+const readControls = (groupName, schema) => {
+  if (!isDev) {
+    return Object.fromEntries(
+      Object.entries(schema).map(([key, config]) => [
+        key,
+        Array.isArray(config?.value) ? [...config.value] : config?.value,
+      ]),
+    );
+  }
+
+  return useControls(groupName, schema);
+};
+
 function CinematicCamera({ targetCamPos = null, targetCamLookAt = null, activeSection = 0 }) {
   const { camera, controls } = useThree();
 
@@ -13,7 +28,7 @@ function CinematicCamera({ targetCamPos = null, targetCamLookAt = null, activeSe
   const activeTween = useRef(null);
 
   // ─── Default / Home camera ───────────────────────────────────────────────
-  const { camPos, target, fov } = useControls("Camera Controls", {
+  const { camPos, target, fov } = readControls("Camera Controls", {
     camPos: { value: [0, 0, 6], step: 0.1 },
     target: { value: [0, 1, 0], step: 0.1 },
     fov:    { value: 53, min: 10, max: 80, step: 1 },
@@ -21,7 +36,7 @@ function CinematicCamera({ targetCamPos = null, targetCamLookAt = null, activeSe
 
   // ─── About section camera ────────────────────────────────────────────────
   // Tweak these values while you're on the About slide; they take effect live.
-  const { aboutCamPos, aboutTarget, aboutFov } = useControls("About Camera", {
+  const { aboutCamPos, aboutTarget, aboutFov } = readControls("About Camera", {
     aboutCamPos: { value: [-5.9, 0, 6], step: 0.1, label: "Position" },
     aboutTarget: { value: [0, 1, 0],    step: 0.1, label: "Look At"  },
     aboutFov:    { value: 53, min: 10, max: 80, step: 1, label: "FOV" },
@@ -29,14 +44,14 @@ function CinematicCamera({ targetCamPos = null, targetCamLookAt = null, activeSe
 
   // ─── Skills section camera ───────────────────────────────────────────────
   // Add Leva controls for the Skills slide so you can tweak position/target/FOV
-  const { skillsCamPos, skillsTarget, skillsFov } = useControls("Skills Camera", {
+  const { skillsCamPos, skillsTarget, skillsFov } = readControls("Skills Camera", {
     skillsCamPos: { value: [-6.3, 0.3, -6.9], step: 0.1, label: "Position" },
     skillsTarget: { value: [0, 0, 0],        step: 0.1, label: "Look At"  },
     skillsFov:    { value: 80, min: 10, max: 80, step: 1, label: "FOV" },
   });
 
   // ─── Contact section camera ──────────────────────────────────────────────
-  const { contactCamPos, contactTarget, contactFov } = useControls("Contact Camera", {
+  const { contactCamPos, contactTarget, contactFov } = readControls("Contact Camera", {
     contactCamPos: { value: [-10.7, 3.5, -1.6], step: 0.1, label: "Position" },
     contactTarget: { value: [0, -0.2, 0],        step: 0.1, label: "Look At"  },
     contactFov:    { value: 80, min: 10, max: 80, step: 1, label: "FOV" },
